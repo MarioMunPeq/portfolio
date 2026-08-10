@@ -42,8 +42,8 @@ export function Hero() {
   })
   const parallaxY = useTransform(scrollYProgress, [0, 1], [0, 90])
 
-  const firstName = profile.name.split(' ').slice(0, 2).join(' ')
-  const surname = profile.name.split(' ').slice(2).join(' ')
+  const firstName = profile.hero.nameFirst
+  const surname = profile.hero.nameLast
 
   return (
     <section
@@ -98,13 +98,13 @@ export function Hero() {
           className="flex items-center justify-between border-b border-paper/10 px-6 py-4 md:px-10"
         >
           <span className="text-label uppercase tracking-[0.3em] text-paper/60">
-            XNAQUE
+            {profile.alias}
           </span>
           <span className="hidden text-label uppercase tracking-[0.3em] text-paper/60 md:inline">
-            Portfolio — CV viviente
+            Portfolio — {profile.branding.cvViviente}
           </span>
           <span className="text-label uppercase tracking-[0.3em] text-paper/60">
-            Valladolid · Es
+            {profile.hero.region}
           </span>
         </motion.header>
 
@@ -163,13 +163,13 @@ export function Hero() {
 
             <div className="hidden text-right md:block">
               <p className="font-medium uppercase tracking-[0.2em] text-paper/80">
-                Aplicaciones multiplataforma
+                {profile.hero.roleLine}
               </p>
               <p className="mt-1 text-label uppercase tracking-[0.3em] text-paper/50">
-                F.P. Grado Superior — DAM
+                {profile.hero.credentialLine}
               </p>
               <p className="mt-1 text-label uppercase tracking-[0.3em] text-paper/50">
-                41.6523° N, 4.7245° O
+                {profile.hero.coordinates}
               </p>
             </div>
           </motion.div>

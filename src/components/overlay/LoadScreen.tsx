@@ -7,6 +7,7 @@ import {
   useReducedMotion,
 } from 'motion/react'
 import { markBooted } from '../../lib/boot'
+import { profile } from '../../data/profile'
 
 const EASE: [number, number, number, number] = [0.76, 0, 0.24, 1]
 
@@ -76,8 +77,8 @@ export function LoadScreen() {
 
       <div className="flex h-full flex-col justify-between px-6 py-8 md:px-10">
         <div className="flex items-center justify-between text-label uppercase tracking-[0.3em] text-paper/60">
-          <span>Xnaque</span>
-          <span>CV Viviente</span>
+          <span>{profile.alias}</span>
+          <span>{profile.branding.cvViviente}</span>
         </div>
 
         <div>
@@ -86,10 +87,10 @@ export function LoadScreen() {
               aria-hidden="true"
               className="h-3 w-3 bg-accent [clip-path:polygon(100%_0,100%_100%,0_50%)]"
             />
-            Sistema personal
+            {profile.branding.system}
           </p>
           <p className="mt-4 font-display text-6xl uppercase leading-none md:text-8xl">
-            Xnaque
+            {profile.alias}
           </p>
           <div className="mt-10 flex items-center gap-5">
             <div className="relative h-1 w-44 overflow-hidden bg-paper/15 md:w-72">
@@ -105,14 +106,14 @@ export function LoadScreen() {
               00
             </span>
             <span className="text-label uppercase tracking-[0.3em] text-paper/60">
-              Cargando
+              {profile.branding.loading}
             </span>
           </div>
         </div>
 
         <div className="flex items-center justify-between text-label uppercase tracking-[0.3em] text-paper/60">
-          <span>© 2026 Mario Muñoz Pequeño</span>
-          <span>Valladolid · Es</span>
+          <span>© 2026 {profile.name}</span>
+          <span>{profile.hero.region}</span>
         </div>
       </div>
     </motion.div>

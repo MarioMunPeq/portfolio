@@ -1,26 +1,39 @@
+import { Reveal } from '../../components/primitives/Reveal'
 import { SectionHeading } from '../../components/primitives/SectionHeading'
 import { education } from '../../data/education'
 
 export function Education() {
   return (
-    <section id="formacion" className="bg-bg-content px-6 py-20 text-ink">
+    <section id="formacion" className="bg-bg-content px-6 py-24 text-ink md:py-28">
       <div className="mx-auto max-w-5xl">
-        <SectionHeading label="Formación" title="Dónde me he formado" />
-        <ol className="mt-10 space-y-10">
-          {education.map((entry) => (
-            <li key={entry.degree}>
-              <article className="border-l-2 border-accent pl-6">
-                <h3 className="font-display text-2xl uppercase leading-tight">
-                  {entry.degree}
-                </h3>
-                <p className="mt-1 font-medium">{entry.institution}</p>
-                <p className="mt-1 text-caption uppercase tracking-[0.18em] text-ink/60">
-                  {entry.period}
-                </p>
-                <p className="mt-3 max-w-2xl text-body leading-relaxed">
-                  {entry.description}
-                </p>
-              </article>
+        <Reveal>
+          <SectionHeading label="Formación" title="Dónde me he formado" />
+        </Reveal>
+
+        <ol className="mt-12">
+          {education.map((entry, index) => (
+            <li key={entry.degree} className="border-t border-ink/15 py-6">
+              <Reveal delay={index * 0.05}>
+                <div className="grid gap-2 md:grid-cols-[10rem_1fr] md:gap-8">
+                  <div className="md:pt-1">
+                    <span className="font-display text-2xl leading-none text-accent">
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                    <p className="mt-2 text-caption uppercase tracking-[0.18em] text-ink/50">
+                      {entry.period}
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="font-display text-2xl uppercase leading-tight">
+                      {entry.degree}
+                    </h3>
+                    <p className="mt-1 font-medium">{entry.institution}</p>
+                    <p className="mt-3 max-w-2xl text-body leading-relaxed text-ink/80">
+                      {entry.description}
+                    </p>
+                  </div>
+                </div>
+              </Reveal>
             </li>
           ))}
         </ol>

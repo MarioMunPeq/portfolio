@@ -143,7 +143,7 @@ export function Navigation() {
         aria-expanded={mounted}
         className={`fixed bottom-5 right-5 z-[60] inline-flex items-center gap-3 border px-4 py-3 text-label font-medium uppercase tracking-[0.25em] transition-colors duration-300 ${
           scrolled
-            ? 'border-accent text-paper'
+            ? 'border-accent bg-bg-hero text-paper'
             : 'border-paper/25 text-paper/60'
         } hover:border-accent hover:bg-accent hover:text-paper focus-visible:border-accent focus-visible:bg-accent focus-visible:text-paper`}
       >
