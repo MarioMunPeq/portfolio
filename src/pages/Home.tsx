@@ -1,247 +1,151 @@
-import { Link } from 'react-router-dom'
-import { motion, useReducedMotion, type Variants } from 'motion/react'
+import { Reveal } from '../components/primitives/Reveal'
+import { MenuOption } from '../components/primitives/MenuOption'
 import { Screen } from '../components/transition/Screen'
-import { Annotation } from '../components/primitives/Annotation'
 import { profile } from '../data/profile'
-import { useBooted } from '../lib/boot'
+import { NAV_ITEMS } from '../components/navigation/nav-items'
 
-const EASE: [number, number, number, number] = [0.76, 0, 0.24, 1]
+const NAME_SIZE = 'clamp(2.75rem, 11vw, 9rem)'
 
-const NAME_SIZE = 'clamp(2.75rem, 9.5vw, 8rem)'
+const nameParts = profile.name.trim().split(/\s+/)
+const nameFirst = nameParts[0]
+const nameMiddle = nameParts.slice(1, -1).join(' ')
+const nameLast = nameParts[nameParts.length - 1]
 
-const container: Variants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.09, delayChildren: 0.1 } },
-}
+const MENU = [
+  NAV_ITEMS.find((item) => item.id === 'proyectos'),
+  NAV_ITEMS.find((item) => item.id === 'experiencia'),
+  NAV_ITEMS.find((item) => item.id === 'sobre-mi'),
+  NAV_ITEMS.find((item) => item.id === 'formacion'),
+  NAV_ITEMS.find((item) => item.id === 'contacto'),
+].filter((item): item is NonNullable<typeof item> => item !== undefined)
 
-const fade: Variants = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { duration: 0.45, ease: 'easeOut' } },
-}
-
-const nameReveal: Variants = {
-  hidden: { clipPath: 'inset(0 0 100% 0)' },
-  show: {
-    clipPath: 'inset(0 0 0% 0)',
-    transition: { duration: 0.9, ease: EASE, delay: 0.2 },
-  },
-}
-
-const cardFloat: Variants = {
-  hidden: { opacity: 0, x: 60, rotate: 8 },
-  show: {
-    opacity: 1,
-    x: 0,
-    rotate: 4,
-    transition: { duration: 0.8, ease: EASE, delay: 0.5 },
-  },
-}
-
+/**
+ * Pantalla principal = MENÚ PRINCIPAL del sistema. La portada del portfolio
+ * no es un hero: es la interfaz de selección de una partida. Título del
+ * juego (el nombre), opciones de destino (rutas reales), silueta de
+ * personaje recortada y HUD superior/inferior persistente.
+ */
 export function Home() {
-  const reduced = useReducedMotion()
-  const booted = useBooted()
-  const { hero, branding, role, roleFull } = profile
-
-  const parts = profile.name.trim().split(/\s+/)
-  const first = parts[0] ?? ''
-  const last = parts.length > 1 ? parts[parts.length - 1] : ''
-  const middle = parts.length > 2 ? parts.slice(1, -1).join(' ') : null
-
   return (
-    <Screen className="bg-bg-hero text-paper">
-      <section className="relative min-h-dvh overflow-hidden">
-        <motion.div
-          className="relative flex min-h-dvh flex-col"
-          initial={reduced ? false : 'hidden'}
-          animate={reduced || booted ? 'show' : 'hidden'}
-          variants={container}
+    <Screen className="min-h-dvh bg-bg-hero text-paper">
+      <section className="relative flex min-h-dvh flex-col overflow-hidden">
+        {/* Capa decorativa del sistema */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-0"
         >
-          {/* Capa decorativa: fantasma, diagonales, rejilla y marcos */}
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-            <motion.span
-              variants={fade}
-              className="absolute -right-[3%] top-[4%] -rotate-6 select-none font-display uppercase leading-none text-outline-faint"
-              style={{ fontSize: 'clamp(9rem, 28vw, 24rem)' }}
-            >
-              {hero.ghost}
-            </motion.span>
-            <motion.span
-              variants={fade}
-              className="absolute right-[9%] top-[15%] block h-2 w-40 -skew-x-12 bg-accent"
-            />
-            <motion.span
-              variants={fade}
-              className="absolute inset-y-0 left-1/3 w-px bg-paper/5"
-            />
-            <motion.span
-              variants={fade}
-              className="absolute inset-y-0 left-2/3 w-px bg-paper/5"
-            />
-            <motion.span
-              variants={fade}
-              className="absolute left-3 top-3 h-5 w-5 border-l-2 border-t-2 border-paper/20 md:left-5 md:top-5"
-            />
-            <motion.span
-              variants={fade}
-              className="absolute right-3 top-3 h-5 w-5 border-r-2 border-t-2 border-paper/20 md:right-5 md:top-5"
-            />
-            <motion.span
-              variants={fade}
-              className="absolute bottom-3 left-3 h-5 w-5 border-b-2 border-l-2 border-paper/20 md:bottom-5 md:left-5"
-            />
-            <motion.span
-              variants={fade}
-              className="absolute bottom-3 right-3 h-5 w-5 border-b-2 border-r-2 border-paper/20 md:bottom-5 md:right-5"
-            />
-            {/* Franja superior de rayas rojas */}
-            <motion.span
-              variants={fade}
-              className="absolute left-0 top-0 h-2 w-full bg-stripes-red"
-            />
-          </div>
-
-          {/* Etiqueta vertical izquierda */}
-          <motion.span
-            variants={fade}
-            className="absolute left-5 top-1/2 hidden -translate-y-1/2 text-label uppercase tracking-[0.45em] text-paper/40 [writing-mode:vertical-rl] md:block"
+          <span
+            className="absolute -right-[5%] -top-6 -rotate-6 select-none font-display uppercase leading-none text-outline-faint"
+            style={{ fontSize: 'clamp(7rem, 22vw, 18rem)' }}
           >
-            {role} — 2026
-          </motion.span>
+            {profile.hero.ghost}
+          </span>
+          <span className="absolute -right-[12%] top-[20%] hidden h-[85%] w-[26vw] rotate-[14deg] bg-accent lg:block" />
+          <span className="absolute bottom-28 left-[5%] hidden h-6 w-12 bg-halftone-red md:block" />
+          <span className="absolute left-1/2 top-1/2 hidden h-[42%] w-px -translate-y-1/2 bg-paper/10 lg:block" />
+        </div>
 
-          {/* Franja superior de estado */}
-          <motion.header
-            variants={fade}
-            className="relative z-10 flex items-center justify-between border-b border-paper/10 px-6 py-4 md:px-10"
-          >
-            <span className="text-label uppercase tracking-[0.3em] text-paper/60">
-              {branding.system}
-            </span>
-            <span className="hidden text-label uppercase tracking-[0.3em] text-paper/60 md:inline">
-              {profile.name} · {role}
-            </span>
-            <span className="text-label uppercase tracking-[0.3em] text-paper/60">
-              01 / 06
-            </span>
-          </motion.header>
+        {/* Zona de personaje: silueta recortada, parcialmente fuera del viewport */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-24 top-1/2 z-0 hidden h-[26rem] w-[20rem] -translate-y-1/2 -skew-x-6 lg:block"
+        >
+          <span className="block h-full w-full border-2 border-accent/70 bg-bg-hero/60 p-8">
+            <svg viewBox="0 0 200 200" className="h-full w-full">
+              <circle cx="100" cy="66" r="40" fill="rgba(245,245,240,0.9)" />
+              <path
+                d="M100 118c-46 0-82 32-82 64 0 6 4 10 10 10h144c6 0 10-4 10-10 0-32-36-64-82-64z"
+                fill="rgba(245,245,240,0.9)"
+              />
+            </svg>
+          </span>
+          <span className="absolute -left-3 -top-3 block h-6 w-6 border-l-2 border-t-2 border-paper/40" />
+          <span className="absolute -bottom-3 -right-3 block h-6 w-6 border-b-2 border-r-2 border-paper/40" />
+        </span>
 
-          {/* Bloque principal: nombre dominante + rol + tarjeta Joker */}
-          <div className="relative z-10 grid flex-1 items-center gap-10 px-6 py-10 md:px-10 lg:grid-cols-[1fr_auto]">
-            <div className="max-w-3xl">
-              <motion.p
-                variants={fade}
-                className="flex items-center gap-2.5 text-label uppercase tracking-[0.3em] text-accent"
-              >
+        {/* Composición principal */}
+        <div className="relative z-10 mx-auto grid w-full max-w-7xl flex-1 content-center gap-12 px-6 pb-16 pt-28 md:px-10 lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)] lg:items-center lg:gap-10">
+          {/* Título del juego */}
+          <div>
+            <Reveal>
+              <p className="inline-flex flex-wrap items-center gap-2.5 text-label font-medium uppercase tracking-[0.28em] text-paper/70">
                 <span
                   aria-hidden="true"
                   className="h-3 w-3 bg-accent [clip-path:polygon(100%_0,100%_100%,0_50%)]"
                 />
-                {roleFull}
-              </motion.p>
+                {profile.role}
+              </p>
+            </Reveal>
 
-              <motion.h1
-                variants={nameReveal}
-                className="mt-5 font-display uppercase leading-[0.95]"
+            <Reveal delay={0.08}>
+              <h1
+                className="mt-5 font-display uppercase leading-[0.92] text-paper"
                 style={{ fontSize: NAME_SIZE }}
               >
-                <span className="block text-paper">{first}</span>
-                <span className="block text-outline md:translate-x-[9%]">
-                  {middle ?? last}
+                <span className="block">{nameFirst}</span>
+                <span className="block text-outline-faint md:translate-x-[6%]">
+                  {nameMiddle}
                 </span>
-                {middle ? (
-                  <span className="relative z-10 block md:translate-x-[18%]">
-                    <span className="relative inline-block -skew-x-6 bg-accent px-[0.1em] leading-[1.02] text-paper">
-                      <span className="inline-block skew-x-6">{last}</span>
-                    </span>
+                <span className="relative z-10 block md:translate-x-[12%]">
+                  <span className="-skew-x-6 inline-block bg-accent px-[0.12em] leading-[1.02]">
+                    <span className="inline-block skew-x-6">{nameLast}</span>
                   </span>
-                ) : null}
-              </motion.h1>
+                </span>
+              </h1>
+            </Reveal>
 
-              <motion.div
-                variants={fade}
-                className="mt-9 flex flex-wrap items-center gap-5"
-              >
-                <span className="inline-block -skew-x-12 bg-accent px-5 py-2.5">
-                  <span className="inline-block skew-x-12 font-display text-xl uppercase tracking-[0.15em] text-paper">
-                    {role}
-                  </span>
-                </span>
-                <span className="text-label uppercase tracking-[0.3em] text-paper/50">
-                  Proyectos · Experiencia · Formación
-                </span>
-              </motion.div>
-            </div>
-
-            {/* Tarjeta de arquetipo (estética Persona) */}
-            <motion.div
-              variants={cardFloat}
-              className="relative hidden justify-self-end lg:block"
-            >
-              <Annotation
-                tone="paper"
-                smile
-                className="absolute -top-9 right-2 rotate-6"
-              >
-                ¡La vida es un juego!
-              </Annotation>
-              <div className="relative w-64 rotate-3 border-2 border-paper">
-                {/* Zona superior: arcanos */}
-                <div className="bg-halftone-red px-4 pb-8 pt-3">
-                  <span className="block text-right font-display text-3xl leading-none text-paper">
-                    00
-                  </span>
-                </div>
-                {/* Cuerpo negro con identidad profesional */}
-                <div className="bg-bg-hero px-4 py-6">
-                  <span className="block font-display text-4xl uppercase leading-[0.95] text-paper">
-                    {profile.name}
-                  </span>
-                  <span className="mt-2 block text-label uppercase tracking-[0.3em] text-paper/50">
-                    {role}
-                  </span>
-                </div>
-                {/* Pie de tarot */}
-                <div className="bg-paper px-4 py-3">
-                  <span className="block font-display text-lg uppercase leading-none text-ink">
-                    The Fool
-                  </span>
-                </div>
-                <span
-                  aria-hidden="true"
-                  className="absolute -bottom-2 left-4 h-2 w-2 bg-accent [clip-path:polygon(100%_0,100%_100%,0_50%)]"
-                />
-              </div>
-            </motion.div>
+            <Reveal delay={0.16}>
+              <p className="mt-6 max-w-md text-body leading-relaxed text-paper/75">
+                {profile.hero.roleLine} — {profile.hero.credentialLine}
+              </p>
+            </Reveal>
           </div>
 
-          {/* Franja inferior: CTA principal y metadata */}
-          <motion.footer
-            variants={fade}
-            className="relative z-10 flex flex-wrap items-end justify-between gap-x-10 gap-y-6 px-6 pb-20 md:px-10 md:pb-8 md:pr-40"
-          >
-            <Link
-              to="/projects"
-              className="group inline-flex items-center gap-3 border-2 border-paper px-6 py-3 font-medium uppercase tracking-[0.2em] text-paper transition-colors hover:border-accent hover:bg-accent"
-            >
-              Entrar al sistema
-              <span
-                aria-hidden="true"
-                className="h-2.5 w-2.5 bg-accent [clip-path:polygon(100%_0,100%_100%,0_50%)] transition-colors group-hover:bg-paper"
-              />
-            </Link>
+          {/* Menú de selección */}
+          <div>
+            <Reveal delay={0.12}>
+              <p className="mb-2 flex items-center gap-2 border-t border-paper/15 pt-3 text-label font-medium uppercase tracking-[0.25em] text-paper/50">
+                <span
+                  aria-hidden="true"
+                  className="block h-2 w-2 bg-accent [clip-path:polygon(100%_0,100%_100%,0_50%)]"
+                />
+                Selecciona destino
+              </p>
+            </Reveal>
 
-            <div className="hidden text-right md:block">
-              <p className="font-medium uppercase tracking-[0.2em] text-paper/80">
-                {hero.roleLine}
-              </p>
-              <p className="mt-1 text-label uppercase tracking-[0.3em] text-paper/50">
-                {hero.credentialLine}
-              </p>
-              <p className="mt-1 text-label uppercase tracking-[0.3em] text-paper/50">
-                {hero.coordinates}
-              </p>
-            </div>
-          </motion.footer>
-        </motion.div>
+            <nav aria-label="Menú principal del portfolio">
+              <Reveal delay={0.14}>
+                <ol>
+                  {MENU.map((item) => (
+                    <MenuOption
+                      key={item.id}
+                      index={item.index}
+                      label={item.label}
+                      path={item.path}
+                      tag="SELECT"
+                    />
+                  ))}
+                </ol>
+              </Reveal>
+            </nav>
+          </div>
+        </div>
+
+        {/* Barra inferior del sistema */}
+        <footer className="relative z-10 flex flex-wrap items-center justify-between gap-3 border-t border-paper/15 px-6 py-4 text-label uppercase tracking-[0.25em] text-paper/50 md:px-10">
+          <span>{profile.hero.coordinates}</span>
+          <span className="hidden items-center gap-2 font-medium text-paper/70 md:flex">
+            <span className="animate-blink-soft">PRESS ENTER</span>
+            <span
+              aria-hidden="true"
+              className="block h-2 w-2 bg-accent [clip-path:polygon(100%_0,100%_100%,0_50%)]"
+            />
+            SELECT
+          </span>
+          <span>
+            © {new Date().getFullYear()} {profile.hero.region}
+          </span>
+        </footer>
       </section>
     </Screen>
   )

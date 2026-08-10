@@ -1,16 +1,12 @@
 import { useEffect, useState } from 'react'
-import {
-  motion,
-  useMotionValue,
-  useReducedMotion,
-  useSpring,
-} from 'motion/react'
+import { motion, useMotionValue, useReducedMotion, useSpring } from 'motion/react'
 
 /**
- * Cursor decorativo (firma Persona) — DESACTIVADO EN ESTA FASE.
- * Se mantiene el componente completo para reintroducirlo fácilmente
- * montándolo en Layout. En la fase de pulido del Hero se usa SOLO el
- * cursor nativo del sistema: no debe montarse mientras dure esa fase.
+ * Cursor decorativo del sistema (reticula + etiqueta SELECT).
+ * Con `prefers-reduced-motion` o puntero táctil no se monta: se usa el
+ * cursor nativo. Cuando está activo se marca `data-cursor-active` en el
+ * documento y CSS oculta el cursor nativo (solo punteros finos).
+ * La reticula crece y muestra "SELECT ▶" sobre elementos interactivos.
  */
 export function Cursor() {
   const reduced = useReducedMotion()
@@ -27,6 +23,7 @@ export function Cursor() {
     if (window.matchMedia('(pointer: coarse)').matches) return
 
     setEnabled(true)
+    document.documentElement.setAttribute('data-cursor-active', 'true')
 
     const onMove = (event: MouseEvent) => {
       x.set(event.clientX)
@@ -46,6 +43,7 @@ export function Cursor() {
     return () => {
       window.removeEventListener('mousemove', onMove)
       window.removeEventListener('mouseover', onOver)
+      document.documentElement.removeAttribute('data-cursor-active')
     }
   }, [reduced, x, y])
 
@@ -57,17 +55,35 @@ export function Cursor() {
       className="pointer-events-none fixed left-0 top-0 z-[120]"
       style={{ x: sx, y: sy }}
     >
-      <motion.div
-        className="-ml-1 -mt-1 flex h-2.5 w-2.5 items-center justify-center"
-        animate={{ scale: active ? 2.2 : 1, rotate: active ? 45 : 0 }}
-        transition={{ duration: 0.25, ease: 'easeOut' }}
-      >
-        <span
-          className={`block h-2.5 w-2.5 transition-colors duration-200 ${
-            active ? 'bg-accent' : 'bg-paper/60'
-          }`}
-        />
-      </motion.div>
+      <div className="relative -ml-[7px] -mt-[7px]">
+        <motion.div
+          className="flex h-[14px] w-[14px] items-center justify-center border-2"
+          animate={{
+            scale: active ? 1.9 : 1,
+            rotate: active ? 45 : 0,
+            borderColor: active ? '#f5f5f0' : '#e60012',
+          }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+        >
+          <span
+            className={`block h-[5px] w-[5px] transition-colors duration-200 ${
+              active ? 'bg-accent' : 'bg-paper'
+            }`}
+          />
+        </motion.div>
+
+        <motion.span
+          className="absolute left-4 top-2 flex items-center gap-1.5 bg-bg-hero px-2 py-1 text-label font-medium uppercase tracking-[0.22em] text-paper"
+          animate={{ opacity: active ? 1 : 0, x: active ? 0 : 6 }}
+          transition={{ duration: 0.15 }}
+        >
+          <span
+            aria-hidden="true"
+            className="block h-2 w-2 bg-accent [clip-path:polygon(100%_0,100%_100%,0_50%)]"
+          />
+          SELECT
+        </motion.span>
+      </div>
     </motion.div>
   )
 }

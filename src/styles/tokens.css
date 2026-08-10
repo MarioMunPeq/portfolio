@@ -179,6 +179,21 @@ html.lenis body {
 
   --text-label: 0.6875rem;
   --text-label--line-height: 1.2;
+
+  /* --- Animaciones del sistema de juego --- */
+
+  /* Parpadeo suave para señales "PRESS ENTER" (respetado por reduced-motion) */
+  --animate-blink-soft: blink-soft 2.2s ease-in-out infinite;
+
+  @keyframes blink-soft {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.25;
+    }
+  }
 }
 
 /* --- Base --- */
@@ -204,6 +219,13 @@ html.lenis body {
   :focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 3px;
+  }
+
+  /* Cursor decorativo del sistema: con el cursor custom activo se oculta
+     el nativo (solo punteros finos; coarse/reduced-motion no lo activan). */
+  html[data-cursor-active],
+  html[data-cursor-active] * {
+    cursor: none !important;
   }
 }
 
