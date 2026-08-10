@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLenis } from 'lenis/react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
   animate,
   motion,
@@ -13,22 +14,33 @@ import { profile } from '../../data/profile'
 
 const EASE: [number, number, number, number] = [0.76, 0, 0.24, 1]
 
+const ROW_SIZE = 'clamp(2rem, 5vw, 4rem)'
+
 /**
- * Navegación oculta: trigger discreto en la esquina inferior derecha
- * (se intensifica al hacer scroll o al pasar el cursor) y panel a
- * pantalla completa que se revela con el barrido diagonal firma.
+ * Navegación principal: menú a pantalla completa con estética de menú de
+ * videojuego. La pantalla activa se marca con bloque rojo sesgado, el
+ * resto alterna texto sólido / contorno fantasma. Abre y cierra con el
+ * barrido diagonal firma; navegar entre rutas dispara el Sweep de ruta.
  */
 export function Navigation() {
   const reduced = useReducedMotion()
   const lenis = useLenis()
+  const navigate = useNavigate()
+  const location = useLocation()
 
   const [mounted, setMounted] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const progress = useMotionValue(0)
   const contentOpacity = useTransform(progress, [0.25, 0.55], [0, 1])
 
-  const triggerRef = useRef<HTMLButtonElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
+
+  const activeIndex = NAV_ITEMS.findIndex((item) =>
+    item.path === '/'
+      ? location.pathname === '/'
+      : location.pathname.startsWith(item.path),
+  )
+  const activeLabel = NAV_ITEMS[activeIndex] ?? NAV_ITEMS[0]
 
   const open = useCallback(() => {
     setMounted(true)
@@ -56,28 +68,19 @@ export function Navigation() {
     })
   }, [lenis, progress, reduced])
 
-  const goTo = useCallback(
-    (id: string) => {
+  const go = useCallback(
+    (path: string) => {
+      setMounted(false)
       lenis?.start()
-      if (id === 'inicio') {
-        if (lenis) {
-          lenis.scrollTo(0, { duration: 1.1 })
-        } else {
-          window.scrollTo({ top: 0, behavior: 'smooth' })
-        }
-      } else {
-        const el = document.getElementById(id)
-        if (!el) return
-        if (lenis) {
-          lenis.scrollTo(el, { duration: 1.1 })
-        } else {
-          el.scrollIntoView({ behavior: 'smooth' })
-        }
-      }
-      close()
+      navigate(path)
     },
-    [close, lenis],
+    [lenis, navigate],
   )
+
+  useEffect(() => {
+    setMounted(false)
+    lenis?.start()
+  }, [lenis, location.pathname])
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 48)
@@ -136,11 +139,11 @@ export function Navigation() {
   return (
     <>
       <button
-        ref={triggerRef}
         type="button"
         onClick={open}
         aria-haspopup="dialog"
         aria-expanded={mounted}
+        aria-label="Abrir menú de navegación"
         className={`fixed bottom-5 right-5 z-[60] inline-flex items-center gap-3 border px-4 py-3 text-label font-medium uppercase tracking-[0.25em] transition-colors duration-300 ${
           scrolled
             ? 'border-accent bg-bg-hero text-paper'
@@ -151,7 +154,8 @@ export function Navigation() {
           aria-hidden="true"
           className="h-2.5 w-2.5 bg-accent [clip-path:polygon(100%_0,100%_100%,0_50%)]"
         />
-        Menú
+        <span>{activeLabel.index}</span>
+        <span>Menú</span>
       </button>
 
       {mounted ? (
@@ -164,9 +168,23 @@ export function Navigation() {
             className="fixed inset-0 z-[70] flex flex-col bg-bg-hero px-6 py-5 text-paper md:px-10"
             style={{ opacity: contentOpacity }}
           >
-            <div className="flex items-center justify-between border-b border-paper/15 pb-4">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 overflow-hidden"
+            >
+              <span className="absolute -right-[2%] top-[10%] -rotate-6 font-display uppercase leading-none text-outline-faint"
+                style={{ fontSize: 'clamp(8rem, 24vw, 20rem)' }}>
+                Menu
+              </span>
+              <span className="absolute right-[10%] top-0 h-2 w-40 -skew-x-12 bg-accent" />
+              <span className="absolute inset-y-0 left-1/2 w-px bg-paper/5" />
+              <span className="absolute left-3 top-3 h-5 w-5 border-l-2 border-t-2 border-paper/15 md:left-5 md:top-5" />
+              <span className="absolute bottom-3 right-3 h-5 w-5 border-b-2 border-r-2 border-paper/15 md:bottom-5 md:right-5" />
+            </div>
+
+            <div className="relative z-10 flex items-center justify-between border-b border-paper/15 pb-4">
               <span className="text-label uppercase tracking-[0.3em] text-paper/60">
-                Navegación
+                Navegación — {profile.branding.system}
               </span>
               <button
                 type="button"
@@ -177,35 +195,90 @@ export function Navigation() {
               </button>
             </div>
 
-            <nav aria-label="Secciones del portfolio" className="flex flex-1 flex-col justify-center">
+            <nav
+              aria-label="Secciones del portfolio"
+              className="relative z-10 flex flex-1 flex-col justify-center"
+            >
               <ul>
-                {NAV_ITEMS.map((item, index) => (
-                  <li key={item.id}>
-                    <motion.button
-                      type="button"
-                      onClick={() => goTo(item.id)}
-                      initial={reduced ? false : { opacity: 0, y: 28 }}
+                {NAV_ITEMS.map((item, index) => {
+                  const isActive = index === activeIndex
+                  return (
+                    <motion.li
+                      key={item.id}
+                      initial={reduced ? false : { opacity: 0, y: 30 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{
                         delay: reduced ? 0 : 0.45 + index * 0.06,
                         duration: 0.4,
                         ease: 'easeOut',
                       }}
-                      className="group flex w-full items-baseline gap-4 border-b border-paper/10 py-3 text-left md:py-4"
+                      className="border-b border-paper/10"
                     >
-                      <span className="text-label tracking-[0.3em] text-accent">
-                        {item.index}
-                      </span>
-                      <span className="font-display text-3xl uppercase leading-none text-paper transition-colors duration-200 group-hover:text-accent md:text-5xl">
-                        {item.label}
-                      </span>
-                    </motion.button>
-                  </li>
-                ))}
+                      <Link
+                        to={item.path}
+                        onClick={() => go(item.path)}
+                        aria-current={isActive ? 'page' : undefined}
+                        className={`group block py-3 md:py-4 ${
+                          index % 2 === 1 ? 'md:translate-x-[6%]' : ''
+                        }`}
+                      >
+                        <span className="flex items-baseline gap-4 md:gap-6">
+                          <span className="w-12 shrink-0">
+                            {isActive ? (
+                              <span className="inline-block -skew-x-12 bg-accent px-2.5 py-1 font-display text-xl leading-none text-paper md:text-2xl">
+                                <span className="inline-block skew-x-12">
+                                  {item.index}
+                                </span>
+                              </span>
+                            ) : (
+                              <span className="font-display text-2xl leading-none text-paper/30 transition-colors group-hover:text-accent md:text-3xl">
+                                {item.index}
+                              </span>
+                            )}
+                          </span>
+
+                          <span
+                            className="font-display uppercase leading-none"
+                            style={{ fontSize: ROW_SIZE }}
+                          >
+                            {isActive ? (
+                              <span className="relative inline-block -skew-x-6 bg-accent px-[0.14em] py-[0.02em] text-paper">
+                                <span className="inline-block skew-x-6">
+                                  {item.label}
+                                </span>
+                              </span>
+                            ) : (
+                              <span
+                                className={`transition-colors ${
+                                  index % 2 === 0
+                                    ? 'text-paper/80 group-hover:text-accent'
+                                    : 'text-outline-faint group-hover:text-outline'
+                                }`}
+                              >
+                                {item.label}
+                              </span>
+                            )}
+                          </span>
+
+                          <span
+                            aria-hidden="true"
+                            className={`ml-auto self-center transition-all duration-200 ${
+                              isActive
+                                ? 'opacity-100'
+                                : 'opacity-0 group-hover:-translate-x-1 group-hover:opacity-100'
+                            }`}
+                          >
+                            <span className="block h-2.5 w-2.5 bg-accent [clip-path:polygon(100%_0,100%_100%,0_50%)]" />
+                          </span>
+                        </span>
+                      </Link>
+                    </motion.li>
+                  )
+                })}
               </ul>
             </nav>
 
-            <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-paper/15 pt-4">
+            <footer className="relative z-10 flex flex-wrap items-center justify-between gap-4 border-t border-paper/15 pt-4">
               <p className="text-label uppercase tracking-[0.3em] text-paper/50">
                 {profile.alias} — {profile.role}
               </p>

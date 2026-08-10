@@ -1,5 +1,6 @@
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { Reveal } from '../components/primitives/Reveal'
+import { Screen } from '../components/transition/Screen'
 import { projects } from '../data/projects'
 import type { Project } from '../data/projects'
 
@@ -44,16 +45,17 @@ export function ProjectDetail() {
   const gallery = hasImages ? project.images!.slice(1) : []
 
   return (
-    <section className="min-h-dvh bg-bg-content px-6 py-20 text-ink">
-      <div className="mx-auto max-w-4xl">
-        <Reveal>
-          <Link
-            to="/#proyectos"
-            className="inline-block text-label uppercase tracking-[0.18em] underline decoration-accent underline-offset-4 hover:text-accent"
-          >
-            Volver a proyectos
-          </Link>
-        </Reveal>
+    <Screen className="min-h-dvh bg-bg-content text-ink">
+      <section className="px-6 py-20 md:px-10 md:py-24">
+        <div className="mx-auto max-w-4xl">
+          <Reveal>
+            <Link
+              to="/projects"
+              className="inline-block text-label uppercase tracking-[0.18em] underline decoration-accent underline-offset-4 hover:text-accent"
+            >
+              Volver a proyectos
+            </Link>
+          </Reveal>
 
         <Reveal delay={0.05}>
           <p className="mt-10 font-display text-3xl text-accent">{project.order}</p>
@@ -140,7 +142,8 @@ export function ProjectDetail() {
             </Reveal>
           ) : null}
         </div>
-      </div>
-    </section>
+        </div>
+      </section>
+    </Screen>
   )
 }

@@ -6,6 +6,12 @@
   -webkit-text-stroke: 2px var(--color-accent);
 }
 
+/* Utilidad: texto hueco fantasmal con trazo paper tenue (fondos oscuros) */
+@utility text-outline-faint {
+  color: transparent;
+  -webkit-text-stroke: 2px rgba(245, 245, 240, 0.28);
+}
+
 /* Marcador angular del indicador de scroll */
 @keyframes scroll-marker {
   0% {

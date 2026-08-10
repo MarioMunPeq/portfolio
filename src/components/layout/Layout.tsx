@@ -1,10 +1,14 @@
-import { Outlet } from 'react-router-dom'
+import type { ReactNode } from 'react'
 import { Cursor } from './Cursor'
 import { ScrollProgress } from './ScrollProgress'
 import { Navigation } from '../navigation/Navigation'
 import { LoadScreen } from '../overlay/LoadScreen'
 
-export function Layout() {
+interface LayoutProps {
+  children: ReactNode
+}
+
+export function Layout({ children }: LayoutProps) {
   return (
     <div className="min-h-dvh bg-bg-hero text-paper">
       <a
@@ -17,9 +21,7 @@ export function Layout() {
       <Cursor />
       <ScrollProgress />
       <Navigation />
-      <main id="main">
-        <Outlet />
-      </main>
+      <main id="main">{children}</main>
     </div>
   )
 }
