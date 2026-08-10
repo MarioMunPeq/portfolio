@@ -74,6 +74,8 @@ export function LoadScreen() {
       aria-hidden="true"
     >
       <div className="pointer-events-none absolute -right-10 top-1/4 h-2 w-44 rotate-[24deg] bg-accent" />
+      <span className="pointer-events-none absolute left-0 top-0 h-2 w-full bg-stripes-red" />
+      <span className="pointer-events-none absolute right-10 bottom-24 hidden h-5 w-10 bg-halftone-red md:block" />
 
       <div className="flex h-full flex-col justify-between px-6 py-8 md:px-10">
         <div className="flex items-center justify-between text-label uppercase tracking-[0.3em] text-paper/60">

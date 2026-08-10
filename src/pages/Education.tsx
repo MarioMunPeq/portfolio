@@ -7,6 +7,10 @@ export function Education() {
   return (
     <Screen className="min-h-dvh bg-bg-content text-ink">
       <section className="relative overflow-hidden px-6 py-24 md:px-10 md:py-28">
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+          <span className="absolute right-0 top-0 h-2 w-full bg-stripes-faint" />
+          <span className="absolute right-10 top-32 block h-4 w-8 bg-halftone-red" />
+        </div>
         <div className="relative mx-auto max-w-5xl">
           <Reveal>
             <ScreenHeader index="05" label="Formación" title="Dónde me he formado" />

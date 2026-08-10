@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { motion, useReducedMotion, type Variants } from 'motion/react'
 import { Screen } from '../components/transition/Screen'
+import { Annotation } from '../components/primitives/Annotation'
 import { profile } from '../data/profile'
 import { useBooted } from '../lib/boot'
 
@@ -23,6 +24,16 @@ const nameReveal: Variants = {
   show: {
     clipPath: 'inset(0 0 0% 0)',
     transition: { duration: 0.9, ease: EASE, delay: 0.2 },
+  },
+}
+
+const cardFloat: Variants = {
+  hidden: { opacity: 0, x: 60, rotate: 8 },
+  show: {
+    opacity: 1,
+    x: 0,
+    rotate: 4,
+    transition: { duration: 0.8, ease: EASE, delay: 0.5 },
   },
 }
 
@@ -82,6 +93,11 @@ export function Home() {
               variants={fade}
               className="absolute bottom-3 right-3 h-5 w-5 border-b-2 border-r-2 border-paper/20 md:bottom-5 md:right-5"
             />
+            {/* Franja superior de rayas rojas */}
+            <motion.span
+              variants={fade}
+              className="absolute left-0 top-0 h-2 w-full bg-stripes-red"
+            />
           </div>
 
           {/* Etiqueta vertical izquierda */}
@@ -108,49 +124,92 @@ export function Home() {
             </span>
           </motion.header>
 
-          {/* Bloque principal: nombre dominante + rol */}
-          <div className="relative z-10 flex flex-1 flex-col justify-center px-6 py-10 md:px-10">
-            <motion.p
-              variants={fade}
-              className="flex items-center gap-2.5 text-label uppercase tracking-[0.3em] text-accent"
-            >
-              <span
-                aria-hidden="true"
-                className="h-3 w-3 bg-accent [clip-path:polygon(100%_0,100%_100%,0_50%)]"
-              />
-              {roleFull}
-            </motion.p>
+          {/* Bloque principal: nombre dominante + rol + tarjeta Joker */}
+          <div className="relative z-10 grid flex-1 items-center gap-10 px-6 py-10 md:px-10 lg:grid-cols-[1fr_auto]">
+            <div className="max-w-3xl">
+              <motion.p
+                variants={fade}
+                className="flex items-center gap-2.5 text-label uppercase tracking-[0.3em] text-accent"
+              >
+                <span
+                  aria-hidden="true"
+                  className="h-3 w-3 bg-accent [clip-path:polygon(100%_0,100%_100%,0_50%)]"
+                />
+                {roleFull}
+              </motion.p>
 
-            <motion.h1
-              variants={nameReveal}
-              className="mt-5 font-display uppercase leading-[0.95]"
-              style={{ fontSize: NAME_SIZE }}
-            >
-              <span className="block text-paper">{first}</span>
-              <span className="block text-outline md:translate-x-[9%]">
-                {middle ?? last}
-              </span>
-              {middle ? (
-                <span className="relative z-10 block md:translate-x-[18%]">
-                  <span className="relative inline-block -skew-x-6 bg-accent px-[0.1em] leading-[1.02] text-paper">
-                    <span className="inline-block skew-x-6">{last}</span>
+              <motion.h1
+                variants={nameReveal}
+                className="mt-5 font-display uppercase leading-[0.95]"
+                style={{ fontSize: NAME_SIZE }}
+              >
+                <span className="block text-paper">{first}</span>
+                <span className="block text-outline md:translate-x-[9%]">
+                  {middle ?? last}
+                </span>
+                {middle ? (
+                  <span className="relative z-10 block md:translate-x-[18%]">
+                    <span className="relative inline-block -skew-x-6 bg-accent px-[0.1em] leading-[1.02] text-paper">
+                      <span className="inline-block skew-x-6">{last}</span>
+                    </span>
+                  </span>
+                ) : null}
+              </motion.h1>
+
+              <motion.div
+                variants={fade}
+                className="mt-9 flex flex-wrap items-center gap-5"
+              >
+                <span className="inline-block -skew-x-12 bg-accent px-5 py-2.5">
+                  <span className="inline-block skew-x-12 font-display text-xl uppercase tracking-[0.15em] text-paper">
+                    {role}
                   </span>
                 </span>
-              ) : null}
-            </motion.h1>
-
-            <motion.div
-              variants={fade}
-              className="mt-9 flex flex-wrap items-center gap-5"
-            >
-              <span className="inline-block -skew-x-12 bg-accent px-5 py-2.5">
-                <span className="inline-block skew-x-12 font-display text-xl uppercase tracking-[0.15em] text-paper">
-                  {role}
+                <span className="text-label uppercase tracking-[0.3em] text-paper/50">
+                  Proyectos · Experiencia · Formación
                 </span>
-              </span>
-              <span className="text-label uppercase tracking-[0.3em] text-paper/50">
-                Proyectos · Experiencia · Formación
-              </span>
+              </motion.div>
+            </div>
+
+            {/* Tarjeta de arquetipo (estética Persona) */}
+            <motion.div
+              variants={cardFloat}
+              className="relative hidden justify-self-end lg:block"
+            >
+              <Annotation
+                tone="paper"
+                smile
+                className="absolute -top-9 right-2 rotate-6"
+              >
+                ¡La vida es un juego!
+              </Annotation>
+              <div className="relative w-64 rotate-3 border-2 border-paper">
+                {/* Zona superior: arcanos */}
+                <div className="bg-halftone-red px-4 pb-8 pt-3">
+                  <span className="block text-right font-display text-3xl leading-none text-paper">
+                    00
+                  </span>
+                </div>
+                {/* Cuerpo negro con alias */}
+                <div className="bg-bg-hero px-4 py-6">
+                  <span className="block font-display text-4xl uppercase leading-none text-paper">
+                    {alias}
+                  </span>
+                  <span className="mt-2 block text-label uppercase tracking-[0.3em] text-paper/50">
+                    {role}
+                  </span>
+                </div>
+                {/* Pie de tarot */}
+                <div className="bg-paper px-4 py-3">
+                  <span className="block font-display text-lg uppercase leading-none text-ink">
+                    The Fool
+                  </span>
+                </div>
+                <span
+                  aria-hidden="true"
+                  className="absolute -bottom-2 left-4 h-2 w-2 bg-accent [clip-path:polygon(100%_0,100%_100%,0_50%)]"
+                />
+              </div>
             </motion.div>
           </div>
 

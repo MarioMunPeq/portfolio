@@ -1,5 +1,6 @@
 import { Reveal } from '../components/primitives/Reveal'
 import { ScreenHeader } from '../components/primitives/ScreenHeader'
+import { Annotation } from '../components/primitives/Annotation'
 import { Screen } from '../components/transition/Screen'
 import { profile } from '../data/profile'
 
@@ -11,6 +12,8 @@ export function Contact() {
       <section className="relative overflow-hidden px-6 py-24 md:px-10 md:py-28">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
           <span className="absolute right-0 top-[22%] block h-1.5 w-40 -skew-x-12 bg-accent" />
+          <span className="absolute left-0 top-0 h-2 w-full bg-stripes-red" />
+          <span className="absolute bottom-12 left-8 hidden h-4 w-8 bg-halftone-red md:block" />
         </div>
 
         <div className="relative mx-auto max-w-5xl">
@@ -22,6 +25,12 @@ export function Contact() {
             <p className="mt-10 max-w-2xl text-body leading-relaxed text-paper/80">
               {contact.intro}
             </p>
+          </Reveal>
+
+          <Reveal delay={0.14}>
+            <Annotation tone="red" smile className="mt-6">
+              ¡No dudes en escribir!
+            </Annotation>
           </Reveal>
 
           <Reveal delay={0.18}>

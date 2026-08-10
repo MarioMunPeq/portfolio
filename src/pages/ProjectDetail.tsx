@@ -20,7 +20,7 @@ function ProjectHero({ project }: { project: Project }) {
   return (
     <div
       aria-hidden="true"
-      className="relative flex aspect-[16/9] items-center justify-center overflow-hidden border border-ink bg-bg-hero text-paper"
+      className="relative flex aspect-[16/9] items-center justify-center overflow-hidden border border-ink bg-halftone-ink text-paper"
     >
       <span
         aria-hidden="true"

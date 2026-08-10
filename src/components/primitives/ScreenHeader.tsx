@@ -10,8 +10,9 @@ interface ScreenHeaderProps {
 
 /**
  * Cabecera de pantalla de contenido: índice fantasma gigante, etiqueta
- * con marcador angular, título display y acento diagonal rojo. Refuerza
- * el lenguaje de "interfaz de juego" con numeración visible.
+ * con marcador angular, título display y acento diagonal rojo. Enmarca
+ * el bloque con esquinas de "viñeta de cómic" y remata con un guiño
+ * de trama de puntos.
  */
 export function ScreenHeader({ index, label, title, onDark = false }: ScreenHeaderProps) {
   return (
@@ -26,6 +27,20 @@ export function ScreenHeader({ index, label, title, onDark = false }: ScreenHead
           {index}
         </span>
       </div>
+
+      {/* Esquinas de viñeta */}
+      <span
+        aria-hidden="true"
+        className={`pointer-events-none absolute -left-3 -top-3 h-6 w-6 border-l-2 border-t-2 ${
+          onDark ? 'border-paper/30' : 'border-ink/30'
+        }`}
+      />
+      <span
+        aria-hidden="true"
+        className={`pointer-events-none absolute -bottom-3 left-24 h-6 w-6 border-b-2 border-l-2 ${
+          onDark ? 'border-paper/30' : 'border-ink/30'
+        }`}
+      />
 
       <span
         className={`inline-flex items-center gap-2.5 text-label font-medium uppercase tracking-[0.22em] ${
@@ -48,12 +63,13 @@ export function ScreenHeader({ index, label, title, onDark = false }: ScreenHead
         {title}
       </h1>
 
-      <span
-        aria-hidden="true"
-        className={`mt-5 block h-2 w-40 -skew-x-12 ${
-          onDark ? 'bg-accent/80' : 'bg-accent'
-        }`}
-      />
+      {/* Guiño de trama: banda diagonal + sello de puntos */}
+      <span aria-hidden="true" className="relative mt-5 flex items-center gap-3">
+        <span
+          className={`block h-2 w-40 -skew-x-12 ${onDark ? 'bg-accent/80' : 'bg-accent'}`}
+        />
+        <span className="block h-3 w-8 bg-halftone-red" />
+      </span>
     </header>
   )
 }

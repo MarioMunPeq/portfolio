@@ -3,6 +3,7 @@ import { Cursor } from './Cursor'
 import { ScrollProgress } from './ScrollProgress'
 import { Navigation } from '../navigation/Navigation'
 import { LoadScreen } from '../overlay/LoadScreen'
+import { Grain } from '../primitives/Grain'
 
 interface LayoutProps {
   children: ReactNode
@@ -21,6 +22,7 @@ export function Layout({ children }: LayoutProps) {
       <Cursor />
       <ScrollProgress />
       <Navigation />
+      <Grain />
       <main id="main">{children}</main>
     </div>
   )

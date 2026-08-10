@@ -17,7 +17,7 @@ function ProjectVisual({ project }: { project: Project }) {
   return (
     <div
       aria-hidden="true"
-      className="relative flex h-full items-center justify-center overflow-hidden bg-bg-hero"
+      className="relative flex h-full items-center justify-center overflow-hidden bg-halftone-ink"
     >
       <span
         aria-hidden="true"
@@ -36,6 +36,8 @@ export function Projects() {
       <section className="relative overflow-hidden px-6 py-24 md:px-10 md:py-28">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
           <span className="absolute right-0 top-[18%] block h-1.5 w-40 -skew-x-12 bg-accent" />
+          <span className="absolute left-0 top-0 h-2 w-full bg-stripes-red" />
+          <span className="absolute bottom-10 right-6 hidden h-4 w-8 bg-halftone-red md:block" />
         </div>
 
         <div className="relative mx-auto max-w-5xl">

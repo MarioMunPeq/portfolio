@@ -12,6 +12,99 @@
   -webkit-text-stroke: 2px rgba(245, 245, 240, 0.28);
 }
 
+/* Utilidad: texto hueco para fondos claros (tinta tenue) */
+@utility text-outline-ink {
+  color: transparent;
+  -webkit-text-stroke: 2px rgba(10, 10, 10, 0.22);
+}
+
+/* ============================================================
+   Lenguaje visual Persona 5 — tramas de puntos, rayas y ruido
+   ============================================================ */
+
+/* Trama de puntos: rojo con puntos papel (firma visual del sistema) */
+@utility bg-halftone-red {
+  background-color: var(--color-accent);
+  background-image: radial-gradient(rgba(245, 245, 240, 0.85) 1.4px, transparent 1.4px);
+  background-size: 12px 12px;
+}
+
+/* Trama de puntos: tinta con puntos papel tenues */
+@utility bg-halftone-ink {
+  background-color: var(--color-ink);
+  background-image: radial-gradient(rgba(245, 245, 240, 0.14) 1.4px, transparent 1.4px);
+  background-size: 12px 12px;
+}
+
+/* Trama de puntos: papel con puntos tinta (negro sobre blanco) */
+@utility bg-halftone-paper {
+  background-color: var(--color-paper);
+  background-image: radial-gradient(rgba(10, 10, 10, 0.85) 1.4px, transparent 1.4px);
+  background-size: 12px 12px;
+}
+
+/* Rayas diagonales rojas (bandas de menú) */
+@utility bg-stripes-red {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--color-accent) 0 10px,
+    transparent 10px 26px
+  );
+}
+
+/* Rayas diagonales tenues para fondos oscuros */
+@utility bg-stripes-faint {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(245, 245, 240, 0.05) 0 10px,
+    transparent 10px 26px
+  );
+}
+
+/* Ruido de imprenta (SVG feTurbulence, tileable y ligero) */
+@utility bg-noise {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
+/* ============================================================
+   Cortes angulares de panel (viñeta de cómic)
+   ============================================================ */
+
+/* Corte en esquina inferior derecha */
+@utility clip-cut-br {
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 1rem),
+    calc(100% - 1rem) 100%,
+    0 100%
+  );
+}
+
+/* Corte en esquina inferior izquierda */
+@utility clip-cut-bl {
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% 100%,
+    calc(100% - 1rem) 100%,
+    0 calc(100% - 1rem)
+  );
+}
+
+/* Doble chaflán inferior (trapecio angular) */
+@utility clip-notch {
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 0.9rem),
+    calc(100% - 0.9rem) 100%,
+    0.9rem 100%,
+    0 calc(100% - 0.9rem)
+  );
+}
+
 /* Marcador angular del indicador de scroll */
 @keyframes scroll-marker {
   0% {
@@ -66,6 +159,7 @@ html.lenis body {
   /* --- Tipografías --- */
   --font-display: "Anton", "Arial Narrow", sans-serif;
   --font-sans: "Space Grotesk", system-ui, sans-serif;
+  --font-hand: "Caveat", cursive;
 
   /* --- Escala tipográfica (min: hero, section-title, subtitle, body, caption) --- */
   --text-hero: clamp(3.25rem, 9vw, 8rem);

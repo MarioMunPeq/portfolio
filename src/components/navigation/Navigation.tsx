@@ -9,6 +9,7 @@ import {
   useTransform,
 } from 'motion/react'
 import { Sweep } from '../primitives/Sweep'
+import { Annotation } from '../primitives/Annotation'
 import { NAV_ITEMS } from './nav-items'
 import { profile } from '../../data/profile'
 
@@ -180,6 +181,7 @@ export function Navigation() {
               <span className="absolute inset-y-0 left-1/2 w-px bg-paper/5" />
               <span className="absolute left-3 top-3 h-5 w-5 border-l-2 border-t-2 border-paper/15 md:left-5 md:top-5" />
               <span className="absolute bottom-3 right-3 h-5 w-5 border-b-2 border-r-2 border-paper/15 md:bottom-5 md:right-5" />
+              <span className="absolute left-0 top-0 h-2 w-full bg-stripes-red" />
             </div>
 
             <div className="relative z-10 flex items-center justify-between border-b border-paper/15 pb-4">
@@ -282,6 +284,9 @@ export function Navigation() {
               <p className="text-label uppercase tracking-[0.3em] text-paper/50">
                 {profile.alias} — {profile.role}
               </p>
+              <Annotation tone="red" smile className="order-first w-full md:order-none md:w-auto">
+                ¡Elige tu destino!
+              </Annotation>
               <ul className="flex flex-wrap gap-3">
                 {links.map((link) => (
                   <li key={link.url}>
