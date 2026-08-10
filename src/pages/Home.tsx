@@ -40,7 +40,7 @@ const cardFloat: Variants = {
 export function Home() {
   const reduced = useReducedMotion()
   const booted = useBooted()
-  const { hero, branding, role, roleFull, alias } = profile
+  const { hero, branding, role, roleFull } = profile
 
   const parts = profile.name.trim().split(/\s+/)
   const first = parts[0] ?? ''
@@ -63,7 +63,7 @@ export function Home() {
               className="absolute -right-[3%] top-[4%] -rotate-6 select-none font-display uppercase leading-none text-outline-faint"
               style={{ fontSize: 'clamp(9rem, 28vw, 24rem)' }}
             >
-              {alias}
+              {hero.ghost}
             </motion.span>
             <motion.span
               variants={fade}
@@ -105,7 +105,7 @@ export function Home() {
             variants={fade}
             className="absolute left-5 top-1/2 hidden -translate-y-1/2 text-label uppercase tracking-[0.45em] text-paper/40 [writing-mode:vertical-rl] md:block"
           >
-            {branding.cvViviente} — 2026
+            {role} — 2026
           </motion.span>
 
           {/* Franja superior de estado */}
@@ -114,10 +114,10 @@ export function Home() {
             className="relative z-10 flex items-center justify-between border-b border-paper/10 px-6 py-4 md:px-10"
           >
             <span className="text-label uppercase tracking-[0.3em] text-paper/60">
-              {alias} — Portfolio
+              {branding.system}
             </span>
             <span className="hidden text-label uppercase tracking-[0.3em] text-paper/60 md:inline">
-              {branding.cvViviente} · {hero.region}
+              {profile.name} · {role}
             </span>
             <span className="text-label uppercase tracking-[0.3em] text-paper/60">
               01 / 06
@@ -190,10 +190,10 @@ export function Home() {
                     00
                   </span>
                 </div>
-                {/* Cuerpo negro con alias */}
+                {/* Cuerpo negro con identidad profesional */}
                 <div className="bg-bg-hero px-4 py-6">
-                  <span className="block font-display text-4xl uppercase leading-none text-paper">
-                    {alias}
+                  <span className="block font-display text-4xl uppercase leading-[0.95] text-paper">
+                    {profile.name}
                   </span>
                   <span className="mt-2 block text-label uppercase tracking-[0.3em] text-paper/50">
                     {role}
@@ -213,29 +213,21 @@ export function Home() {
             </motion.div>
           </div>
 
-          {/* Franja inferior: CTA, scroll y metadata */}
+          {/* Franja inferior: CTA principal y metadata */}
           <motion.footer
             variants={fade}
-            className="relative z-10 flex flex-wrap items-end justify-between gap-x-10 gap-y-6 px-6 pb-8 md:px-10"
+            className="relative z-10 flex flex-wrap items-end justify-between gap-x-10 gap-y-6 px-6 pb-20 md:px-10 md:pb-8 md:pr-40"
           >
-            <div className="flex flex-wrap items-center gap-8">
-              <Link
-                to="/projects"
-                className="inline-flex items-center gap-3 border-2 border-paper px-6 py-3 font-medium uppercase tracking-[0.2em] text-paper transition-colors hover:border-accent hover:bg-accent"
-              >
-                Entrar al sistema
-                <span
-                  aria-hidden="true"
-                  className="h-2.5 w-2.5 bg-accent [clip-path:polygon(100%_0,100%_100%,0_50%)] transition-colors group-hover:bg-paper"
-                />
-              </Link>
-              <div className="flex items-center gap-3 text-label uppercase tracking-[0.3em] text-paper/50">
-                <span>Scroll</span>
-                <span className="relative block h-px w-28 bg-paper/25">
-                  <span className="absolute left-0 top-1/2 h-1.5 w-1.5 -translate-y-1/2 bg-accent [clip-path:polygon(100%_0,100%_100%,0_50%)] animate-[scroll-marker_1.8s_ease-in-out_infinite]" />
-                </span>
-              </div>
-            </div>
+            <Link
+              to="/projects"
+              className="group inline-flex items-center gap-3 border-2 border-paper px-6 py-3 font-medium uppercase tracking-[0.2em] text-paper transition-colors hover:border-accent hover:bg-accent"
+            >
+              Entrar al sistema
+              <span
+                aria-hidden="true"
+                className="h-2.5 w-2.5 bg-accent [clip-path:polygon(100%_0,100%_100%,0_50%)] transition-colors group-hover:bg-paper"
+              />
+            </Link>
 
             <div className="hidden text-right md:block">
               <p className="font-medium uppercase tracking-[0.2em] text-paper/80">

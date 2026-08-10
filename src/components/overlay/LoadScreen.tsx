@@ -80,7 +80,7 @@ export function LoadScreen() {
       <div className="flex h-full flex-col justify-between px-6 py-8 md:px-10">
         <div className="flex items-center justify-between text-label uppercase tracking-[0.3em] text-paper/60">
           <span>{profile.alias}</span>
-          <span>{profile.branding.cvViviente}</span>
+          <span>{profile.branding.system}</span>
         </div>
 
         <div>

@@ -7,9 +7,10 @@ import {
 } from 'motion/react'
 
 /**
- * Cursor decorativo que enriquece el cursor nativo (no lo sustituye).
- * Cambia de forma/tamaño sobre elementos interactivos. Se desactiva
- * en pantallas táctiles y con `prefers-reduced-motion`.
+ * Cursor decorativo (firma Persona) — DESACTIVADO EN ESTA FASE.
+ * Se mantiene el componente completo para reintroducirlo fácilmente
+ * montándolo en Layout. En la fase de pulido del Hero se usa SOLO el
+ * cursor nativo del sistema: no debe montarse mientras dure esa fase.
  */
 export function Cursor() {
   const reduced = useReducedMotion()

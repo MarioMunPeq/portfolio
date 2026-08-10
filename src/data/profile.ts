@@ -22,6 +22,8 @@ export interface Profile {
     nameLast: string
     /** Región corta mostrada en la franja superior. */
     region: string
+    /** Palabra gigante de fondo del hero (agua de marca). */
+    ghost: string
     /** Línea principal del bloque derecho. */
     roleLine: string
     /** Línea secundaria del bloque derecho. */
@@ -63,8 +65,8 @@ export interface Profile {
 
 export const profile: Profile = {
   name: 'Mario Muñoz Pequeño',
-  alias: 'xNaque',
-  role: 'DEVELOPER',
+  alias: 'Mario Muñoz Pequeño',
+  role: 'SOFTWARE DEVELOPER',
   roleFull: 'Desarrollador de Aplicaciones',
   location: 'Valladolid, España',
   tagline: '[PLACEHOLDER] Título o frase corta para el hero — pendiente de definir.',
@@ -72,6 +74,7 @@ export const profile: Profile = {
     nameFirst: 'Mario',
     nameLast: 'Muñoz Pequeño',
     region: 'Valladolid · Es',
+    ghost: 'Sistema',
     roleLine: 'Aplicaciones multiplataforma',
     credentialLine: 'F.P. Grado Superior — DAM',
     coordinates: '41.6523° N, 4.7245° O',
