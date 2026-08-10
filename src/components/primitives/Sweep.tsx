@@ -13,8 +13,8 @@ interface SweepProps {
  * Dos paneles sesgados que atraviesan la pantalla según `progress`.
  */
 export function Sweep({ progress, fadeOutAt, className = '' }: SweepProps) {
-  const xRed = useTransform(progress, [0, 1], ['-135vw', '0vw'])
-  const xBlack = useTransform(progress, [0, 1], ['-127vw', '8vw'])
+  const xRed = useTransform(progress, [0, 1], ['-160vw', '0vw'])
+  const xBlack = useTransform(progress, [0, 1], ['-160vw', '8vw'])
   const opacity = useTransform(
     progress,
     fadeOutAt !== undefined ? [fadeOutAt, 1] : [0, 1],
