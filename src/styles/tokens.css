@@ -215,20 +215,39 @@
   gap: 12px;
   width: 100%;
   padding: 13px 44px 13px 28px;
-  background-color: var(--color-bg-hero);
-  border: 2px solid var(--color-paper);
+  background-color: var(--color-paper);
   clip-path: polygon(0 12%, 6% 0, 94% 0, 100% 50%, 94% 100%, 6% 100%, 0 88%);
   transform: skewX(-8deg) translateX(var(--off, 0px)) rotate(var(--rot, 0deg));
-  transition:
-    transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
-    background-color 0.2s;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
   overflow: hidden;
+}
+
+/* Marco angular sin `border`: la capa exterior (hero-cmd) pinta el borde
+   blanco recortado con clip-path, y una capa interior (track) con el MISMO
+   polígono aplicado a su caja reducida (inset 2px) pinta el relleno. Así las
+   aristas diagonales y la punta de flecha quedan continuas y sin píxel suelto. */
+.hero-cmd-track {
+  position: absolute;
+  inset: 2px;
+  background-color: var(--color-bg-hero);
+  clip-path: polygon(0 12%, 6% 0, 94% 0, 100% 50%, 94% 100%, 6% 100%, 0 88%);
+  transition: background-color 0.2s;
+}
+
+/* El contenido debe quedar por encima del track (ambos comparten caja). */
+.hero-cmd > :not(.hero-cmd-track) {
+  position: relative;
+  z-index: 1;
 }
 
 .hero-cmd:hover,
 .hero-cmd:focus-visible {
-  background-color: var(--color-accent);
   transform: skewX(-8deg) translateX(-18px) rotate(0deg) scale(1.03);
+}
+
+.hero-cmd:hover .hero-cmd-track,
+.hero-cmd:focus-visible .hero-cmd-track {
+  background-color: var(--color-accent);
 }
 
 /* El icono de botón (△ □ ○ ✕) conserva su color de identidad en hover:
@@ -237,6 +256,23 @@
 .hero-cmd:hover .hero-btn-icon,
 .hero-cmd:focus-visible .hero-btn-icon {
   border-color: currentColor;
+}
+
+/* Onda expansiva de los anillos de la pantalla de carga (respetada por
+   reduced-motion gracias a la regla global de animaciones) */
+@keyframes loadscreen-wave {
+  0% {
+    opacity: 0.35;
+    transform: scale(0.55);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
+.loadscreen-wave {
+  animation: loadscreen-wave 2.4s ease-out infinite;
 }
 
 /* Marcador angular del indicador de scroll */

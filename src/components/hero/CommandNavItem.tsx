@@ -35,6 +35,7 @@ export function CommandNavItem({ icon, num, label, sub, path }: CommandNavItemPr
         data-cursor
         className="hero-cmd group"
       >
+        <span aria-hidden="true" className="hero-cmd-track" />
         <span
           aria-hidden="true"
           className={`hero-btn-icon flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full border-2 border-current text-[13px] font-bold [transform:skewX(8deg)] ${colorClass}`}

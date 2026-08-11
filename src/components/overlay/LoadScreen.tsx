@@ -9,6 +9,8 @@ import {
 } from 'motion/react'
 import { markBooted } from '../../lib/boot'
 import { profile } from '../../data/profile'
+import { ConcentricRings } from './ConcentricRings'
+import { Skyline } from './Skyline'
 
 const EASE: [number, number, number, number] = [0.76, 0, 0.24, 1]
 const PROGRESS_EASE: [number, number, number, number] = [0.65, 0, 0.35, 1]
@@ -33,10 +35,14 @@ let loadScreenShown = false
 
 /**
  * Pantalla de carga — cambio de día estilo Persona 5: contador 0→100 gigante
- * con contorno tipo cómic como protagonista absoluto, sobre energía de hazard
- * stripe, speed-lines y trazo diagonal. Saltable con click o cualquier tecla.
- * La salida reutiliza el barrido diagonal rojo/negro (firma del proyecto).
- * Con reduced-motion: aparece 100 estático un instante y desaparece, sin barrido.
+ * con contorno tipo cómic como protagonista (reducido a 2/3 para dejar aire),
+ * sobre un fondo combinado de anillos concéntricos generados por código y una
+ * silueta de skyline en la base. Abajo a la derecha, una barra de "encuesta"
+ * tipo Phan-Site (bloque sesgado con icono Q, contorno grueso, relleno rojo
+ * ligado al contador, pregunta con palabra clave en rojo y "SÍ %" grande).
+ * Saltable con click o cualquier tecla. La salida reutiliza el barrido
+ * diagonal rojo/negro (firma del proyecto). Con reduced-motion: aparece 100
+ * estático un instante y desaparece, sin barrido.
  */
 export function LoadScreen() {
   const reduced = useReducedMotion()
@@ -47,13 +53,22 @@ export function LoadScreen() {
   const pctRef = useRef<HTMLSpanElement>(null)
   const progressControls = useRef<ReturnType<typeof animate> | null>(null)
   const exiting = useRef(false)
+  const barPctRef = useRef<HTMLSpanElement>(null)
+  const fillRef = useRef<HTMLDivElement>(null)
 
   const xRed = useTransform(sweep, [0, 1], ['-160vw', '0vw'])
   const xBlack = useTransform(sweep, [0, 1], ['-160vw', '8vw'])
 
   useMotionValueEvent(progress, 'change', (value) => {
+    const rounded = Math.round(value * 100)
     if (pctRef.current) {
-      pctRef.current.textContent = String(Math.round(value * 100)).padStart(2, '0')
+      pctRef.current.textContent = String(rounded).padStart(2, '0')
+    }
+    if (barPctRef.current) {
+      barPctRef.current.textContent = String(rounded)
+    }
+    if (fillRef.current) {
+      fillRef.current.style.width = `${rounded}%`
     }
   })
 
@@ -101,7 +116,7 @@ export function LoadScreen() {
     }
     if (reduced) {
       markBooted()
-      if (pctRef.current) pctRef.current.textContent = '100'
+      progress.set(1)
       const id = setTimeout(() => setHidden(true), 650)
       return () => clearTimeout(id)
     }
@@ -139,13 +154,14 @@ export function LoadScreen() {
           onPointerDown={skip}
           aria-hidden="true"
         >
-          {/* Energía de fondo: hazard + speed-lines + trazo rojo + halftone */}
+          {/* Marco superior */}
           <span className="pointer-events-none absolute left-0 top-0 h-2 w-full bg-hazard" />
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-speed-lines" />
-          <span aria-hidden="true" className="pointer-events-none absolute -right-10 top-[22%] h-2 w-56 rotate-[24deg] bg-accent" />
-          <span aria-hidden="true" className="pointer-events-none absolute bottom-[16%] right-[14%] hidden h-6 w-12 bg-halftone-red md:block" />
 
-          <div className="flex h-full flex-col justify-between px-6 py-8 md:px-10">
+          {/* Fondo combinado: anillos concéntricos (código) + skyline */}
+          <ConcentricRings />
+          <Skyline />
+
+          <div className="relative z-10 flex h-full flex-col justify-between px-6 py-8 md:px-10">
             {/* Topbar de sistema */}
             <div className="flex items-center justify-between text-label uppercase tracking-[0.3em] text-paper/60">
               <span>{profile.branding.system}</span>
@@ -167,30 +183,45 @@ export function LoadScreen() {
                 ref={pctRef}
                 className="loadscreen-counter font-display uppercase leading-none text-paper"
                 style={{
-                  fontSize: 'clamp(11rem, 26vw, 26rem)',
+                  fontSize: 'clamp(7.5rem, 17.5vw, 17.5rem)',
                   textShadow: COMIC_SHADOW,
                   transform: 'skewX(-6deg)',
                 }}
               >
                 00
               </span>
-              <div className="relative mt-10 h-1 w-52 overflow-hidden bg-paper/15 md:w-72">
-                <motion.div
-                  className="absolute inset-y-0 left-0 bg-accent"
-                  style={{ scaleX: progress, transformOrigin: 'left' }}
-                />
-              </div>
               <p className="mt-8 font-display text-2xl uppercase tracking-[0.05em] text-paper/70 md:text-3xl">
                 {profile.name}
               </p>
             </div>
 
-            {/* Footer de sistema */}
-            <div className="flex items-center justify-between text-label uppercase tracking-[0.3em] text-paper/60">
-              <span>
-                © {new Date().getFullYear()} {profile.name}
-              </span>
-              <span>{profile.hero.region}</span>
+            {/* Barra de encuesta tipo Phan-Site — un único bloque, esquina inferior derecha */}
+            <div className="flex flex-col items-end self-end">
+              <div className="flex items-center">
+                <span
+                  aria-hidden="true"
+                  className="-mr-4 flex h-20 w-20 shrink-0 -rotate-12 items-center justify-center rounded-full border-[3px] border-paper bg-bg-hero font-display text-[2.5rem] leading-none text-accent"
+                >
+                  Q
+                </span>
+                <p className="relative z-10 text-right font-display text-[17px] uppercase leading-none tracking-[0.04em]">
+                  <span className="text-paper">¿Café antes de programar? — </span>
+                  <span className="text-accent">OBLIGATORIO</span>
+                </p>
+              </div>
+              <div className="mt-4 flex items-center gap-4">
+                <div className="bar-frame relative h-[50px] w-[330px] bg-paper [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
+                  <div className="bar-track absolute inset-[3px] bg-bg-hero [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
+                    <div ref={fillRef} className="bar-fill absolute inset-y-0 left-0 bg-accent" />
+                  </div>
+                </div>
+                <div className="flex shrink-0 items-baseline gap-2 [transform:skewX(-10deg)]">
+                  <span className="font-display text-[26px] leading-none text-paper">SÍ</span>
+                  <span className="font-display text-5xl leading-none text-accent">
+                    <span ref={barPctRef}>0</span>%
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </motion.div>
