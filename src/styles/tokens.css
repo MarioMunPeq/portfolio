@@ -61,6 +61,41 @@
   );
 }
 
+/* Rayas de peligro rojo/negro (barra superior del menú principal) */
+@utility bg-hazard {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--color-accent) 0 14px,
+    var(--color-bg-hero) 14px 28px
+  );
+}
+
+/* Speed-lines diagonales del hero (solo menú principal) */
+@utility bg-speed-lines {
+  background-image: repeating-linear-gradient(
+    115deg,
+    transparent 0 38px,
+    color-mix(in srgb, var(--color-accent) 6%, transparent) 38px 40px,
+    transparent 40px 90px
+  );
+  animation: hero-drift-lines 18s linear infinite;
+}
+
+/* Scanlines horizontales sutiles del hero (solo menú principal) */
+@utility bg-scanlines {
+  background-image: repeating-linear-gradient(
+    0deg,
+    color-mix(in srgb, var(--color-paper) 2.5%, transparent) 0 1px,
+    transparent 1px 3px
+  );
+}
+
+/* Puntos halftone tenues (gris sobre negro, fondo del hero) */
+@utility bg-halftone-dots {
+  background-image: radial-gradient(var(--color-bg-content-alt) 1px, transparent 1px);
+  background-size: 6px 6px;
+}
+
 /* Ruido de imprenta (SVG feTurbulence, tileable y ligero) */
 @utility bg-noise {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -103,6 +138,91 @@
     0.9rem 100%,
     0 calc(100% - 0.9rem)
   );
+}
+
+/* ============================================================
+   Menú principal (hero) — tarjeta de comando con glitch-slice
+   ============================================================ */
+
+/* Cuadrados flotantes que suben desde abajo del viewport */
+@keyframes hero-drift {
+  from {
+    transform: translateY(0) rotate(0deg);
+  }
+  to {
+    transform: translateY(-120vh) rotate(180deg);
+  }
+}
+
+/* Desplazamiento de fondo de las speed-lines */
+@keyframes hero-drift-lines {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 600px 0;
+  }
+}
+
+/* Slice de glitch que cruza la tarjeta al hacer hover */
+@keyframes hero-glitch {
+  0% {
+    opacity: 0.9;
+    transform: translateX(0);
+  }
+  50% {
+    opacity: 0.6;
+    transform: translateX(12px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+}
+
+/* Tarjeta de comando: placa angular sesgada con offset/rotación por ítem.
+   El `li` (hero-command-item) declara las variables --off/--rot, que la
+   tarjeta (hero-cmd) consume en su transform. */
+@media (min-width: 1024px) {
+  .hero-command-item:nth-child(1) {
+    --off: 40px;
+    --rot: -1.5deg;
+  }
+  .hero-command-item:nth-child(2) {
+    --off: 0px;
+    --rot: 1deg;
+  }
+  .hero-command-item:nth-child(3) {
+    --off: 55px;
+    --rot: -1deg;
+  }
+  .hero-command-item:nth-child(4) {
+    --off: 15px;
+    --rot: 1.5deg;
+  }
+}
+
+.hero-cmd {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 34px 10px 22px;
+  background-color: var(--color-bg-hero);
+  border: 2px solid var(--color-paper);
+  clip-path: polygon(0 12%, 6% 0, 94% 0, 100% 50%, 94% 100%, 6% 100%, 0 88%);
+  transform: skewX(-8deg) translateX(var(--off, 0px)) rotate(var(--rot, 0deg));
+  transition:
+    transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 0.2s;
+  overflow: hidden;
+}
+
+.hero-cmd:hover,
+.hero-cmd:focus-visible {
+  background-color: var(--color-accent);
+  transform: skewX(-8deg) translateX(-18px) rotate(0deg) scale(1.03);
 }
 
 /* Marcador angular del indicador de scroll */
@@ -150,11 +270,19 @@ html.lenis body {
   /* --- Color: acento + superficies + tinta (spec §4) --- */
   --color-accent: #e60012;
   --color-accent-alt: #ff0000;
+  /* Rojo profundo para sombras/offsets del acento (sombras de texto y cajas) */
+  --color-accent-deep: #a3000c;
   --color-bg-hero: #0a0a0a;
   --color-bg-content: #f5f5f0;
   --color-bg-content-alt: #1a1a1a;
   --color-ink: #0a0a0a;
   --color-paper: #f5f5f0;
+
+  /* --- Iconografía tipo botón de mando (△ □ ○ ✕) --- */
+  --color-face-tri: #5ad1ff;
+  --color-face-sq: #ff5ac8;
+  --color-face-cir: #ff4d4d;
+  --color-face-cross: #6a7bff;
 
   /* --- Tipografías --- */
   --font-display: "Anton", "Arial Narrow", sans-serif;

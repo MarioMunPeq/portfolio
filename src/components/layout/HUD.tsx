@@ -11,9 +11,13 @@ function toCounter(value: number) {
  * marca, la ubicación y el contador de pantalla (página actual / total).
  * Vive por encima del contenido pero bajo el cargador, el barrido y el
  * cursor. Es decorativa de la identidad de juego, no reemplaza la nav.
+ * No se monta en el menú principal: esa pantalla trae su propia topbar
+ * (hazard stripe + labels de sistema de la referencia).
  */
 export function HUD() {
   const location = useLocation()
+
+  if (location.pathname === '/') return null
 
   const activeIndex = NAV_ITEMS.findIndex((item) =>
     item.path === '/'

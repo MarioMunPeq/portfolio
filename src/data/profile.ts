@@ -20,6 +20,8 @@ export interface Profile {
     nameFirst: string
     /** Segundo bloque del nombre (contorno). */
     nameLast: string
+    /** Eyebrow rojo con prefijo ◄ bajo el título. */
+    eyebrow: string
     /** Región corta mostrada en la franja superior. */
     region: string
     /** Palabra gigante de fondo del hero (agua de marca). */
@@ -39,6 +41,8 @@ export interface Profile {
     cvViviente: string
     /** "Cargando". */
     loading: string
+    /** Versión mostrada en la franja superior del menú. */
+    version: string
   }
   /** Enlaces de contacto. url null = pendiente de definir. */
   links: {
@@ -69,12 +73,13 @@ export const profile: Profile = {
   role: 'SOFTWARE DEVELOPER',
   roleFull: 'Desarrollador de Aplicaciones',
   location: 'Valladolid, España',
-  tagline: '[PLACEHOLDER] Título o frase corta para el hero — pendiente de definir.',
+  tagline: 'Bienvenido a mi portfolio inspirado en Persona 5.',
   hero: {
     nameFirst: 'Mario',
     nameLast: 'Muñoz Pequeño',
+    eyebrow: 'Desarrollador de software',
     region: 'Valladolid · Es',
-    ghost: 'Sistema',
+    ghost: 'Menú',
     roleLine: 'Aplicaciones multiplataforma',
     credentialLine: 'F.P. Grado Superior — DAM',
     coordinates: '41.6523° N, 4.7245° O',
@@ -83,6 +88,7 @@ export const profile: Profile = {
     system: 'Sistema personal',
     cvViviente: 'CV Viviente',
     loading: 'Cargando',
+    version: 'v.2026',
   },
   links: {
     github: null,
