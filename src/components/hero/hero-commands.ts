@@ -16,44 +16,38 @@ const byId = (id: string) => {
 }
 
 /**
- * Comandos del menú principal — etiquetas de sección con subtítulo de
- * "sistema" (contexto de juego). Inicio no aparece: esta pantalla ES el
- * menú principal. Los destinos salen de NAV_ITEMS.
+ * Comandos del menú principal — etiqueta grande de "sistema" (contexto de
+ * juego) con el nombre real de la sección como subtítulo. Inicio y Contacto
+ * no aparecen aquí: esta pantalla ES el menú principal y CONTACTO vive en el
+ * pie de pantalla. Los destinos salen de NAV_ITEMS.
  */
 export const HERO_COMMANDS: HeroCommand[] = [
   {
     id: 'sobre-mi',
     icon: 'triangle',
-    label: 'Sobre mí',
-    sub: '(perfil)',
+    label: 'perfil',
+    sub: 'Sobre mí',
     path: byId('sobre-mi'),
   },
   {
     id: 'proyectos',
     icon: 'square',
-    label: 'Proyectos',
-    sub: '(inventario)',
+    label: 'inventario',
+    sub: 'Proyectos',
     path: byId('proyectos'),
   },
   {
     id: 'experiencia',
     icon: 'circle',
-    label: 'Experiencia',
-    sub: '(estadísticas)',
+    label: 'estadísticas',
+    sub: 'Experiencia',
     path: byId('experiencia'),
   },
   {
     id: 'formacion',
     icon: 'cross',
-    label: 'Formación',
-    sub: '(estudios)',
+    label: 'habilidades',
+    sub: 'Formación',
     path: byId('formacion'),
-  },
-  {
-    id: 'contacto',
-    icon: 'asterisk',
-    label: 'Contacto',
-    sub: '(mensaje)',
-    path: byId('contacto'),
   },
 ]

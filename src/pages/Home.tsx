@@ -108,7 +108,7 @@ export function Home() {
         {/* Navegación de comandos */}
         <nav
           aria-label="Menú principal del portfolio"
-          className="hero-command-nav absolute bottom-[14%] left-1/2 z-20 w-[min(78vw,26rem)] -translate-x-1/2 lg:bottom-auto lg:left-auto lg:right-[6%] lg:top-1/2 lg:w-[min(40vw,600px)] lg:-translate-y-1/2 lg:translate-x-0"
+          className="hero-command-nav absolute bottom-[14%] left-1/2 z-20 w-[min(78vw,26rem)] -translate-x-1/2 lg:bottom-auto lg:left-auto lg:right-[6%] lg:top-1/2 lg:w-[min(44vw,640px)] xl:w-[min(46vw,800px)] lg:-translate-y-1/2 lg:translate-x-0"
         >
           <ol className="flex flex-col gap-2">
             {HERO_COMMANDS.map((command) => (

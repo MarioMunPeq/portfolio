@@ -38,14 +38,14 @@ export function CommandNavItem({ icon, label, sub, path }: CommandNavItemProps) 
         <span aria-hidden="true" className="hero-cmd-track" />
         <span
           aria-hidden="true"
-          className={`hero-btn-icon flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full border-2 border-current text-[15px] font-bold [transform:skewX(10deg)] ${colorClass}`}
+          className={`hero-btn-icon flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full border-2 border-current text-[17px] font-bold [transform:skewX(11deg)] ${colorClass}`}
         >
           {glyph}
         </span>
-        <span className="whitespace-nowrap [transform:skewX(10deg)] font-display text-[24px] uppercase leading-none tracking-[0.02em] text-paper transition-colors duration-200 [text-shadow:2px_2px_0_color-mix(in_srgb,var(--color-ink)_60%,transparent)] group-hover:text-ink group-hover:[text-shadow:none] group-focus-visible:text-ink sm:text-[30px] lg:text-[38px]">
+        <span className="whitespace-nowrap [transform:skewX(11deg)] font-display text-[26px] leading-none tracking-[0.02em] text-paper transition-colors duration-200 [text-shadow:2px_2px_0_color-mix(in_srgb,var(--color-ink)_60%,transparent)] group-hover:text-ink group-hover:[text-shadow:none] group-focus-visible:text-ink sm:text-[32px] lg:text-[34px] xl:text-[42px]">
           {label}
         </span>
-        <span className="ml-auto hidden self-center whitespace-nowrap [transform:skewX(10deg)] text-[15px] tracking-[0.06em] text-paper/50 transition-colors duration-200 group-hover:text-ink/70 group-focus-visible:text-ink/70 md:block">
+        <span className="ml-auto hidden self-center whitespace-nowrap [transform:skewX(11deg)] text-[14px] uppercase tracking-[0.06em] text-paper/50 transition-colors duration-200 group-hover:text-ink/70 group-focus-visible:text-ink/70 md:block lg:text-[15px]">
           {sub}
         </span>
       </Link>
