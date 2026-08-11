@@ -51,7 +51,7 @@ export function Home() {
             {profile.branding.system}
           </SystemLabel>
           <span className="hidden truncate text-center text-label font-medium uppercase tracking-[0.15em] text-paper/70 sm:block">
-            {profile.hero.coordinates} · SESIÓN {SESSION_TIME}
+            SESIÓN {SESSION_TIME}
           </span>
           <SystemLabel className="text-paper/60 tracking-[0.15em]">
             {profile.branding.system.split(' ')[0]} {profile.branding.version}

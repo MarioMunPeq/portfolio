@@ -22,10 +22,10 @@ export function Layout({ children }: LayoutProps) {
       <LoadScreen />
       <ScrollProgress />
       <HUD />
-      <Navigation />
       <Grain />
       <Cursor />
       <main id="main">{children}</main>
+      <Navigation />
     </div>
   )
 }
