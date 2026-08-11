@@ -53,7 +53,7 @@ export const projects: Project[] = [
   {
     slug: 'lol-recommender',
     order: '03',
-    name: 'Recomendador de Campeones',
+    name: 'LoL Champion Recommender',
     summary:
       '[PLACEHOLDER] Descripción breve del proyecto — pendiente de definir.',
     description:

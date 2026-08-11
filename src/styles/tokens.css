@@ -324,6 +324,45 @@
   stroke: var(--color-gold);
 }
 
+/* ============================================================
+   Inventario de proyectos — geometría de selección Persona 5
+   ============================================================ */
+
+/* Haz rojo de selección: barra sesgada que atraviesa la fila del
+   inventario y se desborda por el borde izquierdo, con los extremos
+   cortados en ángulo. Se muestra con opacidad (0) cuando la fila no
+   está seleccionada y aparece (1) al seleccionarla. */
+.proj-beam {
+  position: absolute;
+  top: -5px;
+  bottom: -5px;
+  right: 0;
+  left: -2.75rem;
+  background-color: var(--color-accent);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 1rem) 100%, 1rem 100%);
+  transform: skewX(-8deg);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.proj-beam.is-active {
+  opacity: 1;
+}
+
+/* Marco de la gran captura del inventario: esquinas cortadas (viñeta
+   de cómic) para que el bloque de imagen no lea como una tarjeta
+   rectangular convencional. */
+.proj-frame {
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 1.25rem),
+    calc(100% - 1.25rem) 100%,
+    1rem 100%,
+    0 calc(100% - 1rem)
+  );
+}
+
 
 /* Marcador angular del indicador de scroll */
 @keyframes scroll-marker {
