@@ -208,7 +208,7 @@
   align-items: center;
   gap: 12px;
   width: 100%;
-  padding: 10px 34px 10px 22px;
+  padding: 12px 40px 12px 26px;
   background-color: var(--color-bg-hero);
   border: 2px solid var(--color-paper);
   clip-path: polygon(0 12%, 6% 0, 94% 0, 100% 50%, 94% 100%, 6% 100%, 0 88%);
@@ -223,6 +223,14 @@
 .hero-cmd:focus-visible {
   background-color: var(--color-accent);
   transform: skewX(-8deg) translateX(-18px) rotate(0deg) scale(1.03);
+}
+
+/* El icono de botón (△ □ ○ ✕) conserva su color de identidad en hover:
+   su color lo fija text-face-* y no cambia con el fondo rojo de la tarjeta;
+   aquí se garantiza que el borde sigue al símbolo. */
+.hero-cmd:hover .hero-btn-icon,
+.hero-cmd:focus-visible .hero-btn-icon {
+  border-color: currentColor;
 }
 
 /* Marcador angular del indicador de scroll */

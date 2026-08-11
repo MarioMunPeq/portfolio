@@ -41,14 +41,14 @@ export function CommandNavItem({ icon, num, label, sub, path }: CommandNavItemPr
         />
         <span
           aria-hidden="true"
-          className={`flex h-[22px] w-[22px] shrink-0 items-center justify-center border-2 border-current text-[13px] font-bold [transform:skewX(8deg)] ${colorClass}`}
+          className={`hero-btn-icon flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full border-2 border-current text-[13px] font-bold [transform:skewX(8deg)] ${colorClass}`}
         >
           {glyph}
         </span>
         <span className="[transform:skewX(8deg)] font-display text-[11px] leading-none text-accent transition-colors duration-200 group-hover:text-ink group-focus-visible:text-ink">
           {num}
         </span>
-        <span className="whitespace-nowrap [transform:skewX(8deg)] font-display text-[17px] uppercase leading-none tracking-[0.02em] text-paper transition-colors duration-200 [text-shadow:2px_2px_0_color-mix(in_srgb,var(--color-ink)_60%,transparent)] group-hover:text-ink group-hover:[text-shadow:none] group-focus-visible:text-ink sm:text-[22px] lg:text-[26px]">
+        <span className="whitespace-nowrap [transform:skewX(8deg)] font-display text-[20px] uppercase leading-none tracking-[0.02em] text-paper transition-colors duration-200 [text-shadow:2px_2px_0_color-mix(in_srgb,var(--color-ink)_60%,transparent)] group-hover:text-ink group-hover:[text-shadow:none] group-focus-visible:text-ink sm:text-[25px] lg:text-[30px]">
           {label}
         </span>
         <span className="ml-auto hidden self-center whitespace-nowrap [transform:skewX(8deg)] text-[9px] tracking-[0.06em] text-paper/50 transition-colors duration-200 group-hover:text-ink/70 group-focus-visible:text-ink/70 sm:block">

@@ -22,12 +22,12 @@ const byId = (id: string) => {
  */
 export const HERO_COMMANDS: HeroCommand[] = [
   {
-    id: 'inicio',
+    id: 'sobre-mi',
     icon: 'triangle',
     num: '01',
-    label: 'Menú principal',
-    sub: '(inicio)',
-    path: byId('inicio'),
+    label: 'Sobre mí',
+    sub: '(perfil)',
+    path: byId('sobre-mi'),
   },
   {
     id: 'proyectos',
