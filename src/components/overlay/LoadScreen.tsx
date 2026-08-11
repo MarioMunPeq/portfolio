@@ -151,61 +151,66 @@ export function LoadScreen() {
           </div>
         </div>
 
-        {/* Zona inferior: composición única (logo PHAN-SITE + bloque Q/barra) */}
-        <div className="load-base relative mt-6 h-[min(30vh,300px)] w-full">
+        {/* Zona inferior: composición única (PNG PHAN-SITE + Q + pregunta + barra + %) */}
+        <div className="load-base relative mt-6 h-[min(38vh,380px)] w-full">
           {/* Línea roja de anclaje y cuña tras el logo */}
           <span aria-hidden="true" className="absolute bottom-0 left-0 h-[7px] w-[118%] -skew-x-12 bg-accent" />
           <span aria-hidden="true" className="absolute -bottom-2 -left-12 h-[34%] w-[44%] -skew-x-12 bg-accent" />
 
-          {/* PHAN-SITE a gran escala, rotado, saliéndose por el borde */}
-          <img
-            src={phanSiteBadge}
-            alt=""
-            aria-hidden="true"
-            className="phan-site-anchor pointer-events-none absolute -bottom-6 -left-14 z-10 h-[min(34vh,52vw,440px)] w-auto -rotate-6"
-          />
+          {/* Bloque compuesto único: PNG pequeño detrás/arriba + Q + pregunta + barra + % */}
+          <div className="load-composite pointer-events-none absolute -bottom-6 right-0 z-20 w-[min(60rem,94vw)]">
+            {/* PHAN-SITE pequeño, parcialmente tapado por Q y pregunta */}
+            <img
+              src={phanSiteBadge}
+              alt=""
+              aria-hidden="true"
+              className="load-phan pointer-events-none absolute -top-16 left-1/2 z-0 h-[min(24vh,220px)] w-auto -translate-x-1/2 -rotate-6"
+            />
 
-          {/* Bloque compuesto derecho: Q + pregunta + estado + barra + % */}
-          <div className="load-composite pointer-events-none absolute -bottom-5 right-0 z-20 w-[min(45rem,88vw)]">
-            <div className="flex items-end justify-end">
-              <p
-                className="load-question w-[calc(100%-8.5rem)] shrink-0 pr-2 text-right font-display uppercase leading-[1.05] text-paper"
-                style={{ fontSize: 'clamp(1.1rem, 2.3vw, 1.7rem)' }}
-              >
-                {question && (
-                  <>
-                    {question.slice(0, -1)}
-                    <span className="text-accent">?</span>
-                  </>
-                )}
-              </p>
-              {/* Q diamante */}
-              <div className="load-q relative -ml-6 h-[8rem] w-[8rem] shrink-0 -rotate-3">
+            <div className="relative z-10 flex items-end">
+              {/* Q grande, a la izquierda */}
+              <div className="load-q relative h-[13rem] w-[13rem] shrink-0 -rotate-3">
                 <span aria-hidden="true" className="absolute inset-0 translate-x-3 translate-y-3 rotate-45 bg-accent" />
                 <span aria-hidden="true" className="absolute inset-0 rotate-45 border-4 border-paper bg-bg-hero" />
                 <span aria-hidden="true" className="absolute inset-0 flex rotate-45 items-center justify-center">
                   <span aria-hidden="true" className="absolute inset-x-3 top-1/2 h-[6px] -translate-y-1/2 -skew-x-12 bg-accent" />
-                  <span className="relative font-display text-[3.6rem] leading-none text-paper">Q</span>
+                  <span className="relative font-display text-[5.5rem] leading-none text-paper">Q</span>
                 </span>
                 <span aria-hidden="true" className="absolute -right-2.5 -top-3.5 h-6 w-6 bg-accent [clip-path:polygon(0_0,100%_0,0_100%)]" />
                 <span aria-hidden="true" className="absolute -bottom-3 -left-2 h-5 w-5 bg-paper [clip-path:polygon(100%_0,100%_100%,0_100%)]" />
               </div>
-            </div>
 
-            {/* Estado + barra + % */}
-            <div className="load-bar-block relative -mt-10 ml-2 mr-[5.5rem]">
-              <span className="load-status absolute -top-4 left-3 z-10 text-label uppercase tracking-[0.3em] text-paper/50 [transform:skewX(-10deg)]">
-                Cargando sistema
-              </span>
-              <div className="relative h-[44px] w-full bg-paper [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)] [transform:skewX(-6deg)]">
-                <div className="absolute inset-[3px] bg-bg-hero [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
-                  <div ref={barRef} className="absolute inset-y-0 left-0 bg-accent" />
+              {/* Columna derecha: estado + pregunta sobre la barra */}
+              <div className="relative ml-[-3rem] w-full">
+                <span className="load-status mb-1 block text-label uppercase tracking-[0.3em] text-paper/50 [transform:skewX(-10deg)]">
+                  Cargando sistema
+                </span>
+                {/* Pregunta, pegada a la Q y solapando el borde superior de la barra */}
+                <p
+                  className="load-question -ml-4 -mb-2 text-left font-display uppercase leading-[1.05] text-paper"
+                  style={{ fontSize: 'clamp(1.6rem, 3vw, 2.6rem)' }}
+                >
+                  {question && (
+                    <>
+                      {question.slice(0, -1)}
+                      <span className="text-accent">?</span>
+                    </>
+                  )}
+                </p>
+
+                {/* Barra + % */}
+                <div className="load-bar-block relative flex items-center">
+                  <div className="relative h-[64px] w-full bg-paper [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)] [transform:skewX(-6deg)]">
+                    <div className="absolute inset-[4px] bg-bg-hero [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
+                      <div ref={barRef} className="absolute inset-y-0 left-0 bg-accent" />
+                    </div>
+                  </div>
+                  <span className="load-pct ml-4 shrink-0 font-display text-[4rem] leading-none text-accent [text-shadow:3px_3px_0_var(--color-accent-deep)]">
+                    <span ref={pctRef}>0</span>
+                    <span>%</span>
+                  </span>
                 </div>
               </div>
-              <span className="load-pct absolute -right-[4.5rem] top-1/2 -translate-y-1/2 font-display text-[2.75rem] leading-none text-paper [text-shadow:2px_2px_0_var(--color-accent-deep)]">
-                <span ref={pctRef}>0</span>
-                <span className="text-accent">%</span>
-              </span>
             </div>
           </div>
         </div>
