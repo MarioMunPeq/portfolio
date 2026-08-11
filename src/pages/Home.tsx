@@ -60,7 +60,7 @@ export function Home() {
 
         {/* Bloque de título */}
         <div className="hero-title-block absolute left-5 top-[22%] z-10 max-w-[calc(100%-2.5rem)] lg:left-[60px] lg:top-[38%] lg:max-w-none">
-          <p className="hero-eyebrow mb-3.5 flex items-center gap-2 text-[13px] font-bold uppercase tracking-[0.2em] text-accent">
+          <p className="hero-eyebrow mb-3.5 flex items-center gap-2 font-hatty text-[13px] font-bold uppercase tracking-[0.2em] text-accent">
             <span aria-hidden="true">◄</span>
             {profile.hero.eyebrow}
           </p>
@@ -119,11 +119,11 @@ export function Home() {
 
         {/* Pie del sistema */}
         <footer className="hero-footer absolute inset-x-0 bottom-0 z-40 flex items-center justify-center gap-3 border-t border-paper/10 px-6 py-4 md:px-10 sm:justify-between">
-          <SystemLabel className="max-sm:hidden text-paper/50 tracking-[0.1em] sm:inline-flex">
+          <SystemLabel className="font-hatty max-sm:hidden text-paper/50 tracking-[0.1em] sm:inline-flex">
             {profile.hero.roleLine} · {profile.hero.credentialLine}
           </SystemLabel>
           <ContactButton />
-          <SystemLabel className="max-lg:hidden text-paper/50 tracking-[0.1em] lg:inline-flex lg:pr-32">
+          <SystemLabel className="font-hatty max-lg:hidden text-paper/50 tracking-[0.1em] lg:inline-flex lg:pr-32">
             ESC · Salir del menú
           </SystemLabel>
         </footer>

@@ -137,7 +137,7 @@ export function LoadScreen() {
 
         {/* Bloque central: acceso de usuario + categorías (centrado verticalmente) */}
         <div className="relative flex flex-1 flex-col items-center justify-center text-center">
-          <p className="mb-4 flex items-center gap-2.5 text-label uppercase tracking-[0.3em] text-accent">
+          <p className="mb-4 flex items-center gap-2.5 font-display text-label uppercase tracking-[0.3em] text-accent">
             <span aria-hidden="true" className="inline-block h-[7px] w-[7px] bg-accent" />
             ACCEDIENDO A DATOS DE USUARIO
           </p>
@@ -175,7 +175,7 @@ export function LoadScreen() {
             <div className="relative z-10">
               {/* 2. Pregunta sobre el logo */}
               <p
-                className="load-question pl-[2.5rem] text-left font-display uppercase leading-[1.05] text-paper"
+                className="load-question pl-[2.5rem] text-left font-anton uppercase leading-[1.05] text-paper"
                 style={{ fontSize: 'clamp(1.3rem, 2.2vw, 2rem)' }}
               >
                 {question && (
@@ -191,7 +191,7 @@ export function LoadScreen() {
                 {/* 3. Letra Q suelta (sin contenedor), borde inferior solapando 2-4px la esquina sup-izq de la barra */}
                 <span
                   aria-hidden="true"
-                  className="load-q absolute bottom-[50px] left-0 font-display text-[5.5rem] leading-none text-paper [text-shadow:-2px_-2px_0_#000,2px_-2px_0_#000,-2px_2px_0_#000,2px_2px_0_#000,-3px_-3px_0_#000,3px_-3px_0_#000,-3px_3px_0_#000,3px_3px_0_#000]"
+                  className="load-q absolute bottom-[50px] left-0 font-anton text-[5.5rem] leading-none text-paper [text-shadow:-2px_-2px_0_#000,2px_-2px_0_#000,-2px_2px_0_#000,2px_2px_0_#000,-3px_-3px_0_#000,3px_-3px_0_#000,-3px_3px_0_#000,3px_3px_0_#000]"
                 >
                   Q
                 </span>
@@ -204,7 +204,7 @@ export function LoadScreen() {
                 </div>
 
                 {/* 5. SÍ {porcentaje}% */}
-                <span className="load-pct ml-4 shrink-0 font-display text-[3.5rem] leading-none text-accent [transform:skewX(-10deg)] [text-shadow:-2px_-2px_0_#000,2px_-2px_0_#000,-2px_2px_0_#000,2px_2px_0_#000,-3px_-3px_0_#000,3px_-3px_0_#000,-3px_3px_0_#000,3px_3px_0_#000,4px_4px_0_rgba(0,0,0,0.5)]">
+                <span className="load-pct ml-4 shrink-0 font-anton text-[3.5rem] leading-none text-accent [transform:skewX(-10deg)] [text-shadow:-2px_-2px_0_#000,2px_-2px_0_#000,-2px_2px_0_#000,2px_2px_0_#000,-3px_-3px_0_#000,3px_-3px_0_#000,-3px_3px_0_#000,3px_3px_0_#000,4px_4px_0_rgba(0,0,0,0.5)]">
                   SÍ <span ref={pctRef}>0</span>%
                 </span>
               </div>

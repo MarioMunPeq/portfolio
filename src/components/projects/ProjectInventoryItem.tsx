@@ -43,12 +43,12 @@ export function ProjectInventoryItem({
 
         <span className="relative z-10 w-16 shrink-0 text-center md:w-20">
           {selected ? (
-            <span className="inline-block -skew-x-12 bg-paper px-2.5 py-1 font-display text-xl leading-none text-ink md:text-2xl">
+            <span className="inline-block -skew-x-12 bg-paper px-2.5 py-1 font-hatty text-xl leading-none text-ink md:text-2xl">
               <span className="inline-block skew-x-12">{project.order}</span>
             </span>
           ) : (
             <span
-              className={`inline-block -skew-x-12 font-display text-xl leading-none transition-colors duration-200 md:text-2xl ${
+              className={`inline-block -skew-x-12 font-hatty text-xl leading-none transition-colors duration-200 md:text-2xl ${
                 isOutline
                   ? 'text-outline-faint group-hover:text-outline group-focus-visible:text-outline'
                   : 'text-paper/40 group-hover:text-accent group-focus-visible:text-accent'
@@ -60,7 +60,7 @@ export function ProjectInventoryItem({
         </span>
 
         <span
-          className={`relative z-10 font-display uppercase leading-none transition-colors duration-200 ${
+          className={`relative z-10 font-hatty uppercase leading-none transition-colors duration-200 ${
             selected
               ? 'text-paper'
               : isOutline

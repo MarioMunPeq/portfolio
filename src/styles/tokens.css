@@ -1,5 +1,24 @@
 @import "tailwindcss";
 
+/* ============================================================
+   Tipografías fan de Persona 5 (archivos locales en public/fonts)
+   - "P5 Menu": letras de menú recortadas (estilo cómic). Solo mayúsculas
+     latinas; los acentos españoles (á é í ó ú ñ ¿ ¡) los aporta el fallback.
+   - "P5 Hatty": sans más limpia para texto secundario pequeño.
+   La base del proyecto es "/portfolio/", así que las url() llevan ese prefijo.
+   ============================================================ */
+@font-face {
+  font-family: "P5 Menu";
+  src: url("/portfolio/fonts/Persona5MenuFontPrototype-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "P5 Hatty";
+  src: url("/portfolio/fonts/p5hatty.ttf") format("truetype");
+  font-display: swap;
+}
+
 /* Utilidad: texto hueco con trazo en color acento (solo tipografía grande) */
 @utility text-outline {
   color: transparent;
@@ -431,9 +450,15 @@ html.lenis body {
   --color-face-ast: #ffb400;
 
   /* --- Tipografías --- */
-  --font-display: "Anton", "Arial Narrow", sans-serif;
+  --font-display: "P5 Menu", "Anton", "Archivo Black", Impact, sans-serif;
   --font-sans: "Space Grotesk", system-ui, sans-serif;
   --font-hand: "Caveat", cursive;
+  /* P5 Hatty para microcopy/secundario; "P5 Menu" queda reservada para
+     titulares grandes donde su trazo recortado no perjudica la legibilidad. */
+  --font-hatty: "P5 Hatty", "Space Mono", monospace;
+  /* Anton "en crudo": la pantalla de carga mantiene su geometría de
+     composición (Q, pregunta y %) con la fuente original. */
+  --font-anton: "Anton", "Arial Narrow", sans-serif;
 
   /* --- Escala tipográfica (min: hero, section-title, subtitle, body, caption) --- */
   --text-hero: clamp(3.25rem, 9vw, 8rem);
