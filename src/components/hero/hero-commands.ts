@@ -4,7 +4,6 @@ import type { HeroIcon } from './CommandNavItem'
 export interface HeroCommand {
   id: string
   icon: HeroIcon
-  num: string
   label: string
   sub: string
   path: string
@@ -17,14 +16,14 @@ const byId = (id: string) => {
 }
 
 /**
- * Comandos del menú principal — nomenclatura de "sistema" de la referencia
- * con subtítulo que indica la sección real. Los destinos salen de NAV_ITEMS.
+ * Comandos del menú principal — etiquetas de sección con subtítulo de
+ * "sistema" (contexto de juego). Inicio no aparece: esta pantalla ES el
+ * menú principal. Los destinos salen de NAV_ITEMS.
  */
 export const HERO_COMMANDS: HeroCommand[] = [
   {
     id: 'sobre-mi',
     icon: 'triangle',
-    num: '01',
     label: 'Sobre mí',
     sub: '(perfil)',
     path: byId('sobre-mi'),
@@ -32,25 +31,29 @@ export const HERO_COMMANDS: HeroCommand[] = [
   {
     id: 'proyectos',
     icon: 'square',
-    num: '02',
-    label: 'Inventario',
-    sub: '(proyectos)',
+    label: 'Proyectos',
+    sub: '(inventario)',
     path: byId('proyectos'),
   },
   {
     id: 'experiencia',
     icon: 'circle',
-    num: '03',
-    label: 'Estadísticas',
-    sub: '(experiencia)',
+    label: 'Experiencia',
+    sub: '(estadísticas)',
     path: byId('experiencia'),
   },
   {
     id: 'formacion',
     icon: 'cross',
-    num: '04',
-    label: 'Árbol de habilidades',
+    label: 'Formación',
     sub: '(estudios)',
     path: byId('formacion'),
+  },
+  {
+    id: 'contacto',
+    icon: 'asterisk',
+    label: 'Contacto',
+    sub: '(mensaje)',
+    path: byId('contacto'),
   },
 ]

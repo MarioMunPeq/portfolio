@@ -2,7 +2,6 @@ import type { ReactNode } from 'react'
 import { ScrollProgress } from './ScrollProgress'
 import { HUD } from './HUD'
 import { Cursor } from './Cursor'
-import { Navigation } from '../navigation/Navigation'
 import { LoadScreen } from '../overlay/LoadScreen'
 import { Grain } from '../primitives/Grain'
 
@@ -25,7 +24,6 @@ export function Layout({ children }: LayoutProps) {
       <Grain />
       <Cursor />
       <main id="main">{children}</main>
-      <Navigation />
     </div>
   )
 }

@@ -8,7 +8,7 @@ import { SpeedLines } from '../components/hero/SpeedLines'
 import { Floaters } from '../components/hero/Floaters'
 import { ScanlineOverlay } from '../components/hero/ScanlineOverlay'
 import { CommandNavItem } from '../components/hero/CommandNavItem'
-import { EnterButton } from '../components/hero/EnterButton'
+import { ContactButton } from '../components/hero/ContactButton'
 import { HERO_COMMANDS } from '../components/hero/hero-commands'
 import { profile } from '../data/profile'
 
@@ -108,9 +108,9 @@ export function Home() {
         {/* Navegación de comandos */}
         <nav
           aria-label="Menú principal del portfolio"
-          className="hero-command-nav absolute bottom-[14%] left-1/2 z-20 w-[min(78vw,26rem)] -translate-x-1/2 lg:bottom-auto lg:left-auto lg:right-[6%] lg:top-1/2 lg:w-[min(36vw,520px)] lg:-translate-y-1/2 lg:translate-x-0"
+          className="hero-command-nav absolute bottom-[14%] left-1/2 z-20 w-[min(78vw,26rem)] -translate-x-1/2 lg:bottom-auto lg:left-auto lg:right-[6%] lg:top-1/2 lg:w-[min(40vw,600px)] lg:-translate-y-1/2 lg:translate-x-0"
         >
-          <ol className="flex flex-col gap-1.5">
+          <ol className="flex flex-col gap-2">
             {HERO_COMMANDS.map((command) => (
               <CommandNavItem key={command.id} {...command} />
             ))}
@@ -122,7 +122,7 @@ export function Home() {
           <SystemLabel className="max-sm:hidden text-paper/50 tracking-[0.1em] sm:inline-flex">
             {profile.hero.roleLine} · {profile.hero.credentialLine}
           </SystemLabel>
-          <EnterButton />
+          <ContactButton />
           <SystemLabel className="max-lg:hidden text-paper/50 tracking-[0.1em] lg:inline-flex lg:pr-32">
             ESC · Salir del menú
           </SystemLabel>
