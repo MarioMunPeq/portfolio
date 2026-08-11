@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { motion, useMotionValue, useReducedMotion, useSpring } from 'motion/react'
+import { motion, useMotionValue, useReducedMotion } from 'motion/react'
 
 /**
  * Cursor decorativo del sistema (reticula + etiqueta SELECT).
@@ -7,6 +7,8 @@ import { motion, useMotionValue, useReducedMotion, useSpring } from 'motion/reac
  * cursor nativo. Cuando está activo se marca `data-cursor-active` en el
  * documento y CSS oculta el cursor nativo (solo punteros finos).
  * La reticula crece y muestra "SELECT ▶" sobre elementos interactivos.
+ * La posicion usa los MotionValues crudos (x/y) directamente: sin spring
+ * ni interpolacion, la reticula queda bloqueada al puntero fisico.
  */
 export function Cursor() {
   const reduced = useReducedMotion()
@@ -15,8 +17,6 @@ export function Cursor() {
 
   const x = useMotionValue(-100)
   const y = useMotionValue(-100)
-  const sx = useSpring(x, { stiffness: 500, damping: 35, mass: 0.6 })
-  const sy = useSpring(y, { stiffness: 500, damping: 35, mass: 0.6 })
 
   useEffect(() => {
     if (reduced) return
@@ -53,7 +53,7 @@ export function Cursor() {
     <motion.div
       aria-hidden="true"
       className="pointer-events-none fixed left-0 top-0 z-[120]"
-      style={{ x: sx, y: sy }}
+      style={{ x, y }}
     >
       <div className="relative -ml-[7px] -mt-[7px]">
         <motion.div
