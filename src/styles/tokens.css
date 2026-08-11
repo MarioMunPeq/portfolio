@@ -223,7 +223,6 @@
   clip-path: polygon(0 12%, 6% 0, 94% 0, 100% 50%, 94% 100%, 6% 100%, 0 88%);
   transform: skewX(-11deg) translateX(var(--off, 0px)) rotate(var(--rot, 0deg));
   transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
-  overflow: hidden;
 }
 
 /* Marco angular sin `border`: la capa exterior (hero-cmd) pinta el borde

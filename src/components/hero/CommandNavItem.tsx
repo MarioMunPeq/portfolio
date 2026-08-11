@@ -45,7 +45,7 @@ export function CommandNavItem({ icon, label, sub, path }: CommandNavItemProps) 
         <span className="whitespace-nowrap [transform:skewX(11deg)] font-display text-[26px] leading-none tracking-[0.02em] text-paper transition-colors duration-200 [text-shadow:2px_2px_0_color-mix(in_srgb,var(--color-ink)_60%,transparent)] group-hover:text-ink group-hover:[text-shadow:none] group-focus-visible:text-ink sm:text-[32px] lg:text-[34px] xl:text-[42px]">
           {label}
         </span>
-        <span className="ml-auto hidden self-center whitespace-nowrap [transform:skewX(11deg)] text-[14px] uppercase tracking-[0.06em] text-paper/50 transition-colors duration-200 group-hover:text-ink/70 group-focus-visible:text-ink/70 md:block lg:text-[15px]">
+        <span className="ml-auto hidden self-center whitespace-nowrap font-display text-[14px] uppercase tracking-[0.06em] text-paper/50 [transform:skewX(11deg)] transition-colors duration-200 group-hover:text-ink/70 group-focus-visible:text-ink/70 md:block lg:text-[15px]">
           {sub}
         </span>
       </Link>

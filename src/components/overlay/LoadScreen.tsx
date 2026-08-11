@@ -62,8 +62,8 @@ function CategoryRow({ cat, progress }: CategoryRowProps) {
  * Pantalla de carga del sistema: capa fija sobre toda la app que simula el
  * arranque del OS del portfolio. Se compone de topbar, bloque central con
  * acceso de usuario y categorías, y una zona inferior que funciona como una
- * composición única de menú de juego (logo PHAN-SITE + bloque [Q] con
- * pregunta, barra y porcentaje).
+ * composición única de menú de juego (logo PHAN-SITE + letra Q + pregunta,
+ * barra y porcentaje).
  */
 export function LoadScreen() {
   const reduced = useReducedMotion()
@@ -135,8 +135,8 @@ export function LoadScreen() {
           <span className="hidden sm:block">SISTEMA V.2026</span>
         </div>
 
-        {/* Bloque central: acceso de usuario + categorías */}
-        <div className="relative flex flex-col items-center text-center">
+        {/* Bloque central: acceso de usuario + categorías (centrado verticalmente) */}
+        <div className="relative flex flex-1 flex-col items-center justify-center text-center">
           <p className="mb-4 flex items-center gap-2.5 text-label uppercase tracking-[0.3em] text-accent">
             <span aria-hidden="true" className="inline-block h-[7px] w-[7px] bg-accent" />
             ACCEDIENDO A DATOS DE USUARIO
@@ -149,67 +149,64 @@ export function LoadScreen() {
               <CategoryRow key={cat.label} cat={cat} progress={progress} />
             ))}
           </div>
+          <p className="mt-5 flex items-center gap-2 text-label uppercase tracking-[0.3em] text-paper/50">
+            <span aria-hidden="true" className="inline-block h-[7px] w-[7px] bg-accent" />
+            {profile.branding.loading}
+          </p>
         </div>
 
-        {/* Zona inferior: composición única (PNG PHAN-SITE + Q + pregunta + barra + %) */}
-        <div className="load-base relative mt-6 h-[min(38vh,380px)] w-full">
-          {/* Línea roja de anclaje y cuña tras el logo */}
+        {/* Zona inferior: composición única (logo PHAN-SITE + letra Q + pregunta + barra + %) */}
+        <div className="load-base absolute inset-x-0 bottom-0 h-[min(38vh,380px)] w-full">
+          {/* Línea roja de anclaje y cuña decorativas */}
           <span aria-hidden="true" className="absolute bottom-0 left-0 h-[7px] w-[118%] -skew-x-12 bg-accent" />
           <span aria-hidden="true" className="absolute -bottom-2 -left-12 h-[34%] w-[44%] -skew-x-12 bg-accent" />
 
-          {/* Bloque compuesto único: PNG pequeño detrás/arriba + Q + pregunta + barra + % */}
-          <div className="load-composite pointer-events-none absolute -bottom-6 right-0 z-20 w-[min(60rem,94vw)]">
-            {/* PHAN-SITE pequeño, parcialmente tapado por Q y pregunta */}
+          {/* Bloque compuesto único, capas: logo → pregunta → Q → barra → % */}
+          <div className="load-composite pointer-events-none absolute bottom-6 right-6 z-20 w-[min(35rem,80vw)]">
+            {/* 1. PHAN-SITE detrás de la pregunta, a escala de la línea de texto */}
             <img
               src={phanSiteBadge}
               alt=""
               aria-hidden="true"
-              className="load-phan pointer-events-none absolute -top-16 left-1/2 z-0 h-[min(24vh,220px)] w-auto -translate-x-1/2 -rotate-6"
+              className="load-phan pointer-events-none absolute left-1/2 top-0 z-0 h-[min(26vh,250px)] w-auto -translate-x-1/2 -rotate-6"
             />
 
-            <div className="relative z-10 flex items-end">
-              {/* Q grande, a la izquierda */}
-              <div className="load-q relative h-[13rem] w-[13rem] shrink-0 -rotate-3">
-                <span aria-hidden="true" className="absolute inset-0 translate-x-3 translate-y-3 rotate-45 bg-accent" />
-                <span aria-hidden="true" className="absolute inset-0 rotate-45 border-4 border-paper bg-bg-hero" />
-                <span aria-hidden="true" className="absolute inset-0 flex rotate-45 items-center justify-center">
-                  <span aria-hidden="true" className="absolute inset-x-3 top-1/2 h-[6px] -translate-y-1/2 -skew-x-12 bg-accent" />
-                  <span className="relative font-display text-[5.5rem] leading-none text-paper">Q</span>
-                </span>
-                <span aria-hidden="true" className="absolute -right-2.5 -top-3.5 h-6 w-6 bg-accent [clip-path:polygon(0_0,100%_0,0_100%)]" />
-                <span aria-hidden="true" className="absolute -bottom-3 -left-2 h-5 w-5 bg-paper [clip-path:polygon(100%_0,100%_100%,0_100%)]" />
-              </div>
+            {/* 2-5. Pregunta sobre el logo, Q a la izquierda, barra y % debajo */}
+            <div className="relative z-10">
+              {/* 2. Pregunta sobre el logo */}
+              <p
+                className="load-question pl-[2.5rem] text-left font-display uppercase leading-[1.05] text-paper"
+                style={{ fontSize: 'clamp(1.3rem, 2.2vw, 2rem)' }}
+              >
+                {question && (
+                  <>
+                    {question.slice(0, -1)}
+                    <span className="text-accent">?</span>
+                  </>
+                )}
+              </p>
 
-              {/* Columna derecha: estado + pregunta sobre la barra */}
-              <div className="relative ml-[-3rem] w-full">
-                <span className="load-status mb-1 block text-label uppercase tracking-[0.3em] text-paper/50 [transform:skewX(-10deg)]">
-                  Cargando sistema
-                </span>
-                {/* Pregunta, pegada a la Q y solapando el borde superior de la barra */}
-                <p
-                  className="load-question -ml-4 -mb-2 text-left font-display uppercase leading-[1.05] text-paper"
-                  style={{ fontSize: 'clamp(1.6rem, 3vw, 2.6rem)' }}
+              {/* 3-5. Q + barra + % */}
+              <div className="load-bar-block relative mt-2 flex items-center pl-[2.5rem]">
+                {/* 3. Letra Q suelta (sin contenedor), borde inferior solapando 2-4px la esquina sup-izq de la barra */}
+                <span
+                  aria-hidden="true"
+                  className="load-q absolute bottom-[50px] left-0 font-display text-[5.5rem] leading-none text-paper [text-shadow:-2px_-2px_0_#000,2px_-2px_0_#000,-2px_2px_0_#000,2px_2px_0_#000,-3px_-3px_0_#000,3px_-3px_0_#000,-3px_3px_0_#000,3px_3px_0_#000]"
                 >
-                  {question && (
-                    <>
-                      {question.slice(0, -1)}
-                      <span className="text-accent">?</span>
-                    </>
-                  )}
-                </p>
+                  Q
+                </span>
 
-                {/* Barra + % */}
-                <div className="load-bar-block relative flex items-center">
-                  <div className="relative h-[64px] w-full bg-paper [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)] [transform:skewX(-6deg)]">
-                    <div className="absolute inset-[4px] bg-bg-hero [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
-                      <div ref={barRef} className="absolute inset-y-0 left-0 bg-accent" />
-                    </div>
+                {/* 4. Barra trapezoidal larga y fina (~7:1) */}
+                <div className="relative h-[52px] w-full bg-paper [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)] [transform:skewX(-6deg)]">
+                  <div className="absolute inset-[3px] bg-bg-hero [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
+                    <div ref={barRef} className="absolute inset-y-0 left-0 bg-accent" />
                   </div>
-                  <span className="load-pct ml-4 shrink-0 font-display text-[4rem] leading-none text-accent [text-shadow:3px_3px_0_var(--color-accent-deep)]">
-                    <span ref={pctRef}>0</span>
-                    <span>%</span>
-                  </span>
                 </div>
+
+                {/* 5. SÍ {porcentaje}% */}
+                <span className="load-pct ml-4 shrink-0 font-display text-[3.5rem] leading-none text-accent [transform:skewX(-10deg)] [text-shadow:-2px_-2px_0_#000,2px_-2px_0_#000,-2px_2px_0_#000,2px_2px_0_#000,-3px_-3px_0_#000,3px_-3px_0_#000,-3px_3px_0_#000,3px_3px_0_#000,4px_4px_0_rgba(0,0,0,0.5)]">
+                  SÍ <span ref={pctRef}>0</span>%
+                </span>
               </div>
             </div>
           </div>
