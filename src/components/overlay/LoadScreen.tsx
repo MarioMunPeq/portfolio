@@ -11,10 +11,34 @@ import { markBooted } from '../../lib/boot'
 import { profile } from '../../data/profile'
 import { ConcentricRings } from './ConcentricRings'
 import { Skyline } from './Skyline'
+import { StarBadge } from './StarBadge'
+import phanSiteBadge from '../../assets/hero/phan-site-badge.png'
 
 const EASE: [number, number, number, number] = [0.76, 0, 0.24, 1]
 const PROGRESS_EASE: [number, number, number, number] = [0.65, 0, 0.35, 1]
 const LOAD_DURATION = 3.5
+
+/** Recorte del panel de datos: esquinas cortadas en diagonal (arriba dcha. e
+ *  izq. abajo), misma técnica de capas que hero-cmd. */
+const PANEL_CLIP =
+  'polygon(0 0, calc(100% - 1.25rem) 0, 100% 1.25rem, 100% 100%, 1.25rem 100%, 0 calc(100% - 1.25rem))'
+
+/** Categorías del perfil. `finish` = fracción de la carga en la que la
+ *  categoría termina (las cuatro arrancan a la vez y se completan
+ *  escalonadas: IDENTIDAD → ... → HABILIDADES, esta justo al acabar). */
+const CATEGORIES = [
+  { label: 'IDENTIDAD', finish: 0.5 },
+  { label: 'INVENTARIO', finish: 0.65 },
+  { label: 'ESTADÍSTICAS', finish: 0.8 },
+  { label: 'HABILIDADES', finish: 0.95 },
+] as const
+
+/** Preguntas tontas del marcador Q: se rota una al azar por carga. */
+const SURVEY_QUESTIONS = [
+  '¿Los patos programan en pareja?',
+  '¿Los héroes leen las notas del parche?',
+  '¿El nivel se sube sin farmear?',
+]
 
 /** Contorno tipo cómic: blanco con borde negro grueso (8 direcciones) + offset rojo. */
 const COMIC_SHADOW = [
@@ -34,42 +58,59 @@ const COMIC_SHADOW = [
 let loadScreenShown = false
 
 /**
- * Pantalla de carga — cambio de día estilo Persona 5: contador 0→100 gigante
- * con contorno tipo cómic como protagonista (reducido a 2/3 para dejar aire),
- * sobre un fondo combinado de anillos concéntricos generados por código y una
- * silueta de skyline en la base. Abajo a la derecha, una barra de "encuesta"
- * tipo Phan-Site (bloque sesgado con icono Q, contorno grueso, relleno rojo
- * ligado al contador, pregunta con palabra clave en rojo y "SÍ %" grande).
+ * Pantalla de carga — sistema de personaje estilo Persona 5: bloque central
+ * "ACCEDIENDO A DATOS DE USUARIO" con el nombre y cuatro categorías del
+ * perfil, cada una con un sello de estrella que se va rellenando en dorado
+ * (escalonado). Arriba a la izquierda, la topbar de sistema; abajo a la
+ * izquierda, el logotipo PHAN-SITE a gran tamaño como ancla; abajo a la
+ * derecha, un marcador Q angular con una pregunta tonta sin respuesta y la
+ * barra trapezoidal de carga global (CARGANDO SISTEMA + %).
  * Saltable con click o cualquier tecla. La salida reutiliza el barrido
- * diagonal rojo/negro (firma del proyecto). Con reduced-motion: aparece 100
- * estático un instante y desaparece, sin barrido.
+ * diagonal rojo/negro (firma del proyecto). Con reduced-motion: todo
+ * aparece completo un instante y desaparece, sin barrido.
  */
 export function LoadScreen() {
   const reduced = useReducedMotion()
   const [hidden, setHidden] = useState(loadScreenShown)
   const [contentGone, setContentGone] = useState(false)
+  const [question] = useState(
+    () => SURVEY_QUESTIONS[Math.floor(Math.random() * SURVEY_QUESTIONS.length)],
+  )
   const progress = useMotionValue(0)
   const sweep = useMotionValue(0)
-  const pctRef = useRef<HTMLSpanElement>(null)
   const progressControls = useRef<ReturnType<typeof animate> | null>(null)
   const exiting = useRef(false)
   const barPctRef = useRef<HTMLSpanElement>(null)
   const fillRef = useRef<HTMLDivElement>(null)
+  const badgeRefs = useRef<Array<HTMLDivElement | null>>([])
+  /** Progreso lineal (sin ease) que reparte el completado de los sellos de
+   *  categoría de forma uniforme en el tiempo, en paralelo a la barra. */
+  const badgeProgress = useMotionValue(0)
+  const badgeControls = useRef<ReturnType<typeof animate> | null>(null)
 
   const xRed = useTransform(sweep, [0, 1], ['-160vw', '0vw'])
   const xBlack = useTransform(sweep, [0, 1], ['-160vw', '8vw'])
 
   useMotionValueEvent(progress, 'change', (value) => {
     const rounded = Math.round(value * 100)
-    if (pctRef.current) {
-      pctRef.current.textContent = String(rounded).padStart(2, '0')
-    }
     if (barPctRef.current) {
       barPctRef.current.textContent = String(rounded)
     }
     if (fillRef.current) {
       fillRef.current.style.width = `${rounded}%`
     }
+  })
+
+  useMotionValueEvent(badgeProgress, 'change', (value) => {
+    badgeRefs.current.forEach((el, i) => {
+      if (!el) return
+      const finish = CATEGORIES[i].finish
+      const state =
+        value >= finish ? 'full' : value >= finish / 2 ? 'mid' : 'empty'
+      if (el.getAttribute('data-state') !== state) {
+        el.setAttribute('data-state', state)
+      }
+    })
   })
 
   const runExit = useCallback(() => {
@@ -102,6 +143,8 @@ export function LoadScreen() {
     if (exiting.current) return
     progressControls.current?.stop()
     progressControls.current = null
+    badgeControls.current?.stop()
+    badgeControls.current = null
     runExit()
   }, [hidden, reduced, runExit])
 
@@ -117,6 +160,7 @@ export function LoadScreen() {
     if (reduced) {
       markBooted()
       progress.set(1)
+      badgeProgress.set(1)
       const id = setTimeout(() => setHidden(true), 650)
       return () => clearTimeout(id)
     }
@@ -128,11 +172,20 @@ export function LoadScreen() {
         runExit()
       },
     })
+    badgeControls.current = animate(badgeProgress, 1, {
+      duration: LOAD_DURATION,
+      ease: 'linear',
+      onComplete: () => {
+        badgeControls.current = null
+      },
+    })
     return () => {
       progressControls.current?.stop()
       progressControls.current = null
+      badgeControls.current?.stop()
+      badgeControls.current = null
     }
-  }, [hidden, progress, reduced, runExit])
+  }, [hidden, progress, badgeProgress, reduced, runExit])
 
   useEffect(() => {
     if (hidden) return
@@ -162,64 +215,110 @@ export function LoadScreen() {
           <Skyline />
 
           <div className="relative z-10 flex h-full flex-col justify-between px-6 py-8 md:px-10">
+            {/* Logotipo PHAN-SITE: ancla decorativa a gran escala, esquina inferior izquierda */}
+            <img
+              src={phanSiteBadge}
+              alt=""
+              aria-hidden="true"
+              className="phan-site-anchor pointer-events-none absolute bottom-8 left-6 z-0 h-[170px] w-auto -rotate-6 md:left-10"
+            />
+
             {/* Topbar de sistema */}
-            <div className="flex items-center justify-between text-label uppercase tracking-[0.3em] text-paper/60">
+            <div className="relative flex items-center justify-between text-label uppercase tracking-[0.3em] text-paper/60">
               <span>{profile.branding.system}</span>
               <span>
                 {profile.branding.system.split(' ')[0]} {profile.branding.version}
               </span>
             </div>
 
-            {/* Contador protagonista */}
-            <div className="flex flex-col items-center">
-              <p className="mb-4 flex items-center gap-2.5 text-label uppercase tracking-[0.3em] text-accent">
+            {/* Bloque central: sistema de personaje con categorías del perfil */}
+            <div className="relative flex flex-col items-center text-center">
+              <p className="loadscreen-eyebrow mb-4 flex items-center gap-2.5 text-label uppercase tracking-[0.3em] text-accent">
                 <span
                   aria-hidden="true"
                   className="h-3 w-3 bg-accent [clip-path:polygon(100%_0,100%_100%,0_50%)]"
                 />
-                {profile.branding.loading}
+                Accediendo a datos de usuario
               </p>
-              <span
-                ref={pctRef}
-                className="loadscreen-counter font-display uppercase leading-none text-paper"
-                style={{
-                  fontSize: 'clamp(7.5rem, 17.5vw, 17.5rem)',
-                  textShadow: COMIC_SHADOW,
-                  transform: 'skewX(-6deg)',
-                }}
+              <h2
+                className="loadscreen-name font-display text-[2.1rem] uppercase leading-none tracking-[0.04em] text-paper md:text-[3.2rem]"
+                style={{ textShadow: COMIC_SHADOW, transform: 'skewX(-6deg)' }}
               >
-                00
-              </span>
-              <p className="mt-8 font-display text-2xl uppercase tracking-[0.05em] text-paper/70 md:text-3xl">
                 {profile.name}
-              </p>
+              </h2>
+              <span aria-hidden="true" className="mt-5 h-0.5 w-16 bg-accent" />
+
+              {/* Panel de datos: las cuatro categorías visibles a la vez, con sello de estrella */}
+              <div className="mt-6 w-[min(34rem,84vw)]">
+                <div
+                  className="loadscreen-panel relative bg-paper/20 p-[3px]"
+                  style={{ clipPath: PANEL_CLIP }}
+                >
+                  <div
+                    className="bg-bg-hero/60 p-5 backdrop-blur-[2px] md:p-6"
+                    style={{ clipPath: PANEL_CLIP }}
+                  >
+                    <ul className="divide-y divide-paper/10">
+                      {CATEGORIES.map((cat, i) => (
+                        <li
+                          key={cat.label}
+                          className="flex items-center justify-between gap-4 py-3.5 first:pt-0 last:pb-0"
+                        >
+                          <span className="font-display text-lg uppercase leading-none tracking-[0.08em] text-paper/90 md:text-xl">
+                            {cat.label}
+                          </span>
+                          <StarBadge
+                            label={cat.label}
+                            ref={(el) => {
+                              badgeRefs.current[i] = el
+                            }}
+                          />
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Barra de encuesta tipo Phan-Site — un único bloque, esquina inferior derecha */}
-            <div className="flex flex-col items-end self-end">
-              <div className="flex items-center">
-                <span
-                  aria-hidden="true"
-                  className="-mr-4 flex h-20 w-20 shrink-0 -rotate-12 items-center justify-center rounded-full border-[3px] border-paper bg-bg-hero font-display text-[2.5rem] leading-none text-accent"
-                >
-                  Q
-                </span>
-                <p className="relative z-10 text-right font-display text-[17px] uppercase leading-none tracking-[0.04em]">
-                  <span className="text-paper">¿Café antes de programar? — </span>
-                  <span className="text-accent">OBLIGATORIO</span>
+            {/* Esquina inferior derecha: marcador Q angular + barra de carga global */}
+            <div className="survey-widget relative w-[min(26rem,72vw)] self-end">
+              <div className="survey-widget__header flex items-center gap-4">
+                {/* Marcador Q angular y en capas */}
+                <div className="survey-widget__badge relative h-16 w-16 shrink-0">
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-0 translate-x-2 translate-y-2 rotate-45 bg-accent"
+                  />
+                  <span className="absolute inset-0 flex rotate-45 items-center justify-center border-[3px] border-paper bg-bg-hero">
+                    <span className="-rotate-45 font-display text-3xl leading-none text-accent">
+                      Q
+                    </span>
+                  </span>
+                  <span
+                    aria-hidden="true"
+                    className="absolute -right-1.5 -top-1.5 h-3 w-3 bg-accent [clip-path:polygon(0_0,100%_0,0_100%)]"
+                  />
+                </div>
+                {/* Pregunta tonta, sin respuesta: se queda en el aire */}
+                <p className="font-display text-[16px] uppercase leading-none tracking-[0.04em] text-paper">
+                  {question.slice(0, -1)}
+                  <span className="text-accent">?</span>
                 </p>
               </div>
-              <div className="mt-4 flex items-center gap-4">
-                <div className="bar-frame relative h-[50px] w-[330px] bg-paper [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
+
+              {/* Barra trapezoidal de carga global (indicador principal de progreso) */}
+              <div className="survey-widget__loader mt-5">
+                <div className="mb-2 flex items-center justify-between text-label uppercase tracking-[0.3em] text-paper/50">
+                  <span>Cargando sistema</span>
+                  <span className="text-paper/90">
+                    <span ref={barPctRef}>0</span>%
+                  </span>
+                </div>
+                <div className="bar-frame relative h-[30px] w-full bg-paper [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
                   <div className="bar-track absolute inset-[3px] bg-bg-hero [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
                     <div ref={fillRef} className="bar-fill absolute inset-y-0 left-0 bg-accent" />
                   </div>
-                </div>
-                <div className="flex shrink-0 items-baseline gap-2 [transform:skewX(-10deg)]">
-                  <span className="font-display text-[26px] leading-none text-paper">SÍ</span>
-                  <span className="font-display text-5xl leading-none text-accent">
-                    <span ref={barPctRef}>0</span>%
-                  </span>
                 </div>
               </div>
             </div>
