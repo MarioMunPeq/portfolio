@@ -1,15 +1,18 @@
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react'
+import { useLocation } from 'react-router-dom'
 
 /**
  * Indicador de progreso de scroll: línea vertical con marcador angular
  * rojo que recorre la altura de la página. Decorativo (aria-hidden).
+ * No se muestra en el menú principal (pantalla fija sin scroll).
  */
 export function ScrollProgress() {
+  const location = useLocation()
   const reduced = useReducedMotion()
   const { scrollYProgress } = useScroll()
   const top = useTransform(scrollYProgress, (value) => `${value * 100}%`)
 
-  if (reduced) return null
+  if (location.pathname === '/' || reduced) return null
 
   return (
     <div

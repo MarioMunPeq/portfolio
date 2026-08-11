@@ -37,7 +37,7 @@ export function CommandNavItem({ icon, num, label, sub, path }: CommandNavItemPr
       >
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-paper opacity-0 [clip-path:polygon(0_40%,100%_40%,100%_46%,0_46%)] group-hover:animate-[hero-glitch_0.35s_steps(2)_1]"
+          className="pointer-events-none absolute inset-0 bg-paper opacity-0 [clip-path:polygon(0_84%,100%_84%,100%_88%,0_88%)] group-hover:animate-[hero-glitch_0.22s_steps(3)_1]"
         />
         <span
           aria-hidden="true"
@@ -48,7 +48,7 @@ export function CommandNavItem({ icon, num, label, sub, path }: CommandNavItemPr
         <span className="[transform:skewX(8deg)] font-display text-[11px] leading-none text-accent transition-colors duration-200 group-hover:text-ink group-focus-visible:text-ink">
           {num}
         </span>
-        <span className="whitespace-nowrap [transform:skewX(8deg)] font-display text-[20px] uppercase leading-none tracking-[0.02em] text-paper transition-colors duration-200 [text-shadow:2px_2px_0_color-mix(in_srgb,var(--color-ink)_60%,transparent)] group-hover:text-ink group-hover:[text-shadow:none] group-focus-visible:text-ink sm:text-[25px] lg:text-[30px]">
+        <span className="whitespace-nowrap [transform:skewX(8deg)] font-display text-[22px] uppercase leading-none tracking-[0.02em] text-paper transition-colors duration-200 [text-shadow:2px_2px_0_color-mix(in_srgb,var(--color-ink)_60%,transparent)] group-hover:text-ink group-hover:[text-shadow:none] group-focus-visible:text-ink sm:text-[27px] lg:text-[33px]">
           {label}
         </span>
         <span className="ml-auto hidden self-center whitespace-nowrap [transform:skewX(8deg)] text-[9px] tracking-[0.06em] text-paper/50 transition-colors duration-200 group-hover:text-ink/70 group-focus-visible:text-ink/70 sm:block">

@@ -20,6 +20,9 @@ const nameLine3 = nameParts.slice(2).join(' ')
 const OUTLINE_BLACK = `-2px -2px 0 var(--color-bg-hero), 2px -2px 0 var(--color-bg-hero), -2px 2px 0 var(--color-bg-hero), 2px 2px 0 var(--color-bg-hero)`
 const OUTLINE_RED = `-2px -2px 0 var(--color-accent), 2px -2px 0 var(--color-accent), -2px 2px 0 var(--color-accent), 2px 2px 0 var(--color-accent)`
 
+/** Hora de inicio de sesión (fija durante la carga de la pantalla). */
+const SESSION_TIME = new Date().toTimeString().slice(0, 8)
+
 /**
  * Pantalla principal = MENÚ PRINCIPAL del sistema. Reconstrucción fiel de la
  * referencia persona-hero.html como componentes React: overlays de textura
@@ -47,8 +50,8 @@ export function Home() {
           <SystemLabel className="text-paper/60 tracking-[0.15em]">
             {profile.branding.system}
           </SystemLabel>
-          <span className="hidden truncate text-center text-label font-medium uppercase tracking-[0.15em] sm:block">
-            <strong className="font-bold text-paper">{profile.name}</strong> · {profile.role}
+          <span className="hidden truncate text-center text-label font-medium uppercase tracking-[0.15em] text-paper/70 sm:block">
+            {profile.hero.coordinates} · SESIÓN {SESSION_TIME}
           </span>
           <SystemLabel className="text-paper/60 tracking-[0.15em]">
             {profile.branding.system.split(' ')[0]} {profile.branding.version}
@@ -105,7 +108,7 @@ export function Home() {
         {/* Navegación de comandos */}
         <nav
           aria-label="Menú principal del portfolio"
-          className="hero-command-nav absolute bottom-[14%] left-1/2 z-20 w-[min(78vw,26rem)] -translate-x-1/2 lg:bottom-auto lg:left-auto lg:right-[6%] lg:top-1/2 lg:w-[min(34vw,480px)] lg:-translate-y-1/2 lg:translate-x-0"
+          className="hero-command-nav absolute bottom-[14%] left-1/2 z-20 w-[min(78vw,26rem)] -translate-x-1/2 lg:bottom-auto lg:left-auto lg:right-[6%] lg:top-1/2 lg:w-[min(36vw,520px)] lg:-translate-y-1/2 lg:translate-x-0"
         >
           <ol className="flex flex-col gap-1.5">
             {HERO_COMMANDS.map((command) => (

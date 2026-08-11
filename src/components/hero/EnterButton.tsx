@@ -15,7 +15,7 @@ export function EnterButton() {
     >
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-paper opacity-0 [clip-path:polygon(0_40%,100%_40%,100%_46%,0_46%)] group-hover:animate-[hero-glitch_0.35s_steps(2)_1] group-focus-visible:animate-[hero-glitch_0.35s_steps(2)_1]"
+        className="pointer-events-none absolute inset-0 bg-paper opacity-0 [clip-path:polygon(0_84%,100%_84%,100%_88%,0_88%)] group-hover:animate-[hero-glitch_0.22s_steps(3)_1] group-focus-visible:animate-[hero-glitch_0.22s_steps(3)_1]"
       />
       <span className="relative">Entrar al sistema</span>
     </Link>
