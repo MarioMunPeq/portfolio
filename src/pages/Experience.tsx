@@ -16,7 +16,8 @@ export function Experience() {
             <ScreenHeader
               index="04"
               label="Experiencia"
-              title="Dónde he trabajado"
+              title="ESTADÍSTICAS"
+              usePersonaFont
             />
           </Reveal>
 

@@ -6,6 +6,13 @@ export interface ProjectImage {
   alt: string
 }
 
+export interface ProjectScreenshot {
+  src: string
+  alt: string
+  /** Texto opcional que describe la captura. */
+  caption?: string
+}
+
 export interface Project {
   slug: string
   /** Numeración visible del proyecto ("01", "02", …). */
@@ -21,8 +28,10 @@ export interface Project {
     demo: string | null
     github: string | null
   }
-  /** Capturas. null = placeholder visual (no crear assets falsos). */
+  /** Imagen principal (hero/preview). null = placeholder visual. */
   images: ProjectImage[] | null
+  /** Capturas de la galería de detalle. Cada una con caption opcional. */
+  screenshots: ProjectScreenshot[] | null
 }
 
 export const projects: Project[] = [
@@ -34,9 +43,10 @@ export const projects: Project[] = [
       '[PLACEHOLDER] Descripción breve del proyecto — pendiente de definir.',
     description:
       '[PLACEHOLDER] Descripción completa para la página del proyecto — pendiente de definir.',
-    stack: null,
+    stack: ['React', 'TypeScript', 'Tailwind CSS', 'Vite'],
     links: { demo: null, github: null },
     images: null,
+    screenshots: null,
   },
   {
     slug: 'dungeon-archive',
@@ -46,9 +56,10 @@ export const projects: Project[] = [
       '[PLACEHOLDER] Descripción breve del proyecto — pendiente de definir.',
     description:
       '[PLACEHOLDER] Descripción completa para la página del proyecto — pendiente de definir.',
-    stack: null,
+    stack: ['React', 'Node.js', 'PostgreSQL', 'Prisma'],
     links: { demo: null, github: null },
     images: null,
+    screenshots: null,
   },
   {
     slug: 'lol-recommender',
@@ -58,8 +69,9 @@ export const projects: Project[] = [
       '[PLACEHOLDER] Descripción breve del proyecto — pendiente de definir.',
     description:
       '[PLACEHOLDER] Descripción completa para la página del proyecto — pendiente de definir.',
-    stack: null,
+    stack: ['Python', 'scikit-learn', 'FastAPI', 'React'],
     links: { demo: null, github: null },
     images: null,
+    screenshots: null,
   },
 ]

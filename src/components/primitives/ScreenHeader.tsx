@@ -6,6 +6,8 @@ interface ScreenHeaderProps {
   title: ReactNode
   /** true si vive sobre fondo oscuro. */
   onDark?: boolean
+  /** Use Persona 5 menu font for the title */
+  usePersonaFont?: boolean
 }
 
 /**
@@ -14,7 +16,7 @@ interface ScreenHeaderProps {
  * el bloque con esquinas de "viñeta de cómic" y remata con un guiño
  * de trama de puntos.
  */
-export function ScreenHeader({ index, label, title, onDark = false }: ScreenHeaderProps) {
+export function ScreenHeader({ index, label, title, onDark = false, usePersonaFont = false }: ScreenHeaderProps) {
   return (
     <header className="relative">
       <div aria-hidden="true" className="pointer-events-none absolute right-0 top-0 overflow-hidden">
@@ -55,9 +57,9 @@ export function ScreenHeader({ index, label, title, onDark = false }: ScreenHead
       </span>
 
       <h1
-        className={`relative mt-4 max-w-[14ch] font-display uppercase leading-none ${
+        className={`relative mt-4 max-w-[14ch] uppercase leading-none ${
           onDark ? 'text-paper' : 'text-ink'
-        }`}
+        } ${usePersonaFont ? 'font-p5-menu' : 'font-display'}`}
         style={{ fontSize: 'clamp(2.5rem, 7vw, 5rem)' }}
       >
         {title}

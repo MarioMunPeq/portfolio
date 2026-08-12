@@ -1,5 +1,6 @@
 import type { Project } from '../../data/projects'
 import { Annotation } from '../primitives/Annotation'
+import { StarBadge } from '../overlay/StarBadge'
 
 const OUTLINE = `-2px -2px 0 var(--color-bg-hero), 2px -2px 0 var(--color-bg-hero), -2px 2px 0 var(--color-bg-hero), 2px 2px 0 var(--color-bg-hero)`
 
@@ -29,12 +30,12 @@ function Placeholder({ project }: { project: Project }) {
       >
         {project.order}
       </span>
-      <div className="relative flex items-center gap-2 border border-paper/25 bg-bg-hero/70 px-4 py-2.5">
+      <div className="relative flex items-center gap-2 bg-halftone-red px-4 py-2.5 clip-notch border-l-4 border-accent">
         <span
           aria-hidden="true"
           className="h-2.5 w-2.5 bg-accent [clip-path:polygon(100%_0,100%_100%,0_50%)]"
         />
-        <span className="text-label font-medium uppercase tracking-[0.22em] text-paper/70">
+        <span className="text-label font-medium uppercase tracking-[0.22em] text-paper">
           [PROJECT PREVIEW PLACEHOLDER]
         </span>
       </div>
@@ -50,6 +51,9 @@ export function ProjectPreview({ project }: { project: Project }) {
 
   return (
     <div className="relative w-full max-w-[42rem]">
+      {/* Halftone accent strip along left edge - reserved for future character portrait */}
+      <div className="pointer-events-none absolute left-[-2rem] top-0 bottom-0 w-[2rem] bg-halftone-red opacity-30 hidden lg:block" aria-hidden="true" />
+      
       <div className="relative">
         {/* Sombra dura roja desplazada tras el marco */}
         <span
@@ -75,10 +79,10 @@ export function ProjectPreview({ project }: { project: Project }) {
           </span>
         </figure>
 
-        {/* Sello del número sobre la esquina superior derecha del marco */}
+        {/* Sello del número sobre la esquina superior derecha del marco - torn paper style */}
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute -top-5 right-8 z-10 select-none font-display uppercase leading-none text-outline-faint"
+          className="pointer-events-none absolute -top-5 right-8 z-10 select-none font-display uppercase leading-none text-outline-faint bg-halftone-red px-3 py-1 clip-cut-bl"
           style={{ fontSize: 'clamp(3.5rem, 6vw, 5.5rem)' }}
         >
           {project.order}
@@ -86,18 +90,26 @@ export function ProjectPreview({ project }: { project: Project }) {
       </div>
 
       <div className="relative mt-6">
-        <h2
-          className="font-display uppercase leading-[0.95] text-paper"
-          style={{
-            fontSize: 'clamp(2rem, 3.4vw, 3.25rem)',
-            textShadow: OUTLINE,
-          }}
-        >
-          {project.name}
-        </h2>
-        <p className="mt-2 max-w-md text-caption leading-relaxed text-paper/70">
-          {project.summary}
-        </p>
+        <div className="flex items-start gap-4">
+          {/* Star decorative accent near project title */}
+          <div className="flex-shrink-0 mt-1.5" aria-hidden="true">
+            <StarBadge state="full" label={`${project.name} completado`} />
+          </div>
+          <div>
+            <h2
+              className="font-display uppercase leading-[0.95] text-paper"
+              style={{
+                fontSize: 'clamp(2rem, 3.4vw, 3.25rem)',
+                textShadow: OUTLINE,
+              }}
+            >
+              {project.name}
+            </h2>
+            <p className="mt-2 max-w-md text-caption leading-relaxed text-paper/70">
+              {project.summary}
+            </p>
+          </div>
+        </div>
         <span aria-hidden="true" className="mt-4 flex items-center gap-3">
           <span className="block h-2 w-32 -skew-x-12 bg-accent" />
           <span className="block h-3 w-8 bg-halftone-red" />

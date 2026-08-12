@@ -21,7 +21,7 @@ export function About() {
 
         <div className="relative mx-auto max-w-5xl">
           <Reveal>
-            <ScreenHeader index="02" label="Sobre mí" title="Quién está detrás" />
+            <ScreenHeader index="02" label="Sobre mí" title="PERFIL" usePersonaFont />
           </Reveal>
 
           <Reveal delay={0.12}>

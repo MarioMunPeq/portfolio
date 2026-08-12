@@ -13,7 +13,7 @@ export function Education() {
         </div>
         <div className="relative mx-auto max-w-5xl">
           <Reveal>
-            <ScreenHeader index="05" label="Formación" title="Dónde me he formado" />
+            <ScreenHeader index="05" label="Formación" title="HABILIDADES" usePersonaFont />
           </Reveal>
 
           <ol className="mt-14">
