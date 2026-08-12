@@ -1,10 +1,7 @@
-import React from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
-import { motion, useReducedMotion } from 'motion/react'
 import { Reveal } from '../components/primitives/Reveal'
 import { Screen } from '../components/transition/Screen'
 import { DiamondMarker } from '../components/shared/DiamondMarker'
-import { StarBadge } from '../components/overlay/StarBadge'
 import { projects } from '../data/projects'
 import type { ProjectScreenshot } from '../data/projects'
 
@@ -75,49 +72,18 @@ function SectionDivider({ className = '' }: { className?: string }) {
 }
 
 /**
- * Tech stack card with star icon - angular card style with alternating rotation.
+ * Tech stack card - angular card style with alternating rotation.
  */
 function StackCard({ tech, index }: { tech: string; index: number }) {
-  const reduced = useReducedMotion()
   const rotation = ROTATIONS[index % ROTATIONS.length]
-  const [isVisible, setIsVisible] = React.useState(false)
-
-  React.useEffect(() => {
-    if (reduced) {
-      setIsVisible(true)
-      return
-    }
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-          observer.disconnect()
-        }
-      },
-      { threshold: 0.3, rootMargin: '0px 0px -100px 0px' }
-    )
-    const el = document.querySelector(`[data-stack-index="${index}"]`)
-    if (el) observer.observe(el)
-    return () => observer.disconnect()
-  }, [index, reduced])
 
   return (
     <div
-      data-stack-index={index}
-      className={`relative flex items-center gap-3 border border-paper/30 bg-bg-content-alt px-4 py-3 clip-cut-br min-w-[160px] transition-all duration-300 hover:border-accent hover:bg-bg-hero/50 hover:scale-[1.02] hover:shadow-[0_0_0_1px_var(--color-accent)] ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+      className={`relative flex items-center gap-3 border border-paper/30 bg-bg-content-alt px-4 py-3 clip-cut-br min-w-[160px] transition-all duration-300 hover:border-accent hover:bg-bg-hero/50 hover:scale-[1.02] hover:shadow-[0_0_0_1px_var(--color-accent)]`}
       style={{
         transform: `rotate(${rotation})`,
-        transitionDelay: `${index * 80}ms`,
-        transitionDuration: '500ms',
-        transitionTimingFunction: 'cubic-bezier(0.76, 0, 0.24, 1)',
       }}
     >
-      <div className="shrink-0" style={{ transform: `rotate(${rotation})` }}>
-        <StarBadge
-          state={isVisible ? 'full' : 'empty'}
-          label={`${tech} — dominado`}
-        />
-      </div>
       <span className="text-body font-medium text-paper" style={{ transform: `rotate(${-parseFloat(rotation)}deg)` }}>
         {tech}
       </span>
@@ -151,61 +117,6 @@ function AngularButton({ children, href, external = false, className = '' }: {
 }
 
 /**
- * Scroll indicator tied to the page's visual system.
- */
-function ScrollIndicator() {
-  const reduced = useReducedMotion()
-  return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none fixed right-8 bottom-8 z-20 flex flex-col items-end gap-2 opacity-60 transition-opacity duration-500 hover:opacity-100"
-      style={{
-        transform: 'rotate(-90deg) translateX(50%)',
-        transformOrigin: 'right bottom',
-      }}
-    >
-      <span className="text-label font-medium uppercase tracking-[0.3em] text-paper/50 whitespace-nowrap">
-        SCROLL
-      </span>
-      <motion.div
-        className="relative w-px h-16 bg-accent overflow-hidden"
-        animate={reduced ? false : { height: ['16px', '64px', '16px'] }}
-        transition={{ duration: 2, ease: 'easeInOut', repeat: Infinity }}
-      >
-        <span className="absolute inset-0 bg-halftone-red" />
-      </motion.div>
-    </div>
-  )
-}
-
-/**
- * Project counter (e.g., "01 / 03") matching Inventario listing style.
- */
-function ProjectCounter({ current, total, className = '' }: { current: string; total: number; className?: string }) {
-  return (
-    <div className={`flex items-center gap-2 text-label uppercase tracking-[0.22em] text-paper/40 ${className}`}>
-      <span aria-hidden="true" className="h-2 w-2 bg-accent [clip-path:polygon(100%_0,100%_100%,0_50%)]" />
-      <span>{current} / {String(total).padStart(2, '0')}</span>
-    </div>
-  )
-}
-
-/**
- * Large faint ghost number on the right side - background element.
- */
-function BackgroundGhostNumber({ order }: { order: string }) {
-  return (
-    <span
-      aria-hidden="true"
-      className="pointer-events-none absolute right-[-2rem] top-1/2 -translate-y-1/2 select-none font-display uppercase leading-none text-outline-faint hidden lg:block"
-      style={{ fontSize: 'clamp(14rem, 35vw, 28rem)', opacity: 0.04 }}
-    >
-      {order}
-    </span>
-  )
-}
-
-/**
  * Subtle diagonal red accent bleeding from right edge.
  */
 function DiagonalEdgeAccent() {
@@ -234,6 +145,42 @@ function HalftoneAccentStrip() {
   )
 }
 
+/**
+ * Prev/next project navigation - named navigation instead of numbers.
+ */
+function PrevNextNav({ prev, next }: { prev: { slug: string; name: string } | null; next: { slug: string; name: string } | null }) {
+  if (!prev && !next) return null
+
+  return (
+    <nav aria-label="Navegación entre proyectos" className="flex flex-wrap gap-4">
+      {prev && (
+        <Link
+          to={`/proyectos/${prev.slug}`}
+          className="group flex items-center gap-2 text-label font-medium uppercase tracking-[0.22em] text-paper/60 hover:text-accent transition-colors"
+        >
+          <span
+            aria-hidden="true"
+            className="h-2.5 w-2.5 bg-accent rotate-45 transition-transform duration-200 group-hover:-translate-x-1"
+          />
+          {prev.name}
+        </Link>
+      )}
+      {next && (
+        <Link
+          to={`/proyectos/${next.slug}`}
+          className="group ml-auto flex items-center gap-2 text-label font-medium uppercase tracking-[0.22em] text-paper/60 hover:text-accent transition-colors"
+        >
+          {next.name}
+          <span
+            aria-hidden="true"
+            className="h-2.5 w-2.5 bg-accent rotate-45 transition-transform duration-200 group-hover:translate-x-1"
+          />
+        </Link>
+      )}
+    </nav>
+  )
+}
+
 export function ProjectDetail() {
   const { slug } = useParams<{ slug: string }>()
   const project = projects.find((item) => item.slug === slug)
@@ -244,10 +191,13 @@ export function ProjectDetail() {
 
   const sectionLabel = 'INVENTARIO'
 
+  const currentIndex = projects.findIndex((p) => p.slug === slug)
+  const prevProject = currentIndex > 0 ? projects[currentIndex - 1] : null
+  const nextProject = currentIndex < projects.length - 1 ? projects[currentIndex + 1] : null
+
   return (
     <Screen className="min-h-dvh bg-bg-hero text-paper">
       {/* Background decorative elements */}
-      <BackgroundGhostNumber order={project.order} />
       <DiagonalEdgeAccent />
       <HalftoneAccentStrip />
 
@@ -261,16 +211,15 @@ export function ProjectDetail() {
             >
               <span
                 aria-hidden="true"
-                className="h-2.5 w-2.5 bg-accent [clip-path:polygon(100%_0,100%_100%,0_50%)] transition-transform duration-200 group-hover:-translate-x-1"
+                className="h-3 w-3 bg-accent rotate-45 transition-transform duration-200 group-hover:-translate-x-1"
               />
               VOLVER A {sectionLabel}
             </Link>
           </Reveal>
 
           <Reveal delay={0.05}>
-            <p className="mt-10 font-display text-3xl text-accent tracking-[0.1em]">{project.order}</p>
             <h1
-              className="mt-2 font-display uppercase leading-[0.95] text-paper"
+              className="mt-10 font-display uppercase leading-[0.95] text-paper"
               style={{
                 fontSize: 'clamp(2.75rem, 6.5vw, 5.5rem)',
                 textShadow: `${OUTLINE_THICK}, 8px 8px 0 var(--color-accent-deep)`,
@@ -280,14 +229,38 @@ export function ProjectDetail() {
             </h1>
           </Reveal>
 
-          {/* Project counter */}
-          <Reveal delay={0.1}>
-            <ProjectCounter current={project.order} total={projects.length} className="mt-6" />
+          {/* Placeholder image block */}
+          <Reveal delay={0.08}>
+            <div className="mt-8 relative proj-frame border-2 border-paper bg-bg-content-alt overflow-hidden aspect-[16/10]">
+              <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-halftone-ink">
+                <span
+                  aria-hidden="true"
+                  className="absolute -left-10 -top-8 block h-[130%] w-14 -skew-x-[16deg] bg-accent/20"
+                />
+                <div className="relative flex items-center gap-2 bg-halftone-red px-4 py-2.5 clip-notch border-l-4 border-accent">
+                  <span
+                    aria-hidden="true"
+                    className="h-2.5 w-2.5 bg-accent [clip-path:polygon(100%_0,100%_100%,0_50%)]"
+                  />
+                  <span className="text-label font-medium uppercase tracking-[0.22em] text-paper">
+                    [PROJECT PREVIEW PLACEHOLDER]
+                  </span>
+                </div>
+                <span className="absolute bottom-3 left-3 inline-flex items-center gap-2 bg-accent px-3 py-1.5 text-label font-medium uppercase tracking-[0.22em] text-paper -rotate-3">
+                  <span aria-hidden="true">◄</span>
+                  Captura pendiente
+                </span>
+              </div>
+              <span aria-hidden="true" className="flex h-2 overflow-hidden">
+                <span className="h-full w-1/3 bg-stripes-red" />
+                <span className="h-full flex-1 bg-accent" />
+              </span>
+            </div>
           </Reveal>
 
           {/* Diagonal divider */}
-          <Reveal delay={0.12}>
-            <SectionDivider className="mt-10" />
+          <Reveal delay={0.1}>
+            <SectionDivider className="mt-8" />
           </Reveal>
 
           {/* ===== SECTION 2 — Resumen ===== */}
@@ -388,15 +361,19 @@ export function ProjectDetail() {
             </Reveal>
           )}
 
+          {/* Prev/Next navigation */}
+          <Reveal delay={0.35}>
+            <div className="mt-16">
+              <PrevNextNav prev={prevProject} next={nextProject} />
+            </div>
+          </Reveal>
+
           {/* Bottom accent */}
           <div
             aria-hidden="true"
-            className="mt-20 h-px bg-gradient-to-r from-transparent via-paper/10 to-transparent"
+            className="mt-8 h-px bg-gradient-to-r from-transparent via-paper/10 to-transparent"
           />
         </div>
-
-        {/* Scroll indicator */}
-        <ScrollIndicator />
       </section>
     </Screen>
   )

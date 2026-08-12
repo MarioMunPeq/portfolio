@@ -19,14 +19,8 @@ export function ProjectInventoryItem({
   onSelect,
   setItemRef,
 }: ProjectInventoryItemProps) {
-  const isOutline = Number(project.order) % 2 === 1
-
   return (
-    <li
-      className={`border-b border-paper/10 last:border-b-0 ${
-        Number(project.order) % 2 === 0 ? 'md:translate-x-[5%]' : ''
-      }`}
-    >
+    <li className="border-b border-paper/10 last:border-b-0">
       <Link
         to={`/proyectos/${project.slug}`}
         ref={setItemRef}
@@ -41,31 +35,11 @@ export function ProjectInventoryItem({
           className={`proj-beam ${selected ? 'is-active' : ''}`}
         />
 
-        <span className="relative z-10 w-16 shrink-0 text-center md:w-20">
-          {selected ? (
-            <span className="inline-block -skew-x-12 bg-paper px-2.5 py-1 font-display text-xl leading-none text-ink md:text-2xl">
-              <span className="inline-block skew-x-12">{project.order}</span>
-            </span>
-          ) : (
-            <span
-              className={`inline-block -skew-x-12 font-display text-xl leading-none transition-colors duration-200 md:text-2xl ${
-                isOutline
-                  ? 'text-outline-faint group-hover:text-outline group-focus-visible:text-outline'
-                  : 'text-paper/40 group-hover:text-accent group-focus-visible:text-accent'
-              }`}
-            >
-              <span className="inline-block skew-x-12">{project.order}</span>
-            </span>
-          )}
-        </span>
-
         <span
           className={`relative z-10 font-display uppercase leading-none transition-colors duration-200 ${
             selected
               ? 'text-paper'
-              : isOutline
-                ? 'text-outline-faint group-hover:text-outline group-focus-visible:text-outline'
-                : 'text-paper/85 group-hover:text-accent group-focus-visible:text-accent'
+              : 'text-outline-faint group-hover:text-outline group-focus-visible:text-outline'
           }`}
           style={{ fontSize: 'clamp(1.5rem, 3.2vw, 2.75rem)' }}
         >
@@ -85,13 +59,9 @@ export function ProjectInventoryItem({
               selected ? 'text-paper' : 'text-paper/60'
             }`}
           >
-            SELECT
+            SELECCIONAR
           </span>
-          <span
-            className={`block h-3 w-3 ${
-              selected ? 'bg-paper' : 'bg-accent'
-            } [clip-path:polygon(100%_0,100%_100%,0_50%)]`}
-          />
+          <span className="text-label font-medium leading-none text-accent">▲▼</span>
         </span>
       </Link>
     </li>

@@ -65,12 +65,11 @@ export function ScreenHeader({ index, label, title, onDark = false, usePersonaFo
         {title}
       </h1>
 
-      {/* Guiño de trama: banda diagonal + sello de puntos */}
+      {/* Guiño de trama: banda diagonal */}
       <span aria-hidden="true" className="relative mt-5 flex items-center gap-3">
         <span
           className={`block h-2 w-40 -skew-x-12 ${onDark ? 'bg-accent/80' : 'bg-accent'}`}
         />
-        <span className="block h-3 w-8 bg-halftone-red" />
       </span>
     </header>
   )

@@ -27,9 +27,6 @@ function ProjectsGraphicLayer() {
       <span className="absolute -left-16 top-[46%] block h-2 w-[36rem] -rotate-[6deg] bg-accent/50" />
       <span className="absolute left-[26%] top-[72%] block h-px w-[30rem] -rotate-[3deg] bg-paper/15" />
 
-      <span className="absolute left-[42%] top-[20%] hidden h-4 w-8 bg-halftone-red lg:block" />
-      <span className="absolute right-[36%] bottom-[14%] hidden h-4 w-8 -rotate-6 bg-halftone-red xl:block" />
-
       <span className="absolute inset-0 bg-scanlines" />
     </div>
   )
@@ -51,14 +48,6 @@ export function Projects() {
 
         <div className="relative z-10 flex min-h-dvh flex-col px-6 pb-6 pt-24 md:px-10 lg:px-14">
           <header className="relative">
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute -top-6 right-0 rotate-6 select-none font-display uppercase leading-none text-outline-faint"
-              style={{ fontSize: 'clamp(7rem, 16vw, 13rem)' }}
-            >
-              03
-            </span>
-
             <p className="flex items-center gap-2.5 text-label font-medium uppercase tracking-[0.22em] text-accent">
               <span
                 aria-hidden="true"
@@ -77,7 +66,6 @@ export function Projects() {
             </h1>
             <span aria-hidden="true" className="mt-4 flex items-center gap-3">
               <span className="block h-2 w-44 -skew-x-12 bg-accent" />
-              <span className="block h-3 w-8 bg-halftone-red" />
             </span>
           </header>
 
@@ -94,15 +82,8 @@ export function Projects() {
             <p className="flex items-center gap-2 text-label font-medium uppercase tracking-[0.22em] text-paper/50">
               <span aria-hidden="true" className="h-2 w-2 bg-accent" />
               <span className="hidden sm:inline">▲▼</span>
-              <span className="hidden md:inline">Seleccionar ·</span>
-              <span className="hidden sm:inline">✕</span> Abrir ficha
-            </p>
-            <p className="text-label uppercase tracking-[0.22em] text-paper/40 lg:pr-40">
-              Inventario{' '}
-              {String(
-                projects.findIndex((p) => p.slug === selected.slug) + 1,
-              ).padStart(2, '0')}
-              /{String(projects.length).padStart(2, '0')}
+              <span className="hidden md:inline">SELECCIONAR ·</span>
+              <span className="hidden sm:inline">✕</span> ABRIR FICHA
             </p>
           </footer>
         </div>

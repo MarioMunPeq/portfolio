@@ -36,14 +36,6 @@ export function ProjectInventory({
 
   return (
     <nav aria-label="Inventario de proyectos" className="relative">
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-4 -top-20 select-none font-display uppercase leading-none text-outline-faint"
-        style={{ fontSize: 'clamp(5rem, 10vw, 8.5rem)' }}
-      >
-        {selected.order}
-      </span>
-
       <ol className="relative" onKeyDown={onKeyDown}>
         {projects.map((project, index) => (
           <ProjectInventoryItem
@@ -55,11 +47,6 @@ export function ProjectInventory({
           />
         ))}
       </ol>
-
-      <p className="mt-4 text-label uppercase tracking-[0.22em] text-paper/40">
-        {selected.order} / {String(projects.length).padStart(2, '0')} — Ficha
-        seleccionada
-      </p>
     </nav>
   )
 }

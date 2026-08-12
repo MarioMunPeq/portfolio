@@ -4,7 +4,7 @@ interface MenuOptionProps {
   index: string
   label: string
   path: string
-  /** Etiqueta de acción que aparece al hacer hover/focus (p. ej. "SELECT"). */
+  /** Etiqueta de acción que aparece al hacer hover/focus (p. ej. "SELECCIONAR"). */
   tag?: string
   current?: boolean
 }
@@ -19,7 +19,7 @@ export function MenuOption({
   index,
   label,
   path,
-  tag = 'SELECT',
+  tag = 'SELECCIONAR',
   current = false,
 }: MenuOptionProps) {
   const isOutline = Number(index) % 2 === 1

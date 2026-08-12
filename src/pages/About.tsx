@@ -15,7 +15,6 @@ export function About() {
         >
           <span className="absolute right-0 top-0 block h-1.5 w-28 -skew-x-12 bg-accent" />
           <span className="absolute bottom-0 left-0 block h-1.5 w-16 -skew-x-12 bg-ink/10" />
-          <span className="absolute right-[38%] top-24 hidden h-4 w-8 bg-halftone-red md:block" />
           <span className="absolute bottom-10 right-8 hidden h-3 w-6 bg-ink/15 md:block" />
         </div>
 

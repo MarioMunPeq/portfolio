@@ -15,8 +15,6 @@ export interface ProjectScreenshot {
 
 export interface Project {
   slug: string
-  /** Numeración visible del proyecto ("01", "02", …). */
-  order: string
   name: string
   /** Descripción de una o dos frases para la card. PLACEHOLDER. */
   summary: string
@@ -37,7 +35,6 @@ export interface Project {
 export const projects: Project[] = [
   {
     slug: 'cosmere-archive',
-    order: '01',
     name: 'Cosmere Archive',
     summary:
       '[PLACEHOLDER] Descripción breve del proyecto — pendiente de definir.',
@@ -50,7 +47,6 @@ export const projects: Project[] = [
   },
   {
     slug: 'dungeon-archive',
-    order: '02',
     name: 'Dungeon Archive',
     summary:
       '[PLACEHOLDER] Descripción breve del proyecto — pendiente de definir.',
@@ -62,9 +58,8 @@ export const projects: Project[] = [
     screenshots: null,
   },
   {
-    slug: 'lol-recommender',
-    order: '03',
-    name: 'LoL Champion Recommender',
+    slug: 'recomendador-campeones',
+    name: 'Recomendador de Campeones',
     summary:
       '[PLACEHOLDER] Descripción breve del proyecto — pendiente de definir.',
     description:

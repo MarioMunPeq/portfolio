@@ -13,7 +13,6 @@ export function Contact() {
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
           <span className="absolute right-0 top-[22%] block h-1.5 w-40 -skew-x-12 bg-accent" />
           <span className="absolute left-0 top-0 h-2 w-full bg-stripes-red" />
-          <span className="absolute bottom-12 left-8 hidden h-4 w-8 bg-halftone-red md:block" />
         </div>
 
         <div className="relative mx-auto max-w-5xl">

@@ -81,7 +81,7 @@ export function Cursor() {
             aria-hidden="true"
             className="block h-2 w-2 bg-accent [clip-path:polygon(100%_0,100%_100%,0_50%)]"
           />
-          SELECT
+          SELECCIONAR
         </motion.span>
       </div>
     </motion.div>

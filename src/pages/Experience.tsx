@@ -9,7 +9,6 @@ export function Experience() {
       <section className="relative overflow-hidden px-6 py-24 md:px-10 md:py-28">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
           <span className="absolute right-0 top-0 h-2 w-full bg-stripes-faint" />
-          <span className="absolute left-0 top-40 block h-4 w-8 bg-halftone-red" />
         </div>
         <div className="relative mx-auto max-w-5xl">
           <Reveal>
