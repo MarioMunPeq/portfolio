@@ -1,42 +1,54 @@
-const RINGS = Array.from({ length: 11 }, (_, i) => ({
-  r: 30 + i * 26,
-  color: i % 2 === 0 ? 'var(--color-accent)' : 'var(--color-ink)',
-  strokeWidth: i % 2 === 0 ? 3 : 1.5,
-  opacity: Math.max(0.85 - i * 0.07, 0.12),
-}))
+/** Radios de los anillos base (referencia estática, tenues). */
+const BASELINE_RADII = [80, 140, 210, 290, 370]
 
 /**
- * Anillos concéntricos tipo radar/onda expansiva, generados por código
- * (SVG), centrados detrás del contador de la pantalla de carga. Alternan
- * rojo y tinta y pierden opacidad hacia el borde para no competir con el
- * número. Una onda expansiva sutil (respetada por reduced-motion) refuerza
- * la metáfora del sistema arrancando. Puramente decorativo.
+ * Radar de la pantalla de carga: anillos concéntricos alineados con el
+ * punto de fuga del skyline (arriba-centro de la imagen, ~50%/46%) más dos
+ * pulsos escalonados que crecen y se desvanecen en bucle. reduced-motion
+ * deja solo los anillos estáticos (la regla global anula la animación).
+ * Puramente decorativo.
  */
 export function ConcentricRings() {
   return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 grid place-items-center"
-    >
-      <svg
-        viewBox="0 0 600 600"
-        className="h-[min(78vh,660px)] w-[min(78vh,660px)]"
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+      <div
+        className="absolute -translate-x-1/2 -translate-y-1/2"
+        style={{ left: '50%', top: '46%' }}
       >
-        {RINGS.map((ring) => (
+        <svg viewBox="0 0 600 600" className="h-[min(76vh,760px)] w-[min(76vh,760px)]">
+          {BASELINE_RADII.map((r) => (
+            <circle
+              key={r}
+              cx="300"
+              cy="300"
+              r={r}
+              fill="none"
+              stroke="var(--color-accent)"
+              strokeWidth="1.5"
+              opacity="0.22"
+            />
+          ))}
+          <circle cx="300" cy="300" r="5" fill="var(--color-accent)" opacity="0.5" />
           <circle
-            key={ring.r}
+            className="radar-pulse"
             cx="300"
             cy="300"
-            r={ring.r}
+            r="150"
             fill="none"
-            stroke={ring.color}
-            strokeWidth={ring.strokeWidth}
-            opacity={ring.opacity}
+            stroke="var(--color-accent)"
+            strokeWidth="2"
           />
-        ))}
-        <circle cx="300" cy="300" r="7" fill="var(--color-accent)" />
-      </svg>
-      <span className="loadscreen-wave absolute h-[280px] w-[280px] rounded-full border-[3px] border-accent" />
+          <circle
+            className="radar-pulse radar-pulse--b"
+            cx="300"
+            cy="300"
+            r="150"
+            fill="none"
+            stroke="var(--color-accent)"
+            strokeWidth="2"
+          />
+        </svg>
+      </div>
     </div>
   )
 }

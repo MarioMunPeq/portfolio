@@ -11,6 +11,7 @@ import { markBooted } from '../../lib/boot'
 import { profile } from '../../data/profile'
 import { StarBadge, type StarBadgeState } from './StarBadge'
 import { ConcentricRings } from './ConcentricRings'
+import { HudCorners } from './HudCorners'
 import loadingBg from '../../assets/loading/loadingscreenbackground.webp'
 
 const PROGRESS_EASE: [number, number, number, number] = [0.65, 0, 0.35, 1]
@@ -28,9 +29,10 @@ const CATEGORIES = [
 
 /** Preguntas tontas del marcador Q: se rota una al azar por carga. */
 const SURVEY_QUESTIONS = [
-  '¿Los patos programan en pareja?',
-  '¿Los héroes leen las notas del parche?',
-  '¿El nivel se sube sin farmear?',
+  '¿Sirven los fracasos como aprendiazaje?',
+  '¿Sueles leer las notas del parche?',
+  '¿La curiosidad cuenta como habilidad?',
+  '¿Viaje antes que destino?',
 ]
 
 let loadScreenShown = false
@@ -123,18 +125,44 @@ export function LoadScreen() {
   return (
     <div
       className="loadscreen-content fixed inset-0 z-[100] bg-bg-hero text-paper"
-      style={{
-        backgroundImage: `linear-gradient(to bottom, rgba(10,10,10,0.75), rgba(10,10,10,0.55) 40%, rgba(10,10,10,0.85)), url(${loadingBg})`,
-        backgroundSize: 'cover, cover',
-        backgroundPosition: 'center, center',
-      }}
       onPointerDown={skip}
       aria-hidden="true"
     >
-      {/* Anillos concéntricos como acento sobre la imagen (opacidad reducida) */}
-      <div className="pointer-events-none absolute inset-0 opacity-[0.38]">
-        <ConcentricRings />
-      </div>
+      {/* Fondo real: imagen + degradado de contraste con zoom lento y sutil
+          (desactivado bajo reduced-motion) */}
+      <motion.div
+        aria-hidden="true"
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `linear-gradient(to bottom, rgba(10,10,10,0.75), rgba(10,10,10,0.55) 40%, rgba(10,10,10,0.85)), url(${loadingBg})`,
+          backgroundSize: 'cover, cover',
+          backgroundPosition: 'center, center',
+        }}
+        initial={{ scale: 1 }}
+        animate={{ scale: reduced ? 1 : 1.015 }}
+        transition={{ duration: LOAD_DURATION, ease: 'easeOut' }}
+      />
+
+      {/* Resplandor rojo tipo rim-light a lo largo del horizonte del skyline */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 h-[160px]"
+        style={{
+          top: '32%',
+          background:
+            'linear-gradient(to bottom, transparent, rgba(230,0,18,0.55) 50%, transparent)',
+          filter: 'blur(48px)',
+          mixBlendMode: 'screen',
+          opacity: 0.32,
+        }}
+      />
+
+      {/* Radar: anillos de referencia + pulsos alineados al punto de fuga */}
+      <ConcentricRings />
+
+      {/* Corchetes HUD de las esquinas */}
+      <HudCorners />
+
       <motion.div
         className="relative z-10 flex h-full flex-col justify-between px-6 py-8 md:px-10"
         initial={{ opacity: 0 }}
@@ -169,46 +197,49 @@ export function LoadScreen() {
 
         {/* Zona inferior: composición única (letra Q + pregunta + barra + %) */}
         <div className="load-base absolute inset-x-0 bottom-0 h-[min(38vh,380px)] w-full">
-          {/* Línea roja de anclaje y cuña decorativas */}
+          {/* Línea roja de anclaje decorativa */}
           <span aria-hidden="true" className="absolute bottom-0 left-0 h-[7px] w-[118%] -skew-x-12 bg-accent" />
-          <span aria-hidden="true" className="absolute -bottom-2 -left-12 h-[34%] w-[44%] -skew-x-12 bg-accent" />
 
           {/* Bloque compuesto único, capas: logo → pregunta → Q → barra → % */}
-          <div className="load-composite pointer-events-none absolute bottom-6 right-6 z-20 w-[min(35rem,80vw)]">
-            {/* Pregunta, con la Q a la izquierda; barra y % debajo */}
-            <p
-              className="load-question pl-[2.5rem] text-left font-anton uppercase leading-[1.05] text-paper"
-              style={{ fontSize: 'clamp(1.3rem, 2.2vw, 2rem)' }}
-            >
-              {question && (
-                <>
-                  {question.slice(0, -1)}
-                  <span className="text-accent">?</span>
-                </>
-              )}
-            </p>
+          <div className="pointer-events-none absolute bottom-12 right-6 z-20 w-[min(35rem,80vw)]">
+            <div className="load-panel">
+              <div className="load-panel-inner px-7 pb-6 pt-[6.5rem]">
+                {/* Pregunta, con la Q a la izquierda; barra y % debajo */}
+                <p
+                  className="load-question pl-[2.5rem] text-left font-anton uppercase leading-[1.05] text-paper"
+                  style={{ fontSize: 'clamp(1.3rem, 2.2vw, 2rem)' }}
+                >
+                  {question && (
+                    <>
+                      {question.slice(0, -1)}
+                      <span className="text-accent">?</span>
+                    </>
+                  )}
+                </p>
 
-            {/* Q + barra + % */}
-            <div className="load-bar-block relative mt-2 flex items-center pl-[2.5rem]">
-              {/* Letra Q suelta (sin contenedor), borde inferior solapando 2-4px la esquina sup-izq de la barra */}
-              <span
-                aria-hidden="true"
-                className="load-q absolute bottom-[50px] left-0 font-anton text-[5.5rem] leading-none text-paper [text-shadow:-2px_-2px_0_#000,2px_-2px_0_#000,-2px_2px_0_#000,2px_2px_0_#000,-3px_-3px_0_#000,3px_-3px_0_#000,-3px_3px_0_#000,3px_3px_0_#000]"
-              >
-                Q
-              </span>
+                {/* Q + barra + % */}
+                <div className="load-bar-block relative mt-2 flex items-center pl-[2.5rem]">
+                  {/* Letra Q suelta (sin contenedor), borde inferior solapando 2-4px la esquina sup-izq de la barra */}
+                  <span
+                    aria-hidden="true"
+                    className="load-q absolute bottom-[50px] left-0 font-anton text-[5.5rem] leading-none text-paper [text-shadow:-2px_-2px_0_#000,2px_-2px_0_#000,-2px_2px_0_#000,2px_2px_0_#000,-3px_-3px_0_#000,3px_-3px_0_#000,-3px_3px_0_#000,3px_3px_0_#000]"
+                  >
+                    Q
+                  </span>
 
-              {/* Barra trapezoidal larga y fina (~7:1) */}
-              <div className="relative h-[52px] w-full bg-paper [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)] [transform:skewX(-6deg)]">
-                <div className="absolute inset-[3px] bg-bg-hero [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
-                  <div ref={barRef} className="absolute inset-y-0 left-0 bg-accent" />
+                  {/* Barra trapezoidal larga y fina (~7:1) */}
+                  <div className="relative h-[52px] w-full bg-paper [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)] [transform:skewX(-6deg)]">
+                    <div className="absolute inset-[3px] bg-bg-hero [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
+                      <div ref={barRef} className="absolute inset-y-0 left-0 bg-accent" />
+                    </div>
+                  </div>
+
+                  {/* SÍ {porcentaje}% */}
+                  <span className="load-pct ml-4 shrink-0 font-anton text-[3.5rem] leading-none text-accent [transform:skewX(-10deg)] [text-shadow:-2px_-2px_0_#000,2px_-2px_0_#000,-2px_2px_0_#000,2px_2px_0_#000,-3px_-3px_0_#000,3px_-3px_0_#000,-3px_3px_0_#000,3px_3px_0_#000,4px_4px_0_rgba(0,0,0,0.5)]">
+                    SÍ <span ref={pctRef}>0</span>%
+                  </span>
                 </div>
               </div>
-
-              {/* SÍ {porcentaje}% */}
-              <span className="load-pct ml-4 shrink-0 font-anton text-[3.5rem] leading-none text-accent [transform:skewX(-10deg)] [text-shadow:-2px_-2px_0_#000,2px_-2px_0_#000,-2px_2px_0_#000,2px_2px_0_#000,-3px_-3px_0_#000,3px_-3px_0_#000,-3px_3px_0_#000,3px_3px_0_#000,4px_4px_0_rgba(0,0,0,0.5)]">
-                SÍ <span ref={pctRef}>0</span>%
-              </span>
             </div>
           </div>
         </div>

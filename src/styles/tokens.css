@@ -1,5 +1,18 @@
 @import "tailwindcss";
 
+/* ============================================================
+   Tipografía fan de Persona 5 (archivos locales en public/fonts)
+   - "P5 Menu": letras de menú recortadas (estilo cómic). Incluye
+     minúsculas; los acentos españoles (á é í ó ú ñ ¿ ¡) NO están en
+     la fuente y los aporta el fallback del stack (per-glyph).
+   La base del proyecto es "/portfolio/", así que las url() llevan ese prefijo.
+   ============================================================ */
+@font-face {
+  font-family: "P5 Menu";
+  src: url("/portfolio/fonts/Persona5MenuFontPrototype-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+
 /* Utilidad: texto hueco con trazo en color acento (solo tipografía grande) */
 @utility text-outline {
   color: transparent;
@@ -261,21 +274,47 @@
   border-color: currentColor;
 }
 
-/* Onda expansiva de los anillos de la pantalla de carga (respetada por
-   reduced-motion gracias a la regla global de animaciones) */
-@keyframes loadscreen-wave {
+/* Paneles HUD de la pantalla de carga: fondo oscuro semitransparente con
+   borde angular fino (mismo lenguaje que las tarjetas .cmd). La capa
+   exterior pinta el borde (2px) y la interior el relleno, ambas con la
+   esquina recortada en clip-path (sin border-radius, regla del proyecto). */
+.load-panel {
+  position: relative;
+  padding: 2px;
+  background: rgba(230, 0, 18, 0.4);
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+}
+
+.load-panel-inner {
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+  background: rgba(10, 10, 10, 0.66);
+}
+
+/* Radar de la pantalla de carga: pulsos escalonados que crecen y se
+   desvanecen desde el punto de fuga de la foto. reduced-motion los anula
+   vía la regla global y quedan solo los anillos estáticos de referencia. */
+@keyframes radar-pulse {
   0% {
-    opacity: 0.35;
-    transform: scale(0.55);
+    opacity: 0.55;
+    transform: scale(0.3);
+  }
+  70% {
+    opacity: 0.12;
   }
   100% {
     opacity: 0;
-    transform: scale(1.6);
+    transform: scale(1.5);
   }
 }
 
-.loadscreen-wave {
-  animation: loadscreen-wave 2.4s ease-out infinite;
+.radar-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: radar-pulse 2.8s ease-out infinite;
+}
+
+.radar-pulse--b {
+  animation-delay: 1.4s;
 }
 
 /* Sello de estrella por categoría (pantalla de carga): pasa de estrella
@@ -434,6 +473,10 @@ html.lenis body {
   --font-display: "Anton", "Arial Narrow", sans-serif;
   --font-sans: "Space Grotesk", system-ui, sans-serif;
   --font-hand: "Caveat", cursive;
+  /* P5 Menu: SOLO para las etiquetas principales del menú principal
+     (perfil, inventario, estadísticas, habilidades). Falta de acentos:
+     el fallback los aporta. */
+  --font-p5-menu: "P5 Menu", "Anton", "Arial Narrow", sans-serif;
   /* Anton "en crudo": la pantalla de carga mantiene su geometría de
      composición (Q, pregunta y %) con la fuente original. */
   --font-anton: "Anton", "Arial Narrow", sans-serif;
