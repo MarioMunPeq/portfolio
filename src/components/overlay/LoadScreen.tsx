@@ -10,7 +10,8 @@ import {
 import { markBooted } from '../../lib/boot'
 import { profile } from '../../data/profile'
 import { StarBadge, type StarBadgeState } from './StarBadge'
-import phanSiteBadge from '../../assets/hero/phan-site-badge.png'
+import { ConcentricRings } from './ConcentricRings'
+import loadingBg from '../../assets/loading/loadingscreenbackground.webp'
 
 const PROGRESS_EASE: [number, number, number, number] = [0.65, 0, 0.35, 1]
 const LOAD_DURATION = 3.5
@@ -60,10 +61,12 @@ function CategoryRow({ cat, progress }: CategoryRowProps) {
 
 /**
  * Pantalla de carga del sistema: capa fija sobre toda la app que simula el
- * arranque del OS del portfolio. Se compone de topbar, bloque central con
- * acceso de usuario y categorías, y una zona inferior que funciona como una
- * composición única de menú de juego (logo PHAN-SITE + letra Q + pregunta,
- * barra y porcentaje).
+ * arranque del OS del portfolio. Fondo: imagen real (skyline en blanco y
+ * negro, cover) con un degradado oscuro que garantiza el contraste y los
+ * anillos concéntricos generados por código como acento. Se compone de
+ * topbar, bloque central con acceso de usuario y categorías, y una zona
+ * inferior que funciona como una composición única de menú de juego
+ * (letra Q + pregunta, barra trapezoidal y porcentaje).
  */
 export function LoadScreen() {
   const reduced = useReducedMotion()
@@ -120,9 +123,18 @@ export function LoadScreen() {
   return (
     <div
       className="loadscreen-content fixed inset-0 z-[100] bg-bg-hero text-paper"
+      style={{
+        backgroundImage: `linear-gradient(to bottom, rgba(10,10,10,0.75), rgba(10,10,10,0.55) 40%, rgba(10,10,10,0.85)), url(${loadingBg})`,
+        backgroundSize: 'cover, cover',
+        backgroundPosition: 'center, center',
+      }}
       onPointerDown={skip}
       aria-hidden="true"
     >
+      {/* Anillos concéntricos como acento sobre la imagen (opacidad reducida) */}
+      <div className="pointer-events-none absolute inset-0 opacity-[0.38]">
+        <ConcentricRings />
+      </div>
       <motion.div
         className="relative z-10 flex h-full flex-col justify-between px-6 py-8 md:px-10"
         initial={{ opacity: 0 }}
@@ -155,7 +167,7 @@ export function LoadScreen() {
           </p>
         </div>
 
-        {/* Zona inferior: composición única (logo PHAN-SITE + letra Q + pregunta + barra + %) */}
+        {/* Zona inferior: composición única (letra Q + pregunta + barra + %) */}
         <div className="load-base absolute inset-x-0 bottom-0 h-[min(38vh,380px)] w-full">
           {/* Línea roja de anclaje y cuña decorativas */}
           <span aria-hidden="true" className="absolute bottom-0 left-0 h-[7px] w-[118%] -skew-x-12 bg-accent" />
@@ -163,51 +175,40 @@ export function LoadScreen() {
 
           {/* Bloque compuesto único, capas: logo → pregunta → Q → barra → % */}
           <div className="load-composite pointer-events-none absolute bottom-6 right-6 z-20 w-[min(35rem,80vw)]">
-            {/* 1. PHAN-SITE detrás de la pregunta, a escala de la línea de texto */}
-            <img
-              src={phanSiteBadge}
-              alt=""
-              aria-hidden="true"
-              className="load-phan pointer-events-none absolute left-1/2 top-0 z-0 h-[min(26vh,250px)] w-auto -translate-x-1/2 -rotate-6"
-            />
+            {/* Pregunta, con la Q a la izquierda; barra y % debajo */}
+            <p
+              className="load-question pl-[2.5rem] text-left font-anton uppercase leading-[1.05] text-paper"
+              style={{ fontSize: 'clamp(1.3rem, 2.2vw, 2rem)' }}
+            >
+              {question && (
+                <>
+                  {question.slice(0, -1)}
+                  <span className="text-accent">?</span>
+                </>
+              )}
+            </p>
 
-            {/* 2-5. Pregunta sobre el logo, Q a la izquierda, barra y % debajo */}
-            <div className="relative z-10">
-              {/* 2. Pregunta sobre el logo */}
-              <p
-                className="load-question pl-[2.5rem] text-left font-anton uppercase leading-[1.05] text-paper"
-                style={{ fontSize: 'clamp(1.3rem, 2.2vw, 2rem)' }}
+            {/* Q + barra + % */}
+            <div className="load-bar-block relative mt-2 flex items-center pl-[2.5rem]">
+              {/* Letra Q suelta (sin contenedor), borde inferior solapando 2-4px la esquina sup-izq de la barra */}
+              <span
+                aria-hidden="true"
+                className="load-q absolute bottom-[50px] left-0 font-anton text-[5.5rem] leading-none text-paper [text-shadow:-2px_-2px_0_#000,2px_-2px_0_#000,-2px_2px_0_#000,2px_2px_0_#000,-3px_-3px_0_#000,3px_-3px_0_#000,-3px_3px_0_#000,3px_3px_0_#000]"
               >
-                {question && (
-                  <>
-                    {question.slice(0, -1)}
-                    <span className="text-accent">?</span>
-                  </>
-                )}
-              </p>
+                Q
+              </span>
 
-              {/* 3-5. Q + barra + % */}
-              <div className="load-bar-block relative mt-2 flex items-center pl-[2.5rem]">
-                {/* 3. Letra Q suelta (sin contenedor), borde inferior solapando 2-4px la esquina sup-izq de la barra */}
-                <span
-                  aria-hidden="true"
-                  className="load-q absolute bottom-[50px] left-0 font-anton text-[5.5rem] leading-none text-paper [text-shadow:-2px_-2px_0_#000,2px_-2px_0_#000,-2px_2px_0_#000,2px_2px_0_#000,-3px_-3px_0_#000,3px_-3px_0_#000,-3px_3px_0_#000,3px_3px_0_#000]"
-                >
-                  Q
-                </span>
-
-                {/* 4. Barra trapezoidal larga y fina (~7:1) */}
-                <div className="relative h-[52px] w-full bg-paper [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)] [transform:skewX(-6deg)]">
-                  <div className="absolute inset-[3px] bg-bg-hero [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
-                    <div ref={barRef} className="absolute inset-y-0 left-0 bg-accent" />
-                  </div>
+              {/* Barra trapezoidal larga y fina (~7:1) */}
+              <div className="relative h-[52px] w-full bg-paper [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)] [transform:skewX(-6deg)]">
+                <div className="absolute inset-[3px] bg-bg-hero [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
+                  <div ref={barRef} className="absolute inset-y-0 left-0 bg-accent" />
                 </div>
-
-                {/* 5. SÍ {porcentaje}% */}
-                <span className="load-pct ml-4 shrink-0 font-anton text-[3.5rem] leading-none text-accent [transform:skewX(-10deg)] [text-shadow:-2px_-2px_0_#000,2px_-2px_0_#000,-2px_2px_0_#000,2px_2px_0_#000,-3px_-3px_0_#000,3px_-3px_0_#000,-3px_3px_0_#000,3px_3px_0_#000,4px_4px_0_rgba(0,0,0,0.5)]">
-                  SÍ <span ref={pctRef}>0</span>%
-                </span>
               </div>
+
+              {/* SÍ {porcentaje}% */}
+              <span className="load-pct ml-4 shrink-0 font-anton text-[3.5rem] leading-none text-accent [transform:skewX(-10deg)] [text-shadow:-2px_-2px_0_#000,2px_-2px_0_#000,-2px_2px_0_#000,2px_2px_0_#000,-3px_-3px_0_#000,3px_-3px_0_#000,-3px_3px_0_#000,3px_3px_0_#000,4px_4px_0_rgba(0,0,0,0.5)]">
+                SÍ <span ref={pctRef}>0</span>%
+              </span>
             </div>
           </div>
         </div>

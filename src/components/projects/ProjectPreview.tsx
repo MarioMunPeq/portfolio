@@ -87,7 +87,7 @@ export function ProjectPreview({ project }: { project: Project }) {
 
       <div className="relative mt-6">
         <h2
-          className="font-hatty uppercase leading-[0.95] text-paper"
+          className="font-display uppercase leading-[0.95] text-paper"
           style={{
             fontSize: 'clamp(2rem, 3.4vw, 3.25rem)',
             textShadow: OUTLINE,
