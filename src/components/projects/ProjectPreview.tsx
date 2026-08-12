@@ -1,5 +1,5 @@
 import type { Project } from '../../data/projects'
-import { Annotation } from '../primitives/Annotation'
+import { DiamondMarker } from '../shared/DiamondMarker'
 
 const OUTLINE = `-2px -2px 0 var(--color-bg-hero), 2px -2px 0 var(--color-bg-hero), -2px 2px 0 var(--color-bg-hero), 2px 2px 0 var(--color-bg-hero)`
 
@@ -31,9 +31,12 @@ function Placeholder({ project }: { project: Project }) {
           [PROJECT PREVIEW PLACEHOLDER]
         </span>
       </div>
-      <Annotation className="absolute bottom-3 left-3 -rotate-3" marker="arrow">
+      <span
+        className="absolute bottom-3 left-3 inline-flex items-center gap-2 bg-accent px-3 py-1.5 text-label font-medium uppercase tracking-[0.22em] text-paper -rotate-3"
+      >
+        <DiamondMarker size={6} />
         Captura pendiente
-      </Annotation>
+      </span>
     </div>
   )
 }
@@ -69,7 +72,7 @@ export function ProjectPreview({ project }: { project: Project }) {
         </figure>
       </div>
 
-      <div className="relative mt-6">
+      <div className="relative mt-10">
         <div>
           <h2
             className="font-display uppercase leading-[0.95] text-paper"

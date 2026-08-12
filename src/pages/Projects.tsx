@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Screen } from '../components/transition/Screen'
 import { ProjectPreview } from '../components/projects/ProjectPreview'
 import { ProjectInventory } from '../components/projects/ProjectInventory'
+import { DiamondMarker } from '../components/shared/DiamondMarker'
 import { projects } from '../data/projects'
 import type { Project } from '../data/projects'
 
@@ -18,8 +19,8 @@ function ProjectsGraphicLayer() {
       className="pointer-events-none absolute inset-0 overflow-hidden"
     >
       <span
-        className="absolute right-[-4rem] top-[34%] -rotate-6 select-none font-display uppercase leading-none text-outline-faint"
-        style={{ fontSize: 'clamp(8rem, 20vw, 17rem)' }}
+        className="absolute right-[-6rem] top-[30%] -rotate-6 select-none font-display uppercase leading-none text-outline-faint opacity-40"
+        style={{ fontSize: 'clamp(7rem, 16vw, 14rem)' }}
       >
         Inventario
       </span>
@@ -49,10 +50,7 @@ export function Projects() {
         <div className="relative z-10 flex min-h-dvh flex-col px-6 pb-6 pt-24 md:px-10 lg:px-14">
           <header className="relative">
             <p className="flex items-center gap-2.5 text-label font-medium uppercase tracking-[0.22em] text-accent">
-              <span
-                aria-hidden="true"
-                className="h-3 w-3 bg-accent [clip-path:polygon(100%_0,100%_100%,0_50%)]"
-              />
+              <DiamondMarker size={8} />
               Inventario de proyectos
             </p>
             <h1

@@ -49,8 +49,7 @@ function CategoryRow({ cat, progress }: CategoryRowProps) {
   const [state, setState] = useState<StarBadgeState>('empty')
 
   useMotionValueEvent(progress, 'change', (value) => {
-    const next: StarBadgeState =
-      value >= cat.finish ? 'full' : value >= cat.finish - 0.15 ? 'mid' : 'empty'
+    const next: StarBadgeState = value >= cat.finish ? 'full' : 'empty'
     setState((prev) => (prev === next ? prev : next))
   })
 
@@ -198,16 +197,13 @@ export function LoadScreen() {
 
         {/* Zona inferior: composición única (letra Q + pregunta + barra + %) */}
         <div className="load-base absolute inset-x-0 bottom-0 h-[min(38vh,380px)] w-full">
-          {/* Línea roja de anclaje decorativa */}
-          <span aria-hidden="true" className="absolute bottom-0 left-0 h-[7px] w-[118%] -skew-x-12 bg-accent" />
-
           {/* Bloque compuesto único, capas: logo → pregunta → Q → barra → % */}
           <div className="pointer-events-none absolute bottom-12 right-6 z-20 w-[min(35rem,80vw)]">
             <div className="load-panel">
               <div className="load-panel-inner px-7 pb-6 pt-[6.5rem]">
                 {/* Pregunta, con la Q a la izquierda; barra y % debajo */}
                 <p
-                  className="load-question pl-[2.5rem] text-left font-anton uppercase leading-[1.05] text-paper"
+                  className="load-question max-w-full truncate pl-[2.5rem] text-left font-anton uppercase leading-[1.05] text-paper"
                   style={{ fontSize: 'clamp(1.3rem, 2.2vw, 2rem)' }}
                 >
                   {question && (

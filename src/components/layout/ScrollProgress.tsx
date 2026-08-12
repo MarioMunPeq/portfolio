@@ -12,7 +12,7 @@ export function ScrollProgress() {
   const { scrollYProgress } = useScroll()
   const top = useTransform(scrollYProgress, (value) => `${value * 100}%`)
 
-  if (location.pathname === '/' || reduced) return null
+  if (location.pathname === '/' || location.pathname === '/projects' || reduced) return null
 
   return (
     <div

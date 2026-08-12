@@ -39,7 +39,7 @@ export function ProjectInventoryItem({
           className={`relative z-10 font-display uppercase leading-none transition-colors duration-200 ${
             selected
               ? 'text-paper'
-              : 'text-outline-faint group-hover:text-outline group-focus-visible:text-outline'
+              : 'text-outline-mid group-hover:text-outline group-focus-visible:text-outline'
           }`}
           style={{ fontSize: 'clamp(1.5rem, 3.2vw, 2.75rem)' }}
         >

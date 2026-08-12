@@ -7,7 +7,8 @@ export interface ProjectImage {
 }
 
 export interface ProjectScreenshot {
-  src: string
+  /** null = captura pendiente: se muestra el placeholder en la galería. */
+  src: string | null
   alt: string
   /** Texto opcional que describe la captura. */
   caption?: string
@@ -43,7 +44,23 @@ export const projects: Project[] = [
     stack: ['React', 'TypeScript', 'Tailwind CSS', 'Vite'],
     links: { demo: null, github: null },
     images: null,
-    screenshots: null,
+    screenshots: [
+      {
+        src: null,
+        alt: 'Captura pendiente de la vista principal de Cosmere Archive',
+        caption: 'Vista principal del archivo',
+      },
+      {
+        src: null,
+        alt: 'Captura pendiente del catálogo de Cosmere Archive',
+        caption: 'Catálogo de obras',
+      },
+      {
+        src: null,
+        alt: 'Captura pendiente de la ficha de lectura de Cosmere Archive',
+        caption: 'Ficha de lectura',
+      },
+    ],
   },
   {
     slug: 'dungeon-archive',
@@ -55,7 +72,23 @@ export const projects: Project[] = [
     stack: ['React', 'Node.js', 'PostgreSQL', 'Prisma'],
     links: { demo: null, github: null },
     images: null,
-    screenshots: null,
+    screenshots: [
+      {
+        src: null,
+        alt: 'Captura pendiente del mapa de Dungeon Archive',
+        caption: 'Mapa del calabozo',
+      },
+      {
+        src: null,
+        alt: 'Captura pendiente del inventario de Dungeon Archive',
+        caption: 'Inventario del personaje',
+      },
+      {
+        src: null,
+        alt: 'Captura pendiente de la sala del tesoro de Dungeon Archive',
+        caption: 'Sala del tesoro',
+      },
+    ],
   },
   {
     slug: 'recomendador-campeones',
@@ -67,6 +100,22 @@ export const projects: Project[] = [
     stack: ['Python', 'scikit-learn', 'FastAPI', 'React'],
     links: { demo: null, github: null },
     images: null,
-    screenshots: null,
+    screenshots: [
+      {
+        src: null,
+        alt: 'Captura pendiente del selector de campeones',
+        caption: 'Selector de campeones',
+      },
+      {
+        src: null,
+        alt: 'Captura pendiente de las recomendaciones generadas',
+        caption: 'Recomendaciones generadas',
+      },
+      {
+        src: null,
+        alt: 'Captura pendiente del historial del recomendador',
+        caption: 'Historial de partidas',
+      },
+    ],
   },
 ]

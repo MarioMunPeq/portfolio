@@ -1,6 +1,6 @@
 import { forwardRef } from 'react'
 
-export type StarBadgeState = 'empty' | 'mid' | 'full'
+export type StarBadgeState = 'empty' | 'full'
 
 interface StarBadgeProps {
   /** Estado de completado de la categoría. */
@@ -11,10 +11,9 @@ interface StarBadgeProps {
 
 /**
  * Sello de estrella de la pantalla de carga. Sin barras ni porcentajes: una
- * estrella hueca que se rellena en dorado (con un estado intermedio
- * translúcido) cuando la categoría termina de "cargar". El estado se
- * controla externamente vía prop `state` (empty → mid → full) y el CSS de
- * tokens.css hace el morfo con transiciones.
+ * estrella hueca que se rellena en dorado cuando la categoría termina de
+ * "cargar". Solo dos estados visuales (vacío → completo); el morfo lo hace
+ * el CSS de tokens.css con una transición limpia, sin estados intermedios.
  */
 export const StarBadge = forwardRef<HTMLDivElement, StarBadgeProps>(
   function StarBadge({ state = 'empty', label }, ref) {
