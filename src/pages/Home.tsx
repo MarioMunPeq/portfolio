@@ -1,5 +1,6 @@
 import { Screen } from '../components/transition/Screen'
 import { SystemLabel } from '../components/shared/SystemLabel'
+import { DiamondMarker } from '../components/shared/DiamondMarker'
 import { HazardStripe } from '../components/hero/HazardStripe'
 import { GhostBgWord } from '../components/hero/GhostBgWord'
 import { InkBlot } from '../components/hero/InkBlot'
@@ -61,7 +62,7 @@ export function Home() {
         {/* Bloque de título */}
         <div className="hero-title-block absolute left-5 top-[22%] z-10 max-w-[calc(100%-2.5rem)] lg:left-[60px] lg:top-[38%] lg:max-w-none">
           <p className="hero-eyebrow mb-3.5 flex items-center gap-2 font-sans text-[13px] font-bold uppercase tracking-[0.2em] text-accent">
-            <span aria-hidden="true">◄</span>
+            <DiamondMarker size={7} />
             {profile.hero.eyebrow}
           </p>
 

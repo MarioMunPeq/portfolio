@@ -12,6 +12,7 @@ import { profile } from '../../data/profile'
 import { StarBadge, type StarBadgeState } from './StarBadge'
 import { ConcentricRings } from './ConcentricRings'
 import { HudCorners } from './HudCorners'
+import { DiamondMarker } from '../shared/DiamondMarker'
 import loadingBg from '../../assets/loading/loadingscreenbackground.webp'
 
 const PROGRESS_EASE: [number, number, number, number] = [0.65, 0, 0.35, 1]
@@ -178,7 +179,7 @@ export function LoadScreen() {
         {/* Bloque central: acceso de usuario + categorías (centrado verticalmente) */}
         <div className="relative flex flex-1 flex-col items-center justify-center text-center">
           <p className="mb-4 flex items-center gap-2.5 font-display text-label uppercase tracking-[0.3em] text-accent">
-            <span aria-hidden="true" className="inline-block h-[7px] w-[7px] bg-accent" />
+            <DiamondMarker size={7} />
             ACCEDIENDO A DATOS DE USUARIO
           </p>
           <div className="font-display text-[2.1rem] uppercase leading-none tracking-[0.04em] text-paper md:text-[3.2rem]">
@@ -190,7 +191,7 @@ export function LoadScreen() {
             ))}
           </div>
           <p className="mt-5 flex items-center gap-2 text-label uppercase tracking-[0.3em] text-paper/50">
-            <span aria-hidden="true" className="inline-block h-[7px] w-[7px] bg-accent" />
+            <DiamondMarker size={7} />
             {profile.branding.loading}
           </p>
         </div>
