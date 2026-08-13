@@ -91,11 +91,13 @@ function Sticker({
 }: {
   children: ReactNode
   className?: string
-  tone?: 'red' | 'gold' | 'paper'
+  tone?: 'red' | 'gold' | 'yellow' | 'paper'
 }) {
   const toneClass = {
     red: 'bg-accent text-paper',
     gold: 'bg-gold text-ink',
+    // Amarillo idéntico a las etiquetas de Social Stats (P5Label stat).
+    yellow: 'bg-[#FEFF04] text-[#010101]',
     paper: 'bg-paper text-ink',
   }[tone]
   return (
@@ -157,10 +159,10 @@ function PortraitSlot() {
 }
 
 /** Estrella de Social Stats de Persona 5: silueta decorativa regular de cinco
-    puntas (#FFA600/#E68C00) que enmarca un polígono de estadísticas irregular
-    (#FEC802/#EEAF03) cuyas puntas se extienden según el valor de cada atributo.
-    Extrusiones negras desplazadas, sombras anaranjadas y caras en dos tonos.
-    Sin gradientes, brillos suaves, ni forma de radar. */
+    puntas con un único degradado radial plano (centro claro → borde oro oscuro)
+    que enmarca un polígono de estadísticas irregular amarillo plano cuyas
+    puntas se extienden según el valor de cada atributo. Sin extrusiones, sin
+    caras en dos tonos, sin brillos ni forma de radar. */
 function StatStar() {
   return (
     <div className="relative mx-auto w-full max-w-[42rem] px-4 pt-8 pb-4">
@@ -171,58 +173,28 @@ function StatStar() {
           className="absolute inset-0 h-full w-full [transform:rotate(2deg)]"
         >
           <defs>
-            <clipPath id="p5-star-right">
-              <rect x="160" y="0" width="160" height="320" />
-            </clipPath>
+            {/* Oro plano de la silueta: degradado radial con centro claro y
+                borde oro/naranja más oscuro (rendering plano, sin caras). */}
+            <radialGradient id="stat-star-gold" cx="50%" cy="50%" r="68%">
+              <stop offset="0%" stopColor="#ffd84d" />
+              <stop offset="55%" stopColor="#ffa600" />
+              <stop offset="100%" stopColor="#e68c00" />
+            </radialGradient>
           </defs>
 
-          {/* Extrusión negra trasera de la silueta exterior */}
+          {/* Silueta exterior: oro con degradado radial plano */}
           <polygon
             points={OUTER_STAR}
-            fill="#111111"
-            transform="translate(10 12)"
-            strokeLinejoin="round"
-          />
-          {/* Sombra anaranjada profunda */}
-          <polygon
-            points={OUTER_STAR}
-            fill="#E68C00"
-            transform="translate(6 8)"
-            strokeLinejoin="round"
-          />
-
-          {/* Estrella exterior: naranja principal */}
-          <polygon points={OUTER_STAR} fill="#FFA600" strokeLinejoin="round" />
-          {/* Mitad derecha en naranja oscuro */}
-          <g clipPath="url(#p5-star-right)">
-            <polygon points={OUTER_STAR} fill="#E68C00" />
-          </g>
-          {/* Borde negro angular exterior */}
-          <polygon
-            points={OUTER_STAR}
-            fill="none"
+            fill="url(#stat-star-gold)"
             stroke="#111111"
             strokeWidth="3"
             strokeLinejoin="round"
           />
 
-          {/* Polígono de estadísticas: sombra desplazada */}
+          {/* Polígono de estadísticas: amarillo plano */}
           <polygon
             points={INNER_STAR}
-            fill="#EEAF03"
-            transform="translate(3 4)"
-            strokeLinejoin="round"
-          />
-          {/* Polígono de estadísticas: amarillo principal */}
-          <polygon points={INNER_STAR} fill="#FEC802" strokeLinejoin="round" />
-          {/* Mitad derecha en amarillo oscuro */}
-          <g clipPath="url(#p5-star-right)">
-            <polygon points={INNER_STAR} fill="#EEAF03" />
-          </g>
-          {/* Borde negro angular del polígono de estadísticas */}
-          <polygon
-            points={INNER_STAR}
-            fill="none"
+            fill="#FEC802"
             stroke="#111111"
             strokeWidth="2.5"
             strokeLinejoin="round"
@@ -415,9 +387,16 @@ export function About() {
 
             {/* ===== Columna derecha: Social Stats (pieza central) ===== */}
             <div className="relative">
+              {/* Panel de fondo de la composición: textura de estrellas en
+                  gris oscuro (sin rojo) que tapa las estrellas rojas del
+                  fondo de página dentro de esta zona. */}
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute -inset-8 bg-bg-hero bg-stars-charcoal"
+              />
               <Reveal delay={0.1}>
                 <div className="relative">
-                  <Sticker tone="gold" className="absolute right-2 top-0 z-10 -rotate-3">
+                  <Sticker tone="yellow" className="absolute right-2 top-0 z-10 -rotate-3">
                     Estadísticas sociales
                   </Sticker>
                   <StatStar />

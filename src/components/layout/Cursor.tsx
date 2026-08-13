@@ -11,9 +11,11 @@ interface CursorState {
 
 const RED = '#e60012'
 const PAPER = '#f5f5f0'
+const CYAN = '#5ad1ff'
 
-// Etiqueta y color según el contexto (data-cursor). El color del contorno
-// cambia rojo/blanco según la acción: VOLVER queda en rojo.
+// Etiqueta según el contexto (data-cursor). El color sigue existiendo para el
+// dedupe de estado, aunque el diamante ya no lo use: el tratamiento visual
+// (rojo relleno + borde cian fantasma) es fijo en el hover.
 const CURSOR_STYLES: Record<string, CursorState> = {
   select: { active: true, label: 'SELECCIONAR', color: 'white' },
   open: { active: true, label: 'ABRIR', color: 'white' },
@@ -42,38 +44,43 @@ function resolveCursor(target: Element): CursorState {
 
 // Curva rápida y cortante (ease-out exponencial).
 const BEZIER: [number, number, number, number] = [0.16, 1, 0.3, 1]
-// Transición de estado de la retícula (~160 ms).
-const SNAP = { duration: 0.16, ease: BEZIER }
+// Transición de estado del diamante (~180 ms).
+const SNAP = { duration: 0.18, ease: BEZIER }
 // Compresión al pulsar, aún más corta (~120 ms).
 const PRESS = { duration: 0.12, ease: BEZIER }
 // Entrada de la etiqueta contextual.
 const LABEL_IN = { duration: 0.16, ease: BEZIER }
-// Confirmación geométrica del clic.
-const CONFIRM = { duration: 0.13, ease: 'easeOut' as const }
+// Rotación continua y lenta del diamante, independiente del movimiento.
+const SPIN = { duration: 6, ease: 'linear' as const, repeat: Infinity }
 
 // Diamante: cuadrado girado 45° (vértices arriba/abajo/izquierda/derecha).
 const DIAMOND = 'M 12 2.5 L 21.5 12 L 12 21.5 L 2.5 12 Z'
-// Muesca de acento sobre la arista superior derecha (asimetría P5).
-const TICK = 'M 12 2.5 L 15 5.5'
 
 // Separación horizontal de la etiqueta respecto al puntero y ancho estimado
 // (se reajusta con la medición real del DOM).
 const LABEL_GAP = 24
 const LABEL_EST = 150
 
+// Factor de easing del fantasma (más alto = más pegajoso al puntero).
+const GHOST_EASING = 16
+
 /**
- * Cursor decorativo del sistema: un diamante geométrico fino inspirado en el
- * indicador de selección de Persona 5. Con `prefers-reduced-motion` o puntero
- * táctil no se monta: se usa el cursor nativo. Cuando está activo se marca
- * `data-cursor-active` en el documento y CSS oculta el cursor nativo (solo
- * punteros finos). La posición sigue al puntero mediante MotionValues crudos
- * (sin spring, sin lag, sin estado por fotograma).
+ * Cursor decorativo del sistema — "Diamond Selector". Dos capas de un mismo
+ * diamante blanco fino de 2px, inspirado en el marcador de selección que ante
+ * a los comandos del menú de Persona 5:
  *
- * Estados: reposo = diamante rojo pequeño; hover = crece ~1.6x, gira y cambia
- * rojo/blanco según la acción, con muesca de acento y etiqueta contextual;
- * pulsación = compresión breve + anillo de confirmación geométrico (< 150 ms).
- * La etiqueta se recoloca al otro lado del puntero cerca de los bordes del
- * viewport y nunca sale de pantalla.
+ *  - Capa principal: diamante blanco de contorno que rota de forma continua y
+ *    lenta (animación CSS, no ligada al movimiento). En hover crece y se
+ *    rellena de rojo sólido manteniendo el borde blanco.
+ *  - Capa fantasma: copia ligeramente menor, roja, desplazada unos píxeles y
+ *    con retraso suavizado respecto al puntero (requestAnimationFrame +
+ *    easing exponencial, no 1:1), creando el doble perfil tipo glitch. En
+ *    hover su borde pasa a cian.
+ *
+ * Con `prefers-reduced-motion` o puntero táctil no se monta: se usa el cursor
+ * nativo. Cuando está activo se marca `data-cursor-active` y CSS oculta el
+ * nativo (solo punteros finos). La etiqueta contextual se recoloca al otro
+ * lado del puntero cerca de los bordes y nunca sale de pantalla.
  */
 export function Cursor() {
   const reduced = useReducedMotion()
@@ -86,10 +93,12 @@ export function Cursor() {
   const [pressed, setPressed] = useState(false)
   const [flipped, setFlipped] = useState(false)
   const [lift, setLift] = useState(0)
-  const [confirmKey, setConfirmKey] = useState(0)
 
   const x = useMotionValue(-100)
   const y = useMotionValue(-100)
+  // Posición del fantasma: se aproxima a (x, y) con easing por fotograma.
+  const ghostX = useMotionValue(-100)
+  const ghostY = useMotionValue(-100)
 
   const viewport = useRef({ w: 1280, h: 720 })
   const flipRef = useRef(false)
@@ -111,6 +120,8 @@ export function Cursor() {
     setEnabled(true)
     document.documentElement.setAttribute('data-cursor-active', 'true')
     viewport.current = { w: window.innerWidth, h: window.innerHeight }
+    ghostX.set(x.get())
+    ghostY.set(y.get())
 
     const onResize = () => {
       viewport.current = { w: window.innerWidth, h: window.innerHeight }
@@ -155,7 +166,6 @@ export function Cursor() {
     const onDown = (event: MouseEvent) => {
       if (event.button !== 0) return
       setPressed(true)
-      setConfirmKey((key) => key + 1)
     }
 
     const onUp = () => setPressed(false)
@@ -183,124 +193,119 @@ export function Cursor() {
       document.removeEventListener('mouseleave', onLeave)
       document.documentElement.removeAttribute('data-cursor-active')
     }
-  }, [reduced, x, y])
+  }, [reduced, x, y, ghostX, ghostY])
+
+  // Retraso del fantasma: easing exponencial hacia la posición real del
+  // puntero, una vez por fotograma (lag suave, no seguimiento 1:1).
+  useEffect(() => {
+    if (!enabled) return
+    let raf = 0
+    let prev = performance.now()
+    const tick = (now: number) => {
+      const dt = Math.min((now - prev) / 1000, 0.05)
+      prev = now
+      const k = 1 - Math.exp(-dt * GHOST_EASING)
+      ghostX.set(ghostX.get() + (x.get() - ghostX.get()) * k)
+      ghostY.set(ghostY.get() + (y.get() - ghostY.get()) * k)
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [enabled, x, y, ghostX, ghostY])
 
   if (!enabled) return null
 
-  // Reposo: contorno rojo, marcador papel. Hover (acción blanca): contorno
-  // papel brillante con acento rojo. Hover (VOLVER): rojo con acento papel.
-  const strokeColor = cursor.active && cursor.color === 'white' ? PAPER : RED
-  const dotColor = cursor.active && cursor.color === 'white' ? RED : PAPER
+  // Hover: el principal se rellena de rojo sólido con borde blanco; el borde
+  // del fantasma pasa de rojo a cian.
+  const ghostStroke = cursor.active ? CYAN : RED
+  const mainFill = cursor.active ? RED : 'transparent'
 
   const labelX = flipped ? -(labelWidth.current + LABEL_GAP) : LABEL_GAP
   const labelY = lift === 1 ? 26 : lift === -1 ? -58 : -18
 
   return (
-    <motion.div
-      aria-hidden="true"
-      className="pointer-events-none fixed left-0 top-0 z-[120]"
-      style={{ x, y }}
-    >
-      <div className="relative -ml-[9px] -mt-[9px]">
-        {/* Retícula */}
-        <motion.div
-          className="relative flex h-[18px] w-[18px] items-center justify-center"
-          animate={{
-            scale: pressed ? (cursor.active ? 1.32 : 0.86) : cursor.active ? 1.6 : 1,
-            rotate: cursor.active ? 9 : 0,
-          }}
-          transition={pressed ? PRESS : SNAP}
-        >
-          <svg viewBox="0 0 24 24" className="h-full w-full">
-            {/* Confirmación geométrica al pulsar: contracción breve */}
-            {confirmKey > 0 && (
-              <motion.path
-                key={confirmKey}
-                d={DIAMOND}
-                fill="none"
-                stroke={dotColor}
-                strokeWidth="1.2"
-                initial={{ scale: 1, opacity: 0.9 }}
-                animate={{ scale: 0.55, opacity: 0 }}
-                transition={CONFIRM}
-                style={{ transformBox: 'fill-box', transformOrigin: 'center' }}
-              />
-            )}
-
-            {/* Contorno del diamante */}
-            <motion.path
-              d={DIAMOND}
-              fill="none"
-              animate={{
-                stroke: strokeColor,
-                strokeWidth: cursor.active ? 1.6 : 1.2,
-              }}
-              transition={SNAP}
-            />
-
-            {/* Muesca de acento en la arista superior derecha */}
-            <motion.path
-              d={TICK}
-              stroke={dotColor}
-              strokeWidth="1.5"
-              fill="none"
-              animate={{ opacity: cursor.active ? 1 : 0 }}
-              transition={SNAP}
-            />
-
-            {/* Marcador central diminuto */}
-            <motion.g
-              animate={{ scale: cursor.active ? 1.5 : 1 }}
-              transition={SNAP}
-              style={{ transformBox: 'fill-box', transformOrigin: 'center' }}
-            >
-              <rect
-                x="10.9"
-                y="10.9"
-                width="2.2"
-                height="2.2"
-                fill={dotColor}
-                transform="rotate(45 12 12)"
-              />
-            </motion.g>
-          </svg>
-        </motion.div>
-
-        {/* Etiqueta contextual tipo P5 */}
-        <motion.span
-          className="pointer-events-none absolute left-0 top-0"
-          animate={{
-            opacity: cursor.active ? 1 : 0,
-            scale: cursor.active ? 1 : 0.96,
-            x: cursor.active ? labelX : labelX + (flipped ? -8 : 8),
-            y: cursor.active ? labelY : labelY + 6,
-          }}
-          transition={LABEL_IN}
-        >
-          <span
-            ref={labelRef}
-            className={`relative block bg-[#010101] px-4 py-[7px] [clip-path:polygon(0_0,100%_0,calc(100%_-_8px)_100%,8px_100%)] ${
-              flipped ? 'text-right' : ''
-            }`}
+    <>
+      {/* Fantasma retrasado: diamante menor rojo (cian en hover), desplazado
+          unos píxeles detrás del principal y con lag suavizado. */}
+      <motion.div
+        aria-hidden="true"
+        className="pointer-events-none fixed left-0 top-0 z-[119]"
+        style={{ x: ghostX, y: ghostY }}
+      >
+        <div className="-ml-[10px] -mt-[10px]" style={{ transform: 'translate(8px, 8px)' }}>
+          <motion.svg
+            viewBox="0 0 24 24"
+            className="block h-5 w-5"
+            animate={{ rotate: 360 }}
+            transition={SPIN}
           >
-            {/* Línea estructural superior */}
-            <span className="absolute inset-x-0 top-0 h-px bg-paper/60" />
-            {/* Marcador direccional rojo */}
+            <path d={DIAMOND} fill="none" stroke={ghostStroke} strokeWidth="1.6" />
+          </motion.svg>
+        </div>
+      </motion.div>
+
+      {/* Capa principal: diamante blanco de 2px que rota de forma continua. */}
+      <motion.div
+        aria-hidden="true"
+        className="pointer-events-none fixed left-0 top-0 z-[120]"
+        style={{ x, y }}
+      >
+        <div className="relative -ml-[12px] -mt-[12px]">
+          <motion.div animate={{ rotate: 360 }} transition={SPIN}>
+            <motion.div
+              className="relative flex h-6 w-6 items-center justify-center"
+              animate={{
+                scale: pressed ? 0.88 : cursor.active ? 1.7 : 1,
+              }}
+              transition={pressed ? PRESS : SNAP}
+            >
+              <svg viewBox="0 0 24 24" className="block h-full w-full">
+                <path
+                  d={DIAMOND}
+                  fill={mainFill}
+                  stroke={PAPER}
+                  strokeWidth="2"
+                />
+              </svg>
+            </motion.div>
+          </motion.div>
+
+          {/* Etiqueta contextual tipo P5 */}
+          <motion.span
+            className="pointer-events-none absolute left-0 top-0"
+            animate={{
+              opacity: cursor.active ? 1 : 0,
+              scale: cursor.active ? 1 : 0.96,
+              x: cursor.active ? labelX : labelX + (flipped ? -8 : 8),
+              y: cursor.active ? labelY : labelY + 6,
+            }}
+            transition={LABEL_IN}
+          >
             <span
-              className={`absolute top-1/2 h-[6px] w-[6px] -translate-y-1/2 rotate-45 bg-accent ${
-                flipped ? 'right-[7px]' : 'left-[7px]'
-              }`}
-            />
-            <span
-              className={`block whitespace-nowrap font-display text-[11px] uppercase leading-none tracking-[0.18em] text-paper ${
-                flipped ? 'pr-4' : 'pl-4'
+              ref={labelRef}
+              className={`relative block bg-[#010101] px-4 py-[7px] [clip-path:polygon(0_0,100%_0,calc(100%_-_8px)_100%,8px_100%)] ${
+                flipped ? 'text-right' : ''
               }`}
             >
-              {cursor.label}
+              {/* Línea estructural superior */}
+              <span className="absolute inset-x-0 top-0 h-px bg-paper/60" />
+              {/* Marcador direccional rojo */}
+              <span
+                className={`absolute top-1/2 h-[6px] w-[6px] -translate-y-1/2 rotate-45 bg-accent ${
+                  flipped ? 'right-[7px]' : 'left-[7px]'
+                }`}
+              />
+              <span
+                className={`block whitespace-nowrap font-display text-[11px] uppercase leading-none tracking-[0.18em] text-paper ${
+                  flipped ? 'pr-4' : 'pl-4'
+                }`}
+              >
+                {cursor.label}
+              </span>
             </span>
-          </span>
-        </motion.span>
-      </div>
-    </motion.div>
+          </motion.span>
+        </div>
+      </motion.div>
+    </>
   )
 }
