@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react'
-import { ScrollProgress } from './ScrollProgress'
 import { HUD } from './HUD'
 import { Cursor } from './Cursor'
 import { LoadScreen } from '../overlay/LoadScreen'
@@ -19,7 +18,6 @@ export function Layout({ children }: LayoutProps) {
         Saltar al contenido
       </a>
       <LoadScreen />
-      <ScrollProgress />
       <HUD />
       <Grain />
       <Cursor />

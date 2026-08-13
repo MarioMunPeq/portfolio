@@ -17,7 +17,7 @@ export function Contact() {
 
         <div className="relative mx-auto max-w-5xl">
           <Reveal>
-            <ScreenHeader index="06" label="Contacto" title="Hablemos" onDark />
+            <ScreenHeader label="Contacto" title="Hablemos" />
           </Reveal>
 
           <Reveal delay={0.12}>

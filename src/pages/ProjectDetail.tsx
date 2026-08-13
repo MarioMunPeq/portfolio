@@ -10,21 +10,6 @@ const OUTLINE_THICK = `-3px -3px 0 var(--color-bg-hero), 3px -3px 0 var(--color-
 const ROTATIONS = ['-1.5deg', '1deg', '-1deg', '1.5deg', '-0.5deg', '0.5deg']
 
 /**
- * Ghost number for gallery sections - reuses the faint outline numeral treatment.
- */
-function GhostNumber({ order }: { order: string }) {
-  return (
-    <span
-      aria-hidden="true"
-      className="pointer-events-none absolute -right-8 top-1/2 -translate-y-1/2 select-none font-expose uppercase leading-none text-outline-faint"
-      style={{ fontSize: 'clamp(10rem, 25vw, 20rem)' }}
-    >
-      {order}
-    </span>
-  )
-}
-
-/**
  * Angular framed image with clip-path border treatment. When the screenshot
  * has no `src` yet, renders the established [PLACEHOLDER] slot in its place.
  */
@@ -354,9 +339,8 @@ export function ProjectDetail() {
                   </h2>
                 </div>
                 <div className="mt-10 space-y-20">
-                  {project.screenshots.map((screenshot, index) => (
+                  {project.screenshots.map((screenshot) => (
                     <div key={screenshot.src} className="relative">
-                      <GhostNumber order={String(index + 1).padStart(2, '0')} />
                       <GalleryImage screenshot={screenshot} />
                     </div>
                   ))}

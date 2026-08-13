@@ -1,30 +1,18 @@
 import { Link, useLocation } from 'react-router-dom'
-import { NAV_ITEMS } from '../navigation/nav-items'
 import { profile } from '../../data/profile'
-
-function toCounter(value: number) {
-  return String(value).padStart(2, '0')
-}
 
 /**
  * HUD persistente del sistema: franja superior fija con la identidad de
- * marca, la ubicación y el contador de pantalla (página actual / total).
- * Vive por encima del contenido pero bajo el cargador, el barrido y el
- * cursor. Es decorativa de la identidad de juego, no reemplaza la nav.
- * No se monta en el menú principal: esa pantalla trae su propia topbar
- * (hazard stripe + labels de sistema de la referencia).
+ * marca, la ubicación y el año. Vive por encima del contenido pero bajo
+ * el cargador, el barrido y el cursor. Es decorativa de la identidad de
+ * juego, no reemplaza la nav. No se monta en el menú principal: esa
+ * pantalla trae su propia topbar (hazard stripe + labels de sistema).
  */
 export function HUD() {
   const location = useLocation()
 
   if (location.pathname === '/') return null
 
-  const activeIndex = NAV_ITEMS.findIndex((item) =>
-    item.path === '/'
-      ? location.pathname === '/'
-      : location.pathname.startsWith(item.path),
-  )
-  const current = activeIndex >= 0 ? activeIndex : 0
   const year = new Date().getFullYear()
 
   return (
@@ -48,7 +36,7 @@ export function HUD() {
         </span>
 
         <span className="text-label font-medium uppercase tracking-[0.25em] text-paper/70">
-          {toCounter(current + 1)}/{toCounter(NAV_ITEMS.length)} · {year}
+          {year}
         </span>
       </div>
     </div>

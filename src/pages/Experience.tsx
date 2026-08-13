@@ -5,22 +5,17 @@ import { experience } from '../data/experience'
 
 export function Experience() {
   return (
-    <Screen className="min-h-dvh bg-bg-content text-ink">
+    <Screen className="min-h-dvh bg-bg-hero text-paper">
       <section className="relative overflow-hidden px-6 py-24 md:px-10 md:py-28">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
           <span className="absolute right-0 top-0 h-2 w-full bg-stripes-faint" />
         </div>
         <div className="relative mx-auto max-w-5xl">
           <Reveal>
-            <ScreenHeader
-              index="04"
-              label="Experiencia"
-              title="ESTADÍSTICAS"
-              usePersonaFont
-            />
+            <ScreenHeader label="Experiencia" title="ESTADÍSTICAS" usePersonaFont />
           </Reveal>
 
-          <ol className="mt-14 space-y-12 border-l border-ink/15 pl-6 md:pl-8">
+          <ol className="mt-14 space-y-12 border-l border-paper/15 pl-6 md:pl-8">
             {experience.map((entry, index) => (
               <li key={entry.company} className="relative">
                 <span
@@ -33,7 +28,7 @@ export function Experience() {
                       <h2 className="font-display text-2xl uppercase leading-tight">
                         {entry.role}
                       </h2>
-                      <span className="text-caption uppercase tracking-[0.18em] text-ink/50">
+                      <span className="text-caption uppercase tracking-[0.18em] text-paper/50">
                         {entry.period}
                       </span>
                     </div>
@@ -46,7 +41,7 @@ export function Experience() {
                         {entry.highlights.map((highlight) => (
                           <li
                             key={highlight}
-                            className="flex gap-3 text-caption leading-relaxed text-ink/80"
+                            className="flex gap-3 text-caption leading-relaxed text-paper/80"
                           >
                             <span
                               aria-hidden="true"
