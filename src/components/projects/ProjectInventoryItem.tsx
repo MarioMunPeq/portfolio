@@ -35,7 +35,7 @@ export function ProjectInventoryItem({
       <Link
         to={`/proyectos/${project.slug}`}
         ref={setItemRef}
-        data-cursor
+        data-cursor="project"
         aria-current={selected ? 'true' : undefined}
         onMouseEnter={onSelect}
         onFocus={onSelect}

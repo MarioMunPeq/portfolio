@@ -129,6 +129,7 @@ function AngularButton({ children, href, external = false, className = '' }: {
   return (
     <a
       href={href}
+      data-cursor="open"
       target={external ? '_blank' : undefined}
       rel={external ? 'noreferrer' : undefined}
       className={`group relative inline-flex items-center justify-center overflow-hidden border-2 border-accent px-6 py-4 font-expose text-base uppercase tracking-[0.1em] text-paper clip-[polygon(0_0,94%_0,100%_100%,6%_100%)] box-shadow-[3px_3px_0_var(--color-accent-deep)] transition-all duration-200 hover:border-accent hover:bg-accent hover:text-ink hover:box-shadow-[5px_5px_0_var(--color-paper)] focus-visible:border-accent focus-visible:bg-accent focus-visible:text-ink ${className}`}
@@ -187,7 +188,7 @@ function PrevNextNav({
     <nav aria-label="Navegación entre proyectos">
       <div className="grid gap-4 sm:grid-cols-2">
         {prev ? (
-          <Link to={`/proyectos/${prev.slug}`} className={linkClass}>
+          <Link to={`/proyectos/${prev.slug}`} data-cursor="project" className={linkClass}>
             <span className="flex items-center gap-2 font-expose text-label font-medium uppercase tracking-[0.3em] text-paper/50 transition-colors group-hover:text-ink/70 group-focus-visible:text-ink/70">
               <DiamondMarker size={6} />
               Anterior
@@ -200,7 +201,7 @@ function PrevNextNav({
           <span className="hidden sm:block" />
         )}
         {next ? (
-          <Link to={`/proyectos/${next.slug}`} className={`${linkClass} items-end text-right`}>
+          <Link to={`/proyectos/${next.slug}`} data-cursor="project" className={`${linkClass} items-end text-right`}>
             <span className="flex items-center gap-2 font-expose text-label font-medium uppercase tracking-[0.3em] text-paper/50 transition-colors group-hover:text-ink/70 group-focus-visible:text-ink/70">
               Siguiente
               <DiamondMarker size={6} />
@@ -254,6 +255,7 @@ export function ProjectDetail() {
             <Reveal>
               <Link
                 to="/projects"
+                data-cursor="back"
                 className="inline-flex items-center gap-3 font-expose text-label font-medium uppercase tracking-[0.22em] text-paper/80 hover:text-accent transition-colors group"
               >
                 <span

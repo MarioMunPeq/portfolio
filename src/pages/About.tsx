@@ -411,6 +411,7 @@ export function About() {
                 <div className="mt-10 flex flex-wrap items-center justify-between gap-6 border-t border-paper/15 pt-6">
                   <Link
                     to="/"
+                    data-cursor="back"
                     className="group inline-flex items-center gap-3 border-2 border-paper/60 bg-bg-content-alt px-6 py-3 font-display text-base uppercase tracking-[0.15em] text-paper [clip-path:polygon(10px_0,100%_0,calc(100%_-_10px)_100%,0_100%)] transition-colors duration-200 hover:border-accent hover:bg-accent"
                   >
                     <span

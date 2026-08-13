@@ -32,7 +32,7 @@ export function CommandNavItem({ icon, label, sub, path }: CommandNavItemProps) 
     <li className="hero-command-item">
       <Link
         to={path}
-        data-cursor
+        data-cursor="open"
         className="hero-cmd group"
       >
         <span aria-hidden="true" className="hero-cmd-track" />

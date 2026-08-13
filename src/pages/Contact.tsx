@@ -40,6 +40,7 @@ export function Contact() {
                     href={links.github.url}
                     target="_blank"
                     rel="noreferrer"
+                    data-cursor="contact"
                     className="inline-block border border-paper/30 px-5 py-3 font-medium uppercase tracking-[0.18em] transition-colors hover:border-accent hover:text-accent"
                   >
                     GitHub
@@ -52,6 +53,7 @@ export function Contact() {
                     href={links.linkedin.url}
                     target="_blank"
                     rel="noreferrer"
+                    data-cursor="contact"
                     className="inline-block border border-paper/30 px-5 py-3 font-medium uppercase tracking-[0.18em] transition-colors hover:border-accent hover:text-accent"
                   >
                     LinkedIn
@@ -62,6 +64,7 @@ export function Contact() {
                 <li>
                   <a
                     href={links.email.url}
+                    data-cursor="contact"
                     className="inline-block border border-paper/30 px-5 py-3 font-medium uppercase tracking-[0.18em] transition-colors hover:border-accent hover:text-accent"
                   >
                     Email
@@ -73,6 +76,7 @@ export function Contact() {
                   <a
                     href={links.cvPdf}
                     download
+                    data-cursor="contact"
                     className="inline-block bg-accent px-5 py-3 font-medium uppercase tracking-[0.18em] text-paper transition-colors hover:bg-accent-alt"
                   >
                     Descargar CV

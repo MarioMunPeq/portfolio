@@ -28,7 +28,7 @@ export function MenuOption({
     <li>
       <Link
         to={path}
-        data-cursor
+        data-cursor="open"
         aria-current={current ? 'page' : undefined}
         className="group flex items-center gap-4 border-b border-paper/15 py-3 transition-colors focus-visible:border-accent md:gap-6 md:py-4"
       >

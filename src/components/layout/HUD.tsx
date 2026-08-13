@@ -20,6 +20,7 @@ export function HUD() {
       <div className="flex items-center justify-between gap-4 px-4 py-2.5 md:px-6">
         <Link
           to="/"
+          data-cursor="back"
           className="group inline-flex items-center gap-2 text-label font-medium uppercase tracking-[0.25em]"
         >
           <span
