@@ -304,49 +304,6 @@
   border-color: currentColor;
 }
 
-/* Paneles HUD de la pantalla de carga: fondo oscuro semitransparente con
-   borde angular fino (mismo lenguaje que las tarjetas .cmd). La capa
-   exterior pinta el borde (2px) y la interior el relleno, ambas con la
-   esquina recortada en clip-path (sin border-radius, regla del proyecto). */
-.load-panel {
-  position: relative;
-  padding: 2px;
-  background: rgba(230, 0, 18, 0.4);
-  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
-}
-
-.load-panel-inner {
-  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
-  background: rgba(10, 10, 10, 0.66);
-}
-
-/* Radar de la pantalla de carga: pulsos escalonados que crecen y se
-   desvanecen desde el punto de fuga de la foto. reduced-motion los anula
-   vía la regla global y quedan solo los anillos estáticos de referencia. */
-@keyframes radar-pulse {
-  0% {
-    opacity: 0.55;
-    transform: scale(0.3);
-  }
-  70% {
-    opacity: 0.12;
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1.5);
-  }
-}
-
-.radar-pulse {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: radar-pulse 2.8s ease-out infinite;
-}
-
-.radar-pulse--b {
-  animation-delay: 1.4s;
-}
-
 /* Sello de estrella por categoría (pantalla de carga): pasa de estrella
    hueca (contorno) a estrella dorada rellena según el estado de cada
    categoría. Solo dos estados (empty → full) con transición limpia; sin
@@ -385,6 +342,25 @@
 
 .star-badge[data-state='full'] .star-outline {
   stroke: var(--color-gold);
+}
+
+/* Flotación del antifaz: respiración casi imperceptible (4px en ~7s).
+   La silueta del antifaz no tiene filtro propio: el rim-light rojo lo
+   anima motion (fases de entrada). reduced-motion anula el loop vía la
+   regla global. */
+@keyframes load-mask-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.load-mask-float {
+  animation: load-mask-float 7s ease-in-out infinite;
+  will-change: transform;
 }
 
 /* ============================================================
@@ -788,6 +764,140 @@ html.lenis body {
   html[data-cursor-active] * {
     cursor: none !important;
   }
+}
+
+/* ============================================================
+   LoadScreen v2 — entrada cinematográfica en fases
+   Todas las animaciones de este bloque son one-shot o loops casi
+   imperceptibles; reduced-motion las anula vía la regla global.
+   ============================================================ */
+
+/* Aro punteado exterior: rotación lentísima (atmosférica), para que la
+   composición respire sin un movimiento evidente. */
+@keyframes rings-dotted {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.rings-dotted {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: rings-dotted 90s linear infinite;
+}
+
+/* Destello corto de los arcos rojos cuando el antifaz termina de
+   revelarse (fase de impacto). Una sola pasada, sin loop. */
+@keyframes rings-flash {
+  0% {
+    opacity: 0.14;
+  }
+  40% {
+    opacity: 0.62;
+  }
+  100% {
+    opacity: 0.14;
+  }
+}
+
+.rings-arcs--flash {
+  animation: rings-flash 0.55s ease-out;
+}
+
+/* FASE 1 — AUSENCIA: línea roja que crece en el centro (indicio), se
+   mantiene un instante y se apaga al empezar el revelado del antifaz. */
+@keyframes core-line-grow {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.9;
+  }
+  to {
+    width: 64px;
+    opacity: 0.9;
+  }
+}
+
+@keyframes core-line-hide {
+  to {
+    opacity: 0;
+  }
+}
+
+.load-core-line {
+  animation:
+    core-line-grow 0.7s ease-out both,
+    core-line-hide 0.4s ease-in 1s forwards;
+}
+
+/* FASE 1 — AUSENCIA: barrido vertical único de una línea fina. */
+@keyframes scan-v {
+  0% {
+    left: -5%;
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.45;
+  }
+  85% {
+    opacity: 0.45;
+  }
+  100% {
+    left: 105%;
+    opacity: 0;
+  }
+}
+
+.load-scan-v {
+  animation: scan-v 1.6s ease-in-out 0.25s both;
+}
+
+/* FASE 3 — IMPACTO: diamantes que saltan desde las esquinas del antifaz
+   y se desvanecen (una vez). La dirección la fija --dx/--dy por esquina. */
+@keyframes impact-burst {
+  0% {
+    opacity: 0.9;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx, 0px), var(--dy, 0px)) scale(0.4);
+  }
+}
+
+.load-impact-diamond {
+  animation: impact-burst 0.5s ease-out both;
+}
+
+/* SALIDA — barrido horizontal rojo que cruza la pantalla justo antes de
+   levantar la escena hacia la HOME. */
+@keyframes exit-scan {
+  0% {
+    top: -3%;
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.85;
+  }
+  100% {
+    top: 103%;
+    opacity: 0;
+  }
+}
+
+.load-exit-scan {
+  animation: exit-scan 0.55s ease-out 0.05s both;
+}
+
+/* Cursor cuadrado al frente del relleno de progreso. */
+.load-bar-cursor {
+  background-color: var(--color-accent);
+  box-shadow: 0 0 10px rgba(230, 0, 18, 0.55);
 }
 
 /* --- Reduced motion: eliminar movimiento no esencial (spec §9) --- */
