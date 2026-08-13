@@ -15,39 +15,73 @@ const nameLine3 = nameParts.slice(2).join(' ')
 const OUTLINE_BLACK = `-2px -2px 0 var(--color-bg-hero), 2px -2px 0 var(--color-bg-hero), -2px 2px 0 var(--color-bg-hero), 2px 2px 0 var(--color-bg-hero), -3px -3px 0 var(--color-bg-hero), 3px 3px 0 var(--color-bg-hero)`
 const OUTLINE_RED = `-2px -2px 0 var(--color-accent), 2px -2px 0 var(--color-accent), -2px 2px 0 var(--color-accent), 2px 2px 0 var(--color-accent), -3px -3px 0 var(--color-accent), 3px 3px 0 var(--color-accent)`
 
-// Atributos sociales del personaje. Niveles de diseño de la pantalla
-// (no son datos personales presentados como reales).
+// Atributos sociales del personaje (Social Stats de P5). Cada atributo tiene
+// su propio valor (1-5) que decide cuánto se extiende su punta en la estrella
+// interior: a mayor valor, más lejos del centro. El orden fija la posición
+// alrededor de la estrella: arriba, arriba-derecha, abajo-derecha,
+// abajo-izquierda, arriba-izquierda. Sin acentos porque la fuente P5 Menu no
+// tiene glifos acentuados.
 const STATS = [
-  { label: 'PROGRAMACIÓN', level: 5 },
-  { label: 'CREATIVIDAD', level: 4 },
-  { label: 'CARISMA', level: 2 },
-  { label: 'CURIOSIDAD', level: 4 },
-  { label: 'RESOLUCIÓN', level: 3 },
+  { label: 'PROGRAMACION', value: 5 },
+  { label: 'CREATIVIDAD', value: 4 },
+  { label: 'CARISMA', value: 2 },
+  { label: 'CURIOSIDAD', value: 3 },
+  { label: 'RESOLUCION', value: 4 },
 ] as const
 
-// Geometría de la estrella de atributos (Social Stats de P5): recorte
-// irregular "a mano" (jitter de ángulo + radios base variables por punta).
+// Geometría de la estrella de Social Stats de P5. La estrella exterior es una
+// silueta decorativa regular de cinco puntas. La estrella interior es la forma
+// de estadísticas: sus cinco puntas se extienden de forma independiente según
+// el valor de cada atributo, creando una silueta irregular y asimétrica.
 const STAR_CX = 160
 const STAR_CY = 160
-const STAR_BASE_OUTER = [104, 100, 106, 102, 98]
-const STAR_BASE_INNER = [46, 42, 48, 44, 46]
-const STAR_JITTER_OUT = [-1.8, 2.4, -2.2, 1.8, -1.4]
-const STAR_JITTER_IN = [1.2, -1.6, 2.0, -1.2, 1.8]
 
-const starPoint = (i: number, radius: number): [number, number] => {
-  const a = ((-90 + i * 72 + STAR_JITTER_OUT[i]) * Math.PI) / 180
-  return [STAR_CX + radius * Math.cos(a), STAR_CY + radius * Math.sin(a)]
-}
-const valleyPoint = (i: number, radius: number): [number, number] => {
-  const a = ((-54 + i * 72 + STAR_JITTER_IN[i]) * Math.PI) / 180
-  return [STAR_CX + radius * Math.cos(a), STAR_CY + radius * Math.sin(a)]
-}
-const fmt = (p: [number, number]) => p.map((n) => n.toFixed(1)).join(',')
+// Puntas de la estrella decorativa al 65% del radio del contenedor, dejando
+// espacio libre alrededor para las etiquetas.
+const OUTER_TIP = 104
+const OUTER_VALLEY = 44
 
-// Dirección y giro de las etiquetas radiales (sin invertirse al fondo).
-const statAngle = (i: number) => -90 + i * 72
-const statRad = (i: number) => (statAngle(i) * Math.PI) / 180
-const LABEL_ROTATIONS = [0, -18, 54, -54, 18]
+// Puntas del polígono de estadísticas: como máximo el 80% de la punta exterior.
+const INNER_TIP_MAX = OUTER_TIP * 0.8
+// Valles interiores: 42% de la media de las puntas adyacentes.
+const INNER_VALLEY_RATIO = 0.42
+
+const shapePoints = (tips: number[], valleys: number[]): string => {
+  const pts: string[] = []
+  for (let i = 0; i < 5; i += 1) {
+    const a = ((-90 + i * 72) * Math.PI) / 180
+    const b = ((-54 + i * 72) * Math.PI) / 180
+    pts.push(
+      `${(STAR_CX + tips[i] * Math.cos(a)).toFixed(1)},${(STAR_CY + tips[i] * Math.sin(a)).toFixed(1)}`,
+      `${(STAR_CX + valleys[i] * Math.cos(b)).toFixed(1)},${(STAR_CY + valleys[i] * Math.sin(b)).toFixed(1)}`,
+    )
+  }
+  return pts.join(' ')
+}
+
+// Silueta decorativa: estrella regular de cinco puntas.
+const OUTER_STAR = shapePoints(
+  [OUTER_TIP, OUTER_TIP, OUTER_TIP, OUTER_TIP, OUTER_TIP],
+  [OUTER_VALLEY, OUTER_VALLEY, OUTER_VALLEY, OUTER_VALLEY, OUTER_VALLEY],
+)
+
+// Polígono de estadísticas: puntas según el valor de cada atributo.
+const statTips = STATS.map(({ value }) => (value / 5) * INNER_TIP_MAX)
+const statValleys = statTips.map(
+  (tip, i) => INNER_VALLEY_RATIO * ((tip + statTips[(i + 1) % 5]) / 2),
+)
+const INNER_STAR = shapePoints(statTips, statValleys)
+
+// Posiciones fijas de las etiquetas en las esquinas, fuera del área de la
+// estrella, y sus inclinaciones suaves (casi horizontales).
+const LABEL_POSITIONS = [
+  { left: 50, top: 2 },
+  { left: 90, top: 30 },
+  { left: 90, top: 88 },
+  { left: 10, top: 88 },
+  { left: 10, top: 30 },
+]
+const LABEL_ROTATIONS = [0, -2, 2, -2, 1]
 
 /** Etiqueta pegatina angular recortada (estilo pegatinas del menú). */
 function Sticker({
@@ -122,85 +156,92 @@ function PortraitSlot() {
   )
 }
 
-/** Estrella de atributos sociales (estilo Social Stats de Persona 5):
-    irregular, recortada a mano, facetada y con siluetas negras detrás.
-    La longitud de cada punta codifica el nivel del atributo. */
+/** Estrella de Social Stats de Persona 5: silueta decorativa regular de cinco
+    puntas (#FFA600/#E68C00) que enmarca un polígono de estadísticas irregular
+    (#FEC802/#EEAF03) cuyas puntas se extienden según el valor de cada atributo.
+    Extrusiones negras desplazadas, sombras anaranjadas y caras en dos tonos.
+    Sin gradientes, brillos suaves, ni forma de radar. */
 function StatStar() {
-  const { hero } = profile
-  const levels = STATS.map((s) => s.level)
-
-  const outerR = STAR_BASE_OUTER.map((r, i) => r * (levels[i] / 5))
-  const innerR = STAR_BASE_INNER.map((r, i) => {
-    const avg = (levels[i] + levels[(i + 1) % 5]) / 2 / 5
-    return r * Math.max(0.7, avg)
-  })
-  const tips = outerR.map((r, i) => starPoint(i, r))
-  const valleys = innerR.map((r, i) => valleyPoint(i, r))
-  const knees = outerR.map((r, i) => starPoint(i, r * 0.44))
-
-  const outline = STATS.map((_, i) => `${fmt(tips[i])} ${fmt(valleys[i])}`).join(' ')
-  const leftFace = (i: number) =>
-    `${fmt(tips[i])} ${fmt(valleys[(i + 4) % 5])} ${fmt(knees[i])}`
-  const rightFace = (i: number) =>
-    `${fmt(tips[i])} ${fmt(knees[i])} ${fmt(valleys[i])}`
-  const core = STATS.map((_, i) => `${fmt(knees[i])} ${fmt(valleys[i])}`).join(' ')
-
   return (
-    <div className="relative mx-auto w-full max-w-[24rem] px-8 pt-9 pb-12">
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute bottom-2 left-3 text-caption uppercase tracking-[0.22em] text-paper/35"
-      >
-        {hero.coordinates}
-      </span>
-
+    <div className="relative mx-auto w-full max-w-[42rem] px-4 pt-8 pb-4">
       <div className="relative aspect-square">
         <svg
           viewBox="0 0 320 320"
           aria-hidden="true"
           className="absolute inset-0 h-full w-full [transform:rotate(2deg)]"
         >
-          {/* Silueta negra desplazada (sombra dura recortada) */}
-          <g transform="translate(13 15)">
-            <polygon points={outline} fill="#000000" strokeLinejoin="round" />
+          <defs>
+            <clipPath id="p5-star-right">
+              <rect x="160" y="0" width="160" height="320" />
+            </clipPath>
+          </defs>
+
+          {/* Extrusión negra trasera de la silueta exterior */}
+          <polygon
+            points={OUTER_STAR}
+            fill="#111111"
+            transform="translate(10 12)"
+            strokeLinejoin="round"
+          />
+          {/* Sombra anaranjada profunda */}
+          <polygon
+            points={OUTER_STAR}
+            fill="#E68C00"
+            transform="translate(6 8)"
+            strokeLinejoin="round"
+          />
+
+          {/* Estrella exterior: naranja principal */}
+          <polygon points={OUTER_STAR} fill="#FFA600" strokeLinejoin="round" />
+          {/* Mitad derecha en naranja oscuro */}
+          <g clipPath="url(#p5-star-right)">
+            <polygon points={OUTER_STAR} fill="#E68C00" />
           </g>
-          {/* Silueta naranja oscura (profundidad intermedia) */}
-          <g transform="translate(6 7)">
-            <polygon points={outline} fill="#CC7A00" />
+          {/* Borde negro angular exterior */}
+          <polygon
+            points={OUTER_STAR}
+            fill="none"
+            stroke="#111111"
+            strokeWidth="3"
+            strokeLinejoin="round"
+          />
+
+          {/* Polígono de estadísticas: sombra desplazada */}
+          <polygon
+            points={INNER_STAR}
+            fill="#EEAF03"
+            transform="translate(3 4)"
+            strokeLinejoin="round"
+          />
+          {/* Polígono de estadísticas: amarillo principal */}
+          <polygon points={INNER_STAR} fill="#FEC802" strokeLinejoin="round" />
+          {/* Mitad derecha en amarillo oscuro */}
+          <g clipPath="url(#p5-star-right)">
+            <polygon points={INNER_STAR} fill="#EEAF03" />
           </g>
-          {/* Facetas de la estrella */}
-          <g>
-            {STATS.map((_, i) => (
-              <polygon key={`f${i}`} points={leftFace(i)} fill="#FFB800" />
-            ))}
-            {STATS.map((_, i) => (
-              <polygon key={`s${i}`} points={rightFace(i)} fill="#E89A00" />
-            ))}
-            <polygon points={core} fill="#CC7A00" />
-            <polygon
-              points={outline}
-              fill="none"
-              stroke="#000000"
-              strokeWidth="2.5"
-              strokeLinejoin="round"
-            />
-          </g>
+          {/* Borde negro angular del polígono de estadísticas */}
+          <polygon
+            points={INNER_STAR}
+            fill="none"
+            stroke="#111111"
+            strokeWidth="2.5"
+            strokeLinejoin="round"
+          />
         </svg>
 
-        {STATS.map((s, i) => {
-          const left = 50 + 42 * Math.cos(statRad(i))
-          const top = 50 + 42 * Math.sin(statRad(i))
+        {STATS.map(({ label }, i) => {
+          const pos = LABEL_POSITIONS[i]
           return (
             <div
-              key={s.label}
+              key={label}
               className="absolute"
               style={{
-                left: `${left}%`,
-                top: `${top}%`,
+                left: `${pos.left}%`,
+                top: `${pos.top}%`,
                 transform: `translate(-50%,-50%) rotate(${LABEL_ROTATIONS[i]}deg)`,
               }}
             >
-              <P5Label>{s.label}</P5Label>
+              <P5Label variant="stat">{label}</P5Label>
             </div>
           )
         })}
@@ -209,29 +250,50 @@ function StatStar() {
   )
 }
 
-// Etiqueta amarilla recortada con respaldo negro (estilo Social Stats de P5).
-const LABEL_CLIP = '[clip-path:polygon(5px_0,100%_0,calc(100%_-_5px)_100%,0_100%)]'
+// Etiqueta amarilla recortada con respaldo oscuro (estilo Social Stats de P5).
+// variant="stat" para los nombres de atributo alrededor de la estrella:
+// fuente P5 Menu, amarillo #FEFF04 y texto casi negro #010101. La variante
+// "chip" (intereses/tecnologías) usa la fuente legible del sitio, amarillo
+// #FFD400 y texto negro.
+const LABEL_CLIP = '[clip-path:polygon(6px_0,100%_0,calc(100%_-_6px)_100%,0_100%)]'
+const LABEL_CLIP_STAT = '[clip-path:polygon(8px_0,100%_0,calc(100%_-_8px)_100%,0_100%)]'
 
-/** Etiqueta de atributo/etiqueta amarilla P5: fondo negro desplazado,
-    amarillo #FFD400 y texto en P5 Menu. Solo el nombre, sin números. */
-function P5Label({ children, className = '' }: { children: ReactNode; className?: string }) {
+function P5Label({
+  children,
+  className = '',
+  variant = 'chip',
+}: {
+  children: ReactNode
+  className?: string
+  variant?: 'chip' | 'stat'
+}) {
+  const stat = variant === 'stat'
+  const clip = stat ? LABEL_CLIP_STAT : LABEL_CLIP
   return (
     <span className={`relative inline-flex ${className}`}>
       <span
         aria-hidden="true"
-        className={`absolute inset-0 translate-x-[2.5px] translate-y-[3px] bg-black ${LABEL_CLIP}`}
+        className={`absolute inset-0 ${clip} ${
+          stat
+            ? 'translate-x-[3px] translate-y-[4px] bg-[#111111]'
+            : 'translate-x-[2.5px] translate-y-[3px] bg-black'
+        }`}
       />
       <span
-        className={`relative inline-flex items-center bg-[#FFD400] px-3 py-1 text-black ${LABEL_CLIP}`}
+        className={`relative inline-flex items-center ${clip} ${
+          stat
+            ? 'bg-[#FEFF04] px-4 py-2 text-sm uppercase tracking-[0.05em] text-[#010101] sm:text-lg md:text-xl xl:text-2xl'
+            : 'bg-[#FFD400] px-3.5 py-1.5 text-base uppercase tracking-[0.08em] text-black'
+        }`}
       >
-        <span className="font-p5-menu text-sm uppercase leading-none">{children}</span>
+        <span className={`leading-none ${stat ? 'font-p5-menu' : 'font-display'}`}>{children}</span>
       </span>
     </span>
   )
 }
 
-// Inclinaciones alternadas para las etiquetas de intereses/tecnologías.
-const CHIP_ROTATIONS = ['rotate-2', '-rotate-1', 'rotate-1', '-rotate-2', 'rotate-0', '-rotate-2']
+// Inclinaciones suaves y alternadas para las etiquetas de intereses/tecnologías.
+const CHIP_ROTATIONS = ['-rotate-1', 'rotate-1']
 
 export function About() {
   const { about, hero, branding } = profile
@@ -245,7 +307,7 @@ export function About() {
         {/* Palabra fantasma de marca */}
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute right-0 top-2 z-0 -rotate-6 select-none font-expose uppercase leading-none text-outline-faint opacity-70"
+          className="pointer-events-none absolute right-0 top-2 z-0 -rotate-6 select-none font-expose uppercase leading-none text-outline-faint opacity-55"
           style={{ fontSize: 'clamp(7rem, 15vw, 14rem)' }}
         >
           PERFIL
@@ -270,17 +332,26 @@ export function About() {
         </span>
 
         <div className="relative mx-auto max-w-6xl">
-          {/* Barra superior de perfil */}
+          {/* Título de perfil (mismo tratamiento que INVENTARIO) */}
           <Reveal>
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <Sticker className="-rotate-2">Profile</Sticker>
-              <span className="text-label uppercase tracking-[0.25em] text-paper/45">
-                {branding.system} · {hero.region}
+            <div className="relative">
+              <h1
+                className="font-p5-menu uppercase leading-[0.95] text-paper"
+                style={{
+                  fontSize: 'clamp(2.75rem, 6.5vw, 5.5rem)',
+                  textShadow: `${OUTLINE_BLACK}, 6px 6px 0 var(--color-accent-deep)`,
+                }}
+              >
+                PERFIL
+              </h1>
+              <span aria-hidden="true" className="mt-4 flex items-center gap-3">
+                <span className="block h-2 w-44 -skew-x-12 bg-accent" />
+                <span className="block h-3 w-3 rotate-45 bg-gold" />
               </span>
             </div>
           </Reveal>
 
-          <div className="mt-10 grid items-start gap-16 lg:grid-cols-[minmax(0,1.02fr)_minmax(0,0.98fr)] lg:gap-10 xl:gap-16">
+          <div className="mt-10 grid items-start gap-16 lg:grid-cols-[minmax(0,0.94fr)_minmax(0,1.06fr)] lg:gap-10 xl:gap-16">
             {/* ===== Columna izquierda: identidad ===== */}
             <Reveal>
               <div className="relative">
@@ -342,90 +413,85 @@ export function About() {
               </div>
             </Reveal>
 
-            {/* ===== Columna derecha: radar + datos ===== */}
+            {/* ===== Columna derecha: Social Stats (pieza central) ===== */}
             <div className="relative">
               <Reveal delay={0.1}>
                 <div className="relative">
                   <Sticker tone="gold" className="absolute right-2 top-0 z-10 -rotate-3">
-                    Social stats
+                    Estadísticas sociales
                   </Sticker>
-                  <span
-                    aria-hidden="true"
-                    className="pointer-events-none absolute right-6 top-8 z-0 h-40 w-10 bg-stripes-red opacity-40 [transform:rotate(18deg)]"
-                  />
                   <StatStar />
-                </div>
-              </Reveal>
-
-              <Reveal delay={0.16}>
-                <div className="mt-2 grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-10">
-                  <div>
-                    <h2 className="flex items-center gap-2 text-label font-medium uppercase tracking-[0.22em] text-accent">
-                      <DiamondMarker size={6} />
-                      Bio
-                    </h2>
-                    <p className="mt-3 max-w-md text-body leading-relaxed text-paper/75">
-                      {about.bio}
-                    </p>
-                  </div>
-
-                  <div className="flex flex-col gap-7">
-                    <div>
-                      <h2 className="flex items-center gap-2 text-label font-medium uppercase tracking-[0.22em] text-accent">
-                        <DiamondMarker size={6} />
-                        Intereses
-                      </h2>
-                      <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-5" aria-label="Intereses personales">
-                        {about.interests.map((interest, index) => (
-                          <li
-                            key={interest}
-                            className={CHIP_ROTATIONS[index % CHIP_ROTATIONS.length]}
-                          >
-                            <P5Label>{interest}</P5Label>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div>
-                      <h2 className="flex items-center gap-2 text-label font-medium uppercase tracking-[0.22em] text-accent">
-                        <DiamondMarker size={6} />
-                        Tecnologías
-                      </h2>
-                      <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-5" aria-label="Tecnologías y lenguajes">
-                        {about.techSkills.map((skill, index) => (
-                          <li
-                            key={skill}
-                            className={CHIP_ROTATIONS[index % CHIP_ROTATIONS.length]}
-                          >
-                            <P5Label>{skill}</P5Label>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </Reveal>
-
-              <Reveal delay={0.22}>
-                <div className="mt-10 flex flex-wrap items-center justify-between gap-6 border-t border-paper/15 pt-6">
-                  <Link
-                    to="/"
-                    data-cursor="back"
-                    className="group inline-flex items-center gap-3 border-2 border-paper/60 bg-bg-content-alt px-6 py-3 font-display text-base uppercase tracking-[0.15em] text-paper [clip-path:polygon(10px_0,100%_0,calc(100%_-_10px)_100%,0_100%)] transition-colors duration-200 hover:border-accent hover:bg-accent"
-                  >
-                    <span
-                      aria-hidden="true"
-                      className="text-accent transition-colors duration-200 group-hover:text-paper"
-                    >
-                      ◀
-                    </span>
-                    Volver al menú
-                  </Link>
                 </div>
               </Reveal>
             </div>
           </div>
+
+          {/* ===== Contenido: Bio / Intereses / Tecnologías ===== */}
+          <Reveal delay={0.16}>
+            <div className="mt-14 grid gap-x-12 gap-y-12 md:grid-cols-2 lg:mt-16 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.96fr)_minmax(0,0.96fr)]">
+              <div>
+                <h2 className="flex items-center gap-2 text-label font-medium uppercase tracking-[0.22em] text-accent">
+                  <DiamondMarker size={6} />
+                  Bio
+                </h2>
+                <p className="mt-4 max-w-md text-body leading-relaxed text-paper/75">
+                  {about.bio}
+                </p>
+              </div>
+
+              <div>
+                <h2 className="flex items-center gap-2 text-label font-medium uppercase tracking-[0.22em] text-accent">
+                  <DiamondMarker size={6} />
+                  Intereses
+                </h2>
+                <ul className="mt-5 flex flex-wrap gap-x-4 gap-y-4" aria-label="Intereses personales">
+                  {about.interests.map((interest, index) => (
+                    <li
+                      key={interest}
+                      className={CHIP_ROTATIONS[index % CHIP_ROTATIONS.length]}
+                    >
+                      <P5Label>{interest}</P5Label>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div>
+                <h2 className="flex items-center gap-2 text-label font-medium uppercase tracking-[0.22em] text-accent">
+                  <DiamondMarker size={6} />
+                  Tecnologías
+                </h2>
+                <ul className="mt-5 flex flex-wrap gap-x-4 gap-y-4" aria-label="Tecnologías y lenguajes">
+                  {about.techSkills.map((skill, index) => (
+                    <li
+                      key={skill}
+                      className={CHIP_ROTATIONS[index % CHIP_ROTATIONS.length]}
+                    >
+                      <P5Label>{skill}</P5Label>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </Reveal>
+
+          <Reveal delay={0.22}>
+            <div className="mt-12 flex flex-wrap items-center justify-between gap-6 border-t border-paper/15 pt-6">
+              <Link
+                to="/"
+                data-cursor="back"
+                className="group inline-flex items-center gap-3 border-2 border-paper/60 bg-bg-content-alt px-6 py-3 font-display text-base uppercase tracking-[0.15em] text-paper [clip-path:polygon(10px_0,100%_0,calc(100%_-_10px)_100%,0_100%)] transition-colors duration-200 hover:border-accent hover:bg-accent"
+              >
+                <span
+                  aria-hidden="true"
+                  className="text-accent transition-colors duration-200 group-hover:text-paper"
+                >
+                  ◀
+                </span>
+                Volver al menú
+              </Link>
+            </div>
+          </Reveal>
         </div>
       </section>
     </Screen>
