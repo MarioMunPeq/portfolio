@@ -402,6 +402,159 @@
   );
 }
 
+/* ============================================================
+   Aberración cromática — doble exposición tipo glitch
+   ============================================================ */
+
+/* Dos copias (cian y rojo) de la misma forma que se tiñen y se desplazan
+   con pasos bruscos (steps) para que lea como jitter de glitch, no como
+   oscilación suave. El contenedor padre aporta el clip-path de la forma
+   base; la capa se estira a inset:0 y hereda el skew del padre. */
+@keyframes chroma-jitter-a {
+  0%,
+  100% {
+    transform: translate(-4px, 2px) rotate(-0.6deg);
+  }
+  25% {
+    transform: translate(3px, -3px) rotate(0.5deg);
+  }
+  50% {
+    transform: translate(-2px, 3px) rotate(-0.3deg);
+  }
+  75% {
+    transform: translate(4px, -1px) rotate(0.8deg);
+  }
+}
+
+@keyframes chroma-jitter-b {
+  0%,
+  100% {
+    transform: translate(3px, -2px) rotate(0.5deg);
+  }
+  25% {
+    transform: translate(-4px, 2px) rotate(-0.7deg);
+  }
+  50% {
+    transform: translate(4px, -3px) rotate(0.3deg);
+  }
+  75% {
+    transform: translate(-3px, 3px) rotate(-0.6deg);
+  }
+}
+
+/* Capa genérica: se usa tanto en la barra de carga como en el haz del
+   inventario (allí con su propio clip-path vía .proj-beam-copy). */
+.chroma-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.55;
+  animation-duration: 0.5s;
+  animation-timing-function: steps(1);
+  animation-iteration-count: infinite;
+}
+
+.chroma-layer--cyan {
+  background-color: #5ad1ff;
+  clip-path: polygon(0% 25%, 100% 0%, 100% 100%, 0% 75%);
+  animation-name: chroma-jitter-a;
+}
+
+.chroma-layer--red {
+  background-color: var(--color-accent);
+  clip-path: polygon(0% 25%, 100% 0%, 100% 100%, 0% 75%);
+  animation-name: chroma-jitter-b;
+  animation-delay: 0.15s;
+}
+
+/* Copias de aberración cromática del haz de selección del inventario:
+   misma forma (clip-path trapezoidal + skew) que .proj-beam, sesgadas
+   con el mismo desborde por la izquierda. */
+.proj-beam-copy {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  right: 0;
+  left: -2.75rem;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.55;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 1rem) 100%, 1rem 100%);
+  transform: skewX(-8deg);
+  animation-duration: 0.5s;
+  animation-timing-function: steps(1);
+  animation-iteration-count: infinite;
+}
+
+.proj-beam-copy--cyan {
+  background-color: #5ad1ff;
+  animation-name: chroma-jitter-a;
+}
+
+.proj-beam-copy--red {
+  background-color: var(--color-accent);
+  animation-name: chroma-jitter-b;
+  animation-delay: 0.15s;
+}
+
+/* ============================================================
+   Inventario — filas tipo tarjeta angular (tratamiento .cmd del hero)
+   ============================================================ */
+
+/* El `li` declara el offset/rotación por fila (solo escritorio); la
+   tarjeta (.proj-row) consume las variables en su transform. */
+@media (min-width: 1024px) {
+  .proj-item:nth-child(1) {
+    --proj-off: 0px;
+    --proj-rot: -1.25deg;
+  }
+  .proj-item:nth-child(2) {
+    --proj-off: 16px;
+    --proj-rot: 0.9deg;
+  }
+  .proj-item:nth-child(3) {
+    --proj-off: 4px;
+    --proj-rot: -0.6deg;
+  }
+}
+
+.proj-row {
+  position: relative;
+  transform: translateX(var(--proj-off, 0px)) rotate(var(--proj-rot, 0deg));
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.proj-row:hover,
+.proj-row:focus-visible {
+  transform: translateX(calc(var(--proj-off, 0px) - 8px)) rotate(var(--proj-rot, 0deg));
+}
+
+/* Fondo angular de la tarjeta: borde fino + esquina inferior derecha
+   recortada. El contenido y el haz rojo van por encima (no se recortan). */
+.proj-row-track {
+  position: absolute;
+  inset: 0;
+  background: rgba(26, 26, 26, 0.5);
+  border: 1px solid color-mix(in srgb, var(--color-paper) 30%, transparent);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 1rem), calc(100% - 1rem) 100%, 0 100%);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.proj-row:hover .proj-row-track,
+.proj-row:focus-visible .proj-row-track {
+  border-color: var(--color-accent);
+  background: rgba(26, 26, 26, 0.85);
+}
+
+/* Fila seleccionada: el haz rojo pinta la tarjeta; el track se vacía
+   para no pelear con él. Regla declarada después del hover para ganar
+   por orden en igualdad de especificidad. */
+.proj-row.is-selected .proj-row-track {
+  border-color: transparent;
+  background: transparent;
+}
+
 
 /* Marcador angular del indicador de scroll */
 @keyframes scroll-marker {

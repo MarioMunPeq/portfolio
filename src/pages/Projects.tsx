@@ -19,8 +19,8 @@ function ProjectsGraphicLayer() {
       className="pointer-events-none absolute inset-0 overflow-hidden"
     >
       <span
-        className="absolute right-[-6rem] top-[30%] -rotate-6 select-none font-display uppercase leading-none text-outline-faint opacity-40"
-        style={{ fontSize: 'clamp(7rem, 16vw, 14rem)' }}
+        className="absolute right-[-3rem] top-[3%] -rotate-6 select-none font-display uppercase leading-none text-outline-faint opacity-25"
+        style={{ fontSize: 'clamp(6rem, 13vw, 12rem)' }}
       >
         Inventario
       </span>
@@ -49,10 +49,20 @@ export function Projects() {
 
         <div className="relative z-10 flex min-h-dvh flex-col px-6 pb-6 pt-24 md:px-10 lg:px-14">
           <header className="relative">
-            <p className="flex items-center gap-2.5 text-label font-medium uppercase tracking-[0.22em] text-accent">
-              <DiamondMarker size={8} />
-              Inventario de proyectos
-            </p>
+            <div className="flex items-center justify-between gap-4">
+              <p className="flex items-center gap-2.5 text-label font-medium uppercase tracking-[0.22em] text-accent">
+                <DiamondMarker size={8} />
+                Inventario de proyectos
+              </p>
+              <span aria-hidden="true" className="hidden shrink-0 items-center gap-2 sm:flex">
+                <span className="flex h-7 w-7 items-center justify-center bg-halftone-red text-[13px] font-bold text-ink [clip-path:polygon(0_0,100%_0,92%_100%,8%_100%)]">
+                  ★
+                </span>
+                <span className="flex h-7 w-7 items-center justify-center border border-accent text-[13px] font-bold text-accent [clip-path:polygon(0_0,100%_0,92%_100%,8%_100%)]">
+                  ✕
+                </span>
+              </span>
+            </div>
             <h1
               className="mt-3 font-p5-menu uppercase leading-[0.95] text-paper"
               style={{
@@ -64,6 +74,7 @@ export function Projects() {
             </h1>
             <span aria-hidden="true" className="mt-4 flex items-center gap-3">
               <span className="block h-2 w-44 -skew-x-12 bg-accent" />
+              <span className="block h-3 w-3 rotate-45 bg-gold" />
             </span>
           </header>
 

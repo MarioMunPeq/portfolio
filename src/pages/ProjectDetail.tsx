@@ -187,28 +187,20 @@ function HalftoneAccentStrip() {
 }
 
 /**
- * Prev/next project navigation - two angular cards with a project count
- * label (words, no numeric badges).
+ * Prev/next project navigation - two named cards (no numeric badges).
  */
 function PrevNextNav({
   prev,
   next,
-  current,
-  total,
 }: {
   prev: { slug: string; name: string } | null
   next: { slug: string; name: string } | null
-  current: number
-  total: number
 }) {
   const linkClass = `group flex flex-col gap-2 border-2 border-paper/25 bg-bg-content-alt px-6 py-5 clip-cut-br transition-all duration-200 hover:border-accent hover:bg-accent hover:text-ink focus-visible:border-accent focus-visible:bg-accent focus-visible:text-ink`
 
   return (
     <nav aria-label="Navegación entre proyectos">
-      <p className="text-center text-label font-medium uppercase tracking-[0.3em] text-paper/40">
-        Proyecto {current} de {total}
-      </p>
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2">
         {prev ? (
           <Link to={`/proyectos/${prev.slug}`} className={linkClass}>
             <span className="flex items-center gap-2 text-label font-medium uppercase tracking-[0.3em] text-paper/50 transition-colors group-hover:text-ink/70 group-focus-visible:text-ink/70">

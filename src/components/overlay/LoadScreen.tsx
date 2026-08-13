@@ -225,15 +225,30 @@ export function LoadScreen() {
                   </span>
 
                   {/* Barra trapezoidal larga y fina (~7:1) */}
-                  <div className="relative h-[52px] w-full bg-paper [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)] [transform:skewX(-6deg)]">
-                    <div className="absolute inset-[3px] bg-bg-hero [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
-                      <div ref={barRef} className="absolute inset-y-0 left-0 bg-accent" />
+                  <div className="relative h-[52px] w-full [transform:skewX(-6deg)]">
+                    {/* Copias de aberración cromática tras el marco (solo
+                        con movimiento permitido; reduced-motion las omite) */}
+                    {!reduced && (
+                      <>
+                        <span aria-hidden="true" className="chroma-layer chroma-layer--cyan" />
+                        <span aria-hidden="true" className="chroma-layer chroma-layer--red" />
+                      </>
+                    )}
+                    {/* Marco blanco + relleno rojo de progreso */}
+                    <div className="absolute inset-0 bg-paper [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
+                      <div className="absolute inset-[3px] bg-bg-hero [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
+                        <div ref={barRef} className="absolute inset-y-0 left-0 bg-accent" />
+                      </div>
                     </div>
                   </div>
 
-                  {/* SÍ {porcentaje}% */}
+                  {/* SÍ {porcentaje}% — caja de ancho fijo para que el
+                      número a 1-3 dígitos nunca desplace la barra */}
                   <span className="load-pct ml-4 shrink-0 font-anton text-[3.5rem] leading-none text-accent [transform:skewX(-10deg)] [text-shadow:-2px_-2px_0_#000,2px_-2px_0_#000,-2px_2px_0_#000,2px_2px_0_#000,-3px_-3px_0_#000,3px_-3px_0_#000,-3px_3px_0_#000,3px_3px_0_#000,4px_4px_0_rgba(0,0,0,0.5)]">
-                    SÍ <span ref={pctRef}>0</span>%
+                    SÍ{' '}
+                    <span className="inline-block min-w-[4.5ch] text-right tabular-nums">
+                      <span ref={pctRef}>0</span>%
+                    </span>
                   </span>
                 </div>
               </div>
