@@ -55,8 +55,12 @@ export interface Profile {
   about: {
     /** Párrafos de la sección "Sobre mí". PLACEHOLDER. */
     paragraphs: string[]
+    /** Bio corta de la pantalla de personaje (Perfil). PLACEHOLDER. */
+    bio: string
     /** Intereses personales (aparecen de forma sutil). */
     interests: string[]
+    /** Idiomas de programación / tecnologías. PLACEHOLDER. */
+    techSkills: string[]
     /** Foto/avatar. null = usar placeholder visual. */
     avatar: { src: string; alt: string } | null
   }
@@ -101,7 +105,9 @@ export const profile: Profile = {
       '[PLACEHOLDER] Párrafo 1 — Presentación breve: quién soy, qué hago y cómo trabajo.',
       '[PLACEHOLDER] Párrafo 2 — Personalidad, curiosidad y enfoque técnico.',
     ],
-    interests: ['videojuegos', 'D&D', 'Cosmere'],
+    bio: '[PLACEHOLDER] Bio corta de la pantalla de personaje: quién es Mario, qué le mueve y a qué se dedica.',
+    interests: ['programación', 'videojuegos', 'D&D', 'libros'],
+    techSkills: ['JavaScript', 'TypeScript', 'React', 'SQL', 'Git'],
     avatar: null,
   },
   contact: {
