@@ -98,7 +98,7 @@ export function ProjectPreview({ project }: { project: Project }) {
         {/* Bandera "SELECCIONADO" sobre el marco */}
         <span
           aria-hidden="true"
-          className="absolute -top-3 right-5 z-10 inline-flex items-center gap-1.5 bg-halftone-red px-3 py-1 text-label font-medium uppercase tracking-[0.2em] text-paper [clip-path:polygon(0_0,100%_0,92%_100%,8%_100%)]"
+          className="absolute -top-3 right-5 z-10 inline-flex items-center gap-1.5 bg-halftone-red px-3 py-1 font-expose text-label font-medium uppercase tracking-[0.2em] text-paper [clip-path:polygon(0_0,100%_0,92%_100%,8%_100%)]"
         >
           <span className="h-1.5 w-1.5 rotate-45 bg-gold" />
           SELECCIONADO
@@ -108,7 +108,7 @@ export function ProjectPreview({ project }: { project: Project }) {
       <div className="relative mt-10">
         <div>
           <h2
-            className="font-display uppercase leading-[0.95] text-paper"
+            className="font-expose uppercase leading-[0.95] text-paper"
             style={{
               fontSize: 'clamp(2rem, 3.4vw, 3.25rem)',
               textShadow: OUTLINE,

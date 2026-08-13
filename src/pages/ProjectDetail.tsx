@@ -16,7 +16,7 @@ function GhostNumber({ order }: { order: string }) {
   return (
     <span
       aria-hidden="true"
-      className="pointer-events-none absolute -right-8 top-1/2 -translate-y-1/2 select-none font-display uppercase leading-none text-outline-faint"
+      className="pointer-events-none absolute -right-8 top-1/2 -translate-y-1/2 select-none font-expose uppercase leading-none text-outline-faint"
       style={{ fontSize: 'clamp(10rem, 25vw, 20rem)' }}
     >
       {order}
@@ -45,7 +45,7 @@ function GalleryImage({ screenshot }: { screenshot: ProjectScreenshot }) {
           />
           <div className="relative flex items-center gap-2 bg-halftone-red px-4 py-2.5 clip-notch border-l-4 border-accent">
             <DiamondMarker size={6} />
-            <span className="text-label font-medium uppercase tracking-[0.22em] text-paper">
+            <span className="font-expose text-label font-medium uppercase tracking-[0.22em] text-paper">
               [CAPTURA PENDIENTE]
             </span>
           </div>
@@ -146,7 +146,7 @@ function AngularButton({ children, href, external = false, className = '' }: {
       href={href}
       target={external ? '_blank' : undefined}
       rel={external ? 'noreferrer' : undefined}
-      className={`group relative inline-flex items-center justify-center overflow-hidden border-2 border-accent px-6 py-4 font-display text-base uppercase tracking-[0.1em] text-paper clip-[polygon(0_0,94%_0,100%_100%,6%_100%)] box-shadow-[3px_3px_0_var(--color-accent-deep)] transition-all duration-200 hover:border-accent hover:bg-accent hover:text-ink hover:box-shadow-[5px_5px_0_var(--color-paper)] focus-visible:border-accent focus-visible:bg-accent focus-visible:text-ink ${className}`}
+      className={`group relative inline-flex items-center justify-center overflow-hidden border-2 border-accent px-6 py-4 font-expose text-base uppercase tracking-[0.1em] text-paper clip-[polygon(0_0,94%_0,100%_100%,6%_100%)] box-shadow-[3px_3px_0_var(--color-accent-deep)] transition-all duration-200 hover:border-accent hover:bg-accent hover:text-ink hover:box-shadow-[5px_5px_0_var(--color-paper)] focus-visible:border-accent focus-visible:bg-accent focus-visible:text-ink ${className}`}
     >
       <span
         aria-hidden="true"
@@ -203,11 +203,11 @@ function PrevNextNav({
       <div className="grid gap-4 sm:grid-cols-2">
         {prev ? (
           <Link to={`/proyectos/${prev.slug}`} className={linkClass}>
-            <span className="flex items-center gap-2 text-label font-medium uppercase tracking-[0.3em] text-paper/50 transition-colors group-hover:text-ink/70 group-focus-visible:text-ink/70">
+            <span className="flex items-center gap-2 font-expose text-label font-medium uppercase tracking-[0.3em] text-paper/50 transition-colors group-hover:text-ink/70 group-focus-visible:text-ink/70">
               <DiamondMarker size={6} />
               Anterior
             </span>
-            <span className="font-display text-2xl uppercase leading-tight text-paper transition-colors group-hover:text-ink group-focus-visible:text-ink">
+            <span className="font-expose text-2xl uppercase leading-tight text-paper transition-colors group-hover:text-ink group-focus-visible:text-ink">
               {prev.name}
             </span>
           </Link>
@@ -216,11 +216,11 @@ function PrevNextNav({
         )}
         {next ? (
           <Link to={`/proyectos/${next.slug}`} className={`${linkClass} items-end text-right`}>
-            <span className="flex items-center gap-2 text-label font-medium uppercase tracking-[0.3em] text-paper/50 transition-colors group-hover:text-ink/70 group-focus-visible:text-ink/70">
+            <span className="flex items-center gap-2 font-expose text-label font-medium uppercase tracking-[0.3em] text-paper/50 transition-colors group-hover:text-ink/70 group-focus-visible:text-ink/70">
               Siguiente
               <DiamondMarker size={6} />
             </span>
-            <span className="font-display text-2xl uppercase leading-tight text-paper transition-colors group-hover:text-ink group-focus-visible:text-ink">
+            <span className="font-expose text-2xl uppercase leading-tight text-paper transition-colors group-hover:text-ink group-focus-visible:text-ink">
               {next.name}
             </span>
           </Link>
@@ -260,7 +260,7 @@ export function ProjectDetail() {
                 sangrando por el borde derecho del header */}
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute -right-4 -top-12 select-none font-display uppercase leading-none text-outline-faint"
+              className="pointer-events-none absolute -right-4 -top-12 select-none font-expose uppercase leading-none text-outline-faint"
               style={{ fontSize: 'clamp(5rem, 13vw, 9rem)', transform: 'rotate(-4deg)' }}
             >
               {project.name}
@@ -269,7 +269,7 @@ export function ProjectDetail() {
             <Reveal>
               <Link
                 to="/projects"
-                className="inline-flex items-center gap-3 text-label font-medium uppercase tracking-[0.22em] text-paper/80 hover:text-accent transition-colors group"
+                className="inline-flex items-center gap-3 font-expose text-label font-medium uppercase tracking-[0.22em] text-paper/80 hover:text-accent transition-colors group"
               >
                 <span
                   aria-hidden="true"
@@ -281,7 +281,7 @@ export function ProjectDetail() {
 
             <Reveal delay={0.05}>
               <h1
-                className="mt-10 font-display uppercase leading-[0.95] text-paper"
+                className="mt-10 font-expose uppercase leading-[0.95] text-paper"
                 style={{
                   fontSize: 'clamp(2.75rem, 6.5vw, 5.5rem)',
                   textShadow: `${OUTLINE_THICK}, 8px 8px 0 var(--color-accent-deep)`,
@@ -302,7 +302,7 @@ export function ProjectDetail() {
             <div className="mt-12 max-w-2xl">
               <div className="flex items-center gap-3">
                 <DiamondMarker size={8} />
-                <h2 className="text-label font-medium uppercase tracking-[0.22em] text-accent">
+                <h2 className="font-expose text-label font-medium uppercase tracking-[0.22em] text-accent">
                   Resumen
                 </h2>
               </div>
@@ -322,7 +322,7 @@ export function ProjectDetail() {
               <div className="mt-12">
                 <div className="flex items-center gap-3">
                   <DiamondMarker size={8} />
-                  <h2 className="text-label font-medium uppercase tracking-[0.22em] text-accent">
+                  <h2 className="font-expose text-label font-medium uppercase tracking-[0.22em] text-accent">
                     Stack técnico
                   </h2>
                 </div>
@@ -349,7 +349,7 @@ export function ProjectDetail() {
               <div className="mt-12">
                 <div className="flex items-center gap-3">
                   <DiamondMarker size={8} />
-                  <h2 className="text-label font-medium uppercase tracking-[0.22em] text-accent">
+                  <h2 className="font-expose text-label font-medium uppercase tracking-[0.22em] text-accent">
                     Galería
                   </h2>
                 </div>
@@ -376,7 +376,7 @@ export function ProjectDetail() {
             <div className="mt-12">
               <div className="flex items-center gap-3">
                 <DiamondMarker size={8} />
-                <h2 className="text-label font-medium uppercase tracking-[0.22em] text-accent">
+                <h2 className="font-expose text-label font-medium uppercase tracking-[0.22em] text-accent">
                   Enlaces
                 </h2>
               </div>

@@ -13,6 +13,16 @@
   font-display: swap;
 }
 
+/* Expose: fuente display para encabezados y etiquetas del inventario y
+   de las fichas de proyecto. IMPORTANTE: NO incluye los acentos
+   españoles (á é í ó ú ñ ¿ ¡): los aporta el fallback del stack
+   (per-glyph), igual que P5 Menu. */
+@font-face {
+  font-family: "Expose";
+  src: url("/portfolio/fonts/Expose-Regular.otf") format("opentype");
+  font-display: swap;
+}
+
 /* Utilidad: texto hueco con trazo en color acento (solo tipografía grande) */
 @utility text-outline {
   color: transparent;
@@ -115,27 +125,11 @@
   background-size: 6px 6px;
 }
 
-/* Chevron/zigzag diagonal sutil para fondos (Inventario): dos capas de la
-   misma rampa a 45° desplazadas medio período forman V/zigzag. Gris apenas
-   distinguible del negro; textura de fondo, no patrón protagonista. */
-@utility bg-chevrons {
-  background-image:
-    linear-gradient(
-      45deg,
-      rgba(245, 245, 240, 0.045) 25%,
-      transparent 25%,
-      transparent 75%,
-      rgba(245, 245, 240, 0.045) 75%
-    ),
-    linear-gradient(
-      45deg,
-      rgba(245, 245, 240, 0.045) 25%,
-      transparent 25%,
-      transparent 75%,
-      rgba(245, 245, 240, 0.045) 75%
-    );
-  background-size: 28px 28px;
-  background-position: 0 0, 14px 14px;
+/* Estrellas de contorno para fondos (Inventario): tesela SVG data-URI con
+   estrellas de trazo (no rellenas) de tamaños variados en papel tenue y
+   un par de acentos rojos, sutiles para no entorpecer el contenido. */
+@utility bg-stars {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='240'%20height='240'%20viewBox='0%200%20240%20240'%3E%3Cpolygon%20points='38.0,33.0%2040.4,38.7%2046.6,39.2%2041.9,43.3%2043.3,49.3%2038.0,46.0%2032.7,49.3%2034.1,43.3%2029.4,39.2%2035.6,38.7'%20fill='none'%20stroke='rgba(245,245,240,0.17)'%20stroke-width='1.5'/%3E%3Cpolygon%20points='152.0,15.0%20155.4,23.3%20164.4,24.0%20157.6,29.8%20159.6,38.5%20152.0,33.9%20144.4,38.5%20146.4,29.8%20139.6,24.0%20148.6,23.3'%20fill='none'%20stroke='rgba(245,245,240,0.17)'%20stroke-width='1.5'/%3E%3Cpolygon%20points='212.0,85.0%20213.9,89.5%20218.7,89.8%20215.0,93.0%20216.1,97.7%20212.0,95.2%20207.9,97.7%20209.0,93.0%20205.3,89.8%20210.1,89.5'%20fill='none'%20stroke='rgba(230,0,18,0.5)'%20stroke-width='1.5'/%3E%3Cpolygon%20points='28.0,153.0%2032.0,162.5%2042.3,163.4%2034.4,170.1%2036.8,180.1%2028.0,174.8%2019.2,180.1%2021.6,170.1%2013.7,163.4%2024.0,162.5'%20fill='none'%20stroke='rgba(245,245,240,0.17)'%20stroke-width='1.5'/%3E%3Cpolygon%20points='118.0,122.0%20119.6,125.8%20123.7,126.1%20120.6,128.8%20121.5,132.9%20118.0,130.7%20114.5,132.9%20115.4,128.8%20112.3,126.1%20116.4,125.8'%20fill='none'%20stroke='rgba(245,245,240,0.17)'%20stroke-width='1.5'/%3E%3Cpolygon%20points='192.0,186.0%20194.6,192.4%20201.5,192.9%20196.3,197.4%20197.9,204.1%20192.0,200.5%20186.1,204.1%20187.7,197.4%20182.5,192.9%20189.4,192.4'%20fill='none'%20stroke='rgba(245,245,240,0.17)'%20stroke-width='1.5'/%3E%3Cpolygon%20points='78.0,214.0%2080.1,219.1%2085.6,219.5%2081.4,223.1%2082.7,228.5%2078.0,225.6%2073.3,228.5%2074.6,223.1%2070.4,219.5%2075.9,219.1'%20fill='none'%20stroke='rgba(245,245,240,0.17)'%20stroke-width='1.5'/%3E%3Cpolygon%20points='110.0,205.0%20111.3,208.2%20114.8,208.5%20112.1,210.7%20112.9,214.0%20110.0,212.3%20107.1,214.0%20107.9,210.7%20105.2,208.5%20108.7,208.2'%20fill='none'%20stroke='rgba(230,0,18,0.5)'%20stroke-width='1.5'/%3E%3Cpolygon%20points='210.0,172.0%20211.6,175.8%20215.7,176.1%20212.6,178.8%20213.5,182.9%20210.0,180.7%20206.5,182.9%20207.4,178.8%20204.3,176.1%20208.4,175.8'%20fill='none'%20stroke='rgba(245,245,240,0.17)'%20stroke-width='1.5'/%3E%3C/svg%3E");
 }
 
 /* Ruido de imprenta (SVG feTurbulence, tileable y ligero) */
@@ -716,6 +710,10 @@ html.lenis body {
   /* Anton "en crudo": la pantalla de carga mantiene su geometría de
      composición (Q, pregunta y %) con la fuente original. */
   --font-anton: "Anton", "Arial Narrow", sans-serif;
+  /* Expose: display de encabezados/etiquetas del inventario y de las
+     fichas de proyecto (Rounds posteriores). Sin acentos españoles:
+     el fallback los aporta por glifo. */
+  --font-expose: "Expose", "Anton", "Arial Narrow", sans-serif;
 
   /* --- Escala tipográfica (min: hero, section-title, subtitle, body, caption) --- */
   --text-hero: clamp(3.25rem, 9vw, 8rem);

@@ -119,14 +119,11 @@ export function Home() {
         </nav>
 
         {/* Pie del sistema */}
-        <footer className="hero-footer absolute inset-x-0 bottom-0 z-40 flex items-center justify-center gap-3 border-t border-paper/10 px-6 py-4 md:px-10 sm:justify-between">
-          <SystemLabel className="font-sans max-sm:hidden text-paper/50 tracking-[0.1em] sm:inline-flex">
+        <footer className="hero-footer absolute inset-x-0 bottom-0 z-40 flex items-center justify-center gap-3 border-t border-paper/10 px-6 py-4 md:px-10">
+          <SystemLabel className="font-sans absolute left-6 max-sm:hidden text-paper/50 tracking-[0.1em] md:left-10">
             {profile.hero.roleLine} · {profile.hero.credentialLine}
           </SystemLabel>
           <ContactButton />
-          <SystemLabel className="font-sans max-lg:hidden text-paper/50 tracking-[0.1em] lg:inline-flex lg:pr-32">
-            ESC · Salir del menú
-          </SystemLabel>
         </footer>
       </section>
     </Screen>

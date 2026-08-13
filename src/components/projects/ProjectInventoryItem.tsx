@@ -46,7 +46,7 @@ export function ProjectInventoryItem({
         {/* Nombre del proyecto (sobre la colisión cuando está
             seleccionada) */}
         <span
-          className={`proj-row-name relative z-10 font-display uppercase leading-none transition-colors duration-200 ${
+          className={`proj-row-name relative z-10 font-expose uppercase leading-none transition-colors duration-200 ${
             selected
               ? 'text-paper'
               : 'text-outline-mid group-hover:text-outline group-focus-visible:text-outline'

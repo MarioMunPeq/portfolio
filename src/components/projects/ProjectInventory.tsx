@@ -36,11 +36,6 @@ export function ProjectInventory({
 
   return (
     <nav aria-label="Inventario de proyectos" className="relative">
-      {/* Lavado halftone sutil detrás de las filas */}
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute -inset-6 bg-halftone-dots opacity-40"
-      />
       <ol className="relative flex flex-col gap-2.5" onKeyDown={onKeyDown}>
         {projects.map((project, index) => (
           <ProjectInventoryItem

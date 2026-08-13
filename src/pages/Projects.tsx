@@ -9,10 +9,9 @@ import type { Project } from '../data/projects'
 const OUTLINE_BLACK = `-2px -2px 0 var(--color-bg-hero), 2px -2px 0 var(--color-bg-hero), -2px 2px 0 var(--color-bg-hero), 2px 2px 0 var(--color-bg-hero)`
 
 /**
- * Capa gráfica de fondo del inventario: chevron/zigzag sutil por toda la
- * página, lavados halftone de acento a baja opacidad (uno detrás de la
- * preview, otro en el hueco junto a la lista), palabra fantasma, cuñas
- * diagonales y scanlines. Todo decorativo y detrás del contenido (z-10).
+ * Capa gráfica de fondo del inventario: estrellas de contorno por toda la
+ * página, palabra fantasma, cuñas diagonales y scanlines. Todo
+ * decorativo y detrás del contenido (z-10).
  */
 function ProjectsGraphicLayer() {
   return (
@@ -20,17 +19,8 @@ function ProjectsGraphicLayer() {
       aria-hidden="true"
       className="pointer-events-none absolute inset-0 overflow-hidden"
     >
-      {/* Chevron/zigzag diagonal sutil de fondo */}
-      <span className="absolute inset-0 bg-chevrons" />
-
-      {/* Lavados halftone de acento (muy baja opacidad, con desvanecido
-          radial para que no lea como un rectángulo duro) */}
-      <span
-        className="absolute left-[3%] top-[36%] block h-[26rem] w-[24rem] bg-halftone-red opacity-[0.07] [transform:rotate(-5deg)] [mask-image:radial-gradient(closest-side,black,transparent)]"
-      />
-      <span
-        className="absolute bottom-[12%] right-[6%] block h-[20rem] w-[20rem] bg-halftone-red opacity-[0.05] [transform:rotate(6deg)] [mask-image:radial-gradient(closest-side,black,transparent)]"
-      />
+      {/* Estrellas de contorno sutiles de fondo */}
+      <span className="absolute inset-0 bg-stars" />
 
       <span
         className="absolute right-[-3rem] top-[3%] -rotate-6 select-none font-display uppercase leading-none text-outline-faint opacity-25"
@@ -64,7 +54,7 @@ export function Projects() {
 
         <div className="relative z-10 flex min-h-dvh flex-col px-6 pb-6 pt-24 md:px-10 lg:px-14">
           <header className="relative">
-            <p className="flex items-center gap-2.5 text-label font-medium uppercase tracking-[0.22em] text-accent">
+            <p className="flex items-center gap-2.5 font-expose text-label font-medium uppercase tracking-[0.22em] text-accent">
               <DiamondMarker size={8} />
               Inventario de proyectos
             </p>
@@ -91,15 +81,6 @@ export function Projects() {
               onSelect={setSelected}
             />
           </div>
-
-          <footer className="flex items-center justify-between gap-4 border-t border-paper/10 pt-3">
-            <p className="flex items-center gap-2 text-label font-medium uppercase tracking-[0.22em] text-paper/50">
-              <span aria-hidden="true" className="h-2 w-2 bg-accent" />
-              <span className="hidden sm:inline">▲▼</span>
-              <span className="hidden md:inline">SELECCIONAR ·</span>
-              <span className="hidden sm:inline">✕</span> ABRIR FICHA
-            </p>
-          </footer>
         </div>
       </section>
     </Screen>
