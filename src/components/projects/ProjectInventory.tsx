@@ -46,7 +46,6 @@ export function ProjectInventory({
           <ProjectInventoryItem
             key={project.slug}
             project={project}
-            index={index}
             selected={project.slug === selected.slug}
             onSelect={() => onSelect(project)}
             setItemRef={setItemRef(index)}

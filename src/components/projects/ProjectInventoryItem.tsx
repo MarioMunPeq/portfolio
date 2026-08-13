@@ -4,35 +4,31 @@ import type { Project } from '../../data/projects'
 
 interface ProjectInventoryItemProps {
   project: Project
-  index: number
   selected: boolean
   onSelect: () => void
   setItemRef: (el: HTMLAnchorElement | null) => void
 }
 
-/** Iconos de botón de mando (misma familia que la navegación del hero). */
-const ROW_GLYPHS: ReadonlyArray<{ glyph: string; color: string }> = [
-  { glyph: '△', color: 'text-face-tri' },
-  { glyph: '□', color: 'text-face-sq' },
-  { glyph: '○', color: 'text-face-cir' },
-  { glyph: '✕', color: 'text-face-cross' },
-]
-
 /**
  * Fila del inventario tipo tarjeta angular (tratamiento .cmd del hero):
  * borde fino con esquina recortada y rotación/offset por fila. Al estar
- * seleccionada, un haz rojo sesgado la atraviesa con doble exposición de
- * aberración cromática. El estado activo se marca con aria-current.
+ * seleccionada, un haz rojo sesgado la atraviesa y, con movimiento
+ * permitido, entra en un glitch continuo 100% CSS (sin temporizadores JS):
+ * dos clones completos del banner en rojo #FF1E1E y cian #00E5FF ciclan
+ * de forma ininterrumpida por posiciones de offset/skew con opacidad
+ * media siempre activa, en loops infinitos de duración independiente para
+ * que no se muevan en sincronía ni sus picos coincidan (evita el lavado a
+ * blanco del mix-blend screen); el banner base se deforma con micro-skews
+ * en otro loop continuo. Bajo reduced-motion no se renderiza nada y la
+ * fila queda estática. El estado seleccionado se marca con aria-current.
  */
 export function ProjectInventoryItem({
   project,
-  index,
   selected,
   onSelect,
   setItemRef,
 }: ProjectInventoryItemProps) {
   const reduced = useReducedMotion()
-  const { glyph, color } = ROW_GLYPHS[index % ROW_GLYPHS.length]
 
   return (
     <li className="proj-item">
@@ -45,18 +41,10 @@ export function ProjectInventoryItem({
         onFocus={onSelect}
         className={`proj-row group relative flex items-center gap-3 py-3 pl-4 pr-3 md:gap-4 md:py-4 ${
           selected ? 'is-selected' : ''
-        }`}
+        } ${selected && !reduced ? 'is-glitching' : ''}`}
       >
         {/* Fondo angular de la tarjeta */}
         <span aria-hidden="true" className="proj-row-track" />
-
-        {/* Copias de aberración cromática tras el haz (solo seleccionado) */}
-        {selected && !reduced && (
-          <>
-            <span aria-hidden="true" className="proj-beam-copy proj-beam-copy--cyan" />
-            <span aria-hidden="true" className="proj-beam-copy proj-beam-copy--red" />
-          </>
-        )}
 
         {/* Haz rojo de selección */}
         <span
@@ -64,17 +52,9 @@ export function ProjectInventoryItem({
           className={`proj-beam ${selected ? 'is-active' : ''}`}
         />
 
-        {/* Icono de botón de mando */}
-        <span
-          aria-hidden="true"
-          className={`relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-current text-sm font-bold ${color}`}
-        >
-          {glyph}
-        </span>
-
         {/* Nombre del proyecto */}
         <span
-          className={`relative z-10 font-display uppercase leading-none transition-colors duration-200 ${
+          className={`proj-row-name relative z-10 font-display uppercase leading-none transition-colors duration-200 ${
             selected
               ? 'text-paper'
               : 'text-outline-mid group-hover:text-outline group-focus-visible:text-outline'
@@ -84,17 +64,22 @@ export function ProjectInventoryItem({
           {project.name}
         </span>
 
-        {/* Píldora de acción con corte diagonal */}
-        <span
-          className={`relative z-10 ml-auto flex shrink-0 items-center gap-2 self-center px-3 py-1.5 text-label font-medium uppercase tracking-[0.2em] transition-opacity duration-200 [clip-path:polygon(0_0,92%_0,100%_100%,8%_100%)] ${
-            selected
-              ? 'bg-halftone-red text-paper'
-              : 'border border-accent/70 text-paper/70 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 group-hover:text-paper group-focus-visible:text-paper'
-          }`}
-        >
-          SELECCIONAR
-          <span className="text-[10px] leading-none">▲▼</span>
-        </span>
+        {/* Clones de glitch (solo seleccionado y con movimiento permitido):
+            dos copias completas del banner (haz + texto), rojo #FF1E1E y
+            cian #00E5FF, que ciclan en loops CSS infinite con opacity
+            media siempre activa y posiciones escalonadas independientes */}
+        {selected && !reduced && (
+          <span aria-hidden="true" className="proj-glitch">
+            <span className="proj-glitch__copy proj-glitch__copy--red">
+              <span className="proj-glitch__copy-beam" />
+              <span className="proj-glitch__copy-text">{project.name}</span>
+            </span>
+            <span className="proj-glitch__copy proj-glitch__copy--cyan">
+              <span className="proj-glitch__copy-beam" />
+              <span className="proj-glitch__copy-text">{project.name}</span>
+            </span>
+          </span>
+        )}
 
         {/* Glitch-slice breve al hover en filas no seleccionadas */}
         {!selected && (

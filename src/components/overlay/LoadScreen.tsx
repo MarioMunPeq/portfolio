@@ -226,18 +226,15 @@ export function LoadScreen() {
 
                   {/* Barra trapezoidal larga y fina (~7:1) */}
                   <div className="relative h-[52px] w-full [transform:skewX(-6deg)]">
-                    {/* Copias de aberración cromática tras el marco (solo
-                        con movimiento permitido; reduced-motion las omite) */}
-                    {!reduced && (
-                      <>
-                        <span aria-hidden="true" className="chroma-layer chroma-layer--cyan" />
-                        <span aria-hidden="true" className="chroma-layer chroma-layer--red" />
-                      </>
-                    )}
-                    {/* Marco blanco + relleno rojo de progreso */}
+                    {/* Marco blanco + relleno rojo de progreso con pulso de
+                        brillo/glow rítmico (solo con movimiento permitido;
+                        reduced-motion lo deja estático) */}
                     <div className="absolute inset-0 bg-paper [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
                       <div className="absolute inset-[3px] bg-bg-hero [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
-                        <div ref={barRef} className="absolute inset-y-0 left-0 bg-accent" />
+                        <div
+                          ref={barRef}
+                          className={`absolute inset-y-0 left-0 bg-accent${reduced ? '' : ' bar-breathe'}`}
+                        />
                       </div>
                     </div>
                   </div>

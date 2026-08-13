@@ -9,8 +9,10 @@ import type { Project } from '../data/projects'
 const OUTLINE_BLACK = `-2px -2px 0 var(--color-bg-hero), 2px -2px 0 var(--color-bg-hero), -2px 2px 0 var(--color-bg-hero), 2px 2px 0 var(--color-bg-hero)`
 
 /**
- * Capa gráfica de fondo del inventario: palabra fantasma gigante,
- * cuñas diagonales, sellos de puntos y scanlines. Decorativa.
+ * Capa gráfica de fondo del inventario: chevron/zigzag sutil por toda la
+ * página, lavados halftone de acento a baja opacidad (uno detrás de la
+ * preview, otro en el hueco junto a la lista), palabra fantasma, cuñas
+ * diagonales y scanlines. Todo decorativo y detrás del contenido (z-10).
  */
 function ProjectsGraphicLayer() {
   return (
@@ -18,6 +20,18 @@ function ProjectsGraphicLayer() {
       aria-hidden="true"
       className="pointer-events-none absolute inset-0 overflow-hidden"
     >
+      {/* Chevron/zigzag diagonal sutil de fondo */}
+      <span className="absolute inset-0 bg-chevrons" />
+
+      {/* Lavados halftone de acento (muy baja opacidad, con desvanecido
+          radial para que no lea como un rectángulo duro) */}
+      <span
+        className="absolute left-[3%] top-[36%] block h-[26rem] w-[24rem] bg-halftone-red opacity-[0.07] [transform:rotate(-5deg)] [mask-image:radial-gradient(closest-side,black,transparent)]"
+      />
+      <span
+        className="absolute bottom-[12%] right-[6%] block h-[20rem] w-[20rem] bg-halftone-red opacity-[0.05] [transform:rotate(6deg)] [mask-image:radial-gradient(closest-side,black,transparent)]"
+      />
+
       <span
         className="absolute right-[-3rem] top-[3%] -rotate-6 select-none font-display uppercase leading-none text-outline-faint opacity-25"
         style={{ fontSize: 'clamp(6rem, 13vw, 12rem)' }}
@@ -49,20 +63,10 @@ export function Projects() {
 
         <div className="relative z-10 flex min-h-dvh flex-col px-6 pb-6 pt-24 md:px-10 lg:px-14">
           <header className="relative">
-            <div className="flex items-center justify-between gap-4">
-              <p className="flex items-center gap-2.5 text-label font-medium uppercase tracking-[0.22em] text-accent">
-                <DiamondMarker size={8} />
-                Inventario de proyectos
-              </p>
-              <span aria-hidden="true" className="hidden shrink-0 items-center gap-2 sm:flex">
-                <span className="flex h-7 w-7 items-center justify-center bg-halftone-red text-[13px] font-bold text-ink [clip-path:polygon(0_0,100%_0,92%_100%,8%_100%)]">
-                  ★
-                </span>
-                <span className="flex h-7 w-7 items-center justify-center border border-accent text-[13px] font-bold text-accent [clip-path:polygon(0_0,100%_0,92%_100%,8%_100%)]">
-                  ✕
-                </span>
-              </span>
-            </div>
+            <p className="flex items-center gap-2.5 text-label font-medium uppercase tracking-[0.22em] text-accent">
+              <DiamondMarker size={8} />
+              Inventario de proyectos
+            </p>
             <h1
               className="mt-3 font-p5-menu uppercase leading-[0.95] text-paper"
               style={{
