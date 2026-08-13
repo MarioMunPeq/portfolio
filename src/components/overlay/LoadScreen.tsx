@@ -20,9 +20,6 @@ const LOAD_DURATION = 3.5
 
 /** Preguntas tontas del marcador Q: se rota una al azar por carga. */
 const SURVEY_QUESTIONS = [
-  '¿Sirven los fracasos como aprendiazaje?',
-  '¿Sueles leer las notas del parche?',
-  '¿La curiosidad cuenta como habilidad?',
   '¿Viaje antes que destino?',
 ]
 
