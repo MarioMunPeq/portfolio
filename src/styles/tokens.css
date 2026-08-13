@@ -387,28 +387,81 @@
 }
 
 /* ============================================================
-   Inventario de proyectos — geometría de selección Persona 5
+   Inventario de proyectos — haz de selección por colisión de vigas
    ============================================================ */
 
-/* Haz rojo de selección: barra sesgada que atraviesa la fila del
-   inventario y se desborda por el borde izquierdo, con los extremos
-   cortados en ángulo. Se muestra con opacidad (0) cuando la fila no
-   está seleccionada y aparece (1) al seleccionarla. */
-.proj-beam {
+/* La fila seleccionada NO tiene un banner sólido debajo: todo el color
+   visible sale de dos vigas sesgadas que se cruzan a un ligero ángulo
+   (modelo del menú P5). Cian a la izquierda, rojo a la derecha; la zona
+   donde se solapan se aclara (mix-blend screen) y es donde queda el
+   nombre, y en los extremos sobresale cada color puro. Un tercer eco
+   fantasma (cian apagado) va desplazado hacia abajo/detrás para dar
+   profundidad. El jitter continuo de las dos vigas (loops infinite
+   independientes) se declara con is-glitching en la sección Glitch;
+   bajo reduced-motion no hay animación y las vigas quedan estáticas. */
+.proj-row-beams {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.proj-row-beam {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: screen;
+  will-change: transform, opacity;
+}
+
+/* Geometría compartida de la viga: cuadrilátero sesgado (-8deg) con
+   overhang izquierdo -2.75rem, como forma de color en sí misma (no
+   relleno bajo el texto). El clip-path base (pose estática) es un
+   cuadrilátero ligeramente deformado; en movimiento lo reemplaza la
+   animación de deformación (ver sección Glitch). */
+.proj-row-beam__shape {
   position: absolute;
   top: -5px;
   bottom: -5px;
   right: 0;
   left: -2.75rem;
-  background-color: var(--color-accent);
-  clip-path: polygon(0 0, 100% 0, calc(100% - 1rem) 100%, 1rem 100%);
+  clip-path: polygon(1% 8%, 100% 2%, 98% 92%, 2% 98%);
   transform: skewX(-8deg);
-  opacity: 0;
-  transition: opacity 0.15s ease;
+  will-change: clip-path, opacity;
 }
 
-.proj-beam.is-active {
-  opacity: 1;
+.proj-row-beam--cyan .proj-row-beam__shape {
+  background-color: #00e5ff;
+  opacity: 0.4;
+}
+
+.proj-row-beam--red .proj-row-beam__shape {
+  background-color: #ff1e1e;
+  opacity: 0.5;
+}
+
+/* Eco fantasma: copia apagada del cian, desplazada hacia abajo y sin
+   blend (sombra), para que la colisión principal no lea como dos
+   rectángulos planos. Solo se mueve por translate (capa de fondo). */
+.proj-row-beam--ghost .proj-row-beam__shape {
+  background-color: #075e68;
+  transform: skewX(-8deg) translate(1px, 6px);
+}
+
+.proj-row-beam--ghost {
+  mix-blend-mode: normal;
+  opacity: 0.35;
+}
+
+/* Separación estática de las vigas (pose reduced-motion): cian asoma a
+   la izquierda, rojo a la derecha. La opacidad media vive en el shape
+   para que la animación de deformación pueda modularla por fotograma
+   sin multiplicarse con la del wrapper. */
+.proj-row-beam--cyan {
+  transform: translate(-8px, 1px) skew(-3deg);
+}
+
+.proj-row-beam--red {
+  transform: translate(9px, -2px) skew(2deg);
 }
 
 /* Marco de la gran captura del inventario: esquinas cortadas (viñeta
@@ -451,154 +504,86 @@
 }
 
 /* ============================================================
-   Glitch del inventario — bucle continuo (color + deformación)
+   Inventario — deformación continua de las vigas (loops infinite)
    ============================================================ */
 
-/* Envoltura del efecto: cubre la fila seleccionada, por encima del
-   contenido real. Sin overflow hidden: las copias replican el banner
-   completo, incluido el overhang izquierdo del haz, y se desbordan
-   igual que el banner real. El jitter es 100% CSS (animaciones
-   infinite), sin temporizadores JS; bajo reduced-motion no se renderiza. */
-.proj-glitch {
-  position: absolute;
-  inset: 0;
-  z-index: 20;
-  pointer-events: none;
-}
-
-/* Copia completa del banner (haz trapezoidal + texto), recolorada con
-   el rojo/cian eléctrico del glitch. Reproduce la geometría exacta del
-   .proj-beam (overhang izquierdo -2.75rem, skew -8deg y clip-path) y
-   alinea el texto con el nombre real: flex centrado vertical + mismo
-   padding horizontal que la fila. */
-.proj-glitch__copy {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  padding-left: 1rem;
-  padding-right: 0.75rem;
-  mix-blend-mode: screen;
-  opacity: 0;
-  will-change: transform, opacity;
-}
-
-.proj-glitch__copy-beam {
-  position: absolute;
-  top: -5px;
-  bottom: -5px;
-  right: 0;
-  left: -2.75rem;
-  clip-path: polygon(0 0, 100% 0, calc(100% - 1rem) 100%, 1rem 100%);
-  transform: skewX(-8deg);
-}
-
-.proj-glitch__copy--red .proj-glitch__copy-beam {
-  background-color: #ff1e1e;
-}
-
-.proj-glitch__copy--cyan .proj-glitch__copy-beam {
-  background-color: #00e5ff;
-}
-
-/* Bucle continuo de cada capa: opacidad media SIEMPRE activa (no salta
-   entre 0 y pico) y 5 posiciones de offset/skew por ciclo con steps(1)
-   (cada posición salta y se mantiene). Rojo y cian usan keyframes y
-   duraciones independientes (0.5s vs 0.62s) para que nunca se muevan en
-   sincronía y sus picos de intensidad no coincidan en el mismo instante
-   (evita el lavado a blanco del mix-blend screen); el offset de cada
-   capa los mantiene ~14-22px separados. */
-@keyframes glitch-red {
+/* La colisión de vigas se mantiene en movimiento perpetuo mientras la
+   fila está seleccionada y hay movimiento permitido, pero NO como un
+   bloque rígido que se desliza (transform): cada viga deforma su propia
+   geometría animando los puntos del clip-path, con cada esquina
+   empujada de forma independiente por fotograma (no todas en la misma
+   dirección). Rojo y cian usan keyframes y duraciones independientes
+   (0.5s vs 0.62s) con steps(1), de modo que deforman de forma distinta
+   y sus picos de intensidad no coinciden en el mismo instante (evita
+   que la zona de solape se lave a blanco). El fantasma solo deriva en
+   translate (es fondo). Todo 100% CSS, sin temporizadores JS. */
+@keyframes beam-deform-red {
   0%,
   100% {
     opacity: 0.35;
-    transform: translate(7px, 0) skew(3deg);
+    clip-path: polygon(2% 10%, 100% 0%, 98% 90%, 0% 100%);
   }
-  20% {
+  25% {
     opacity: 0.55;
-    transform: translate(9px, -2px) skew(2deg);
+    clip-path: polygon(0% 15%, 97% 5%, 100% 85%, 3% 95%);
   }
-  40% {
+  50% {
     opacity: 0.3;
-    transform: translate(11px, 1px) skew(4deg);
+    clip-path: polygon(4% 5%, 100% 8%, 96% 95%, 1% 92%);
   }
-  60% {
+  75% {
     opacity: 0.5;
-    transform: translate(8px, -1px) skew(2.5deg);
-  }
-  80% {
-    opacity: 0.35;
-    transform: translate(10px, 2px) skew(3.5deg);
+    clip-path: polygon(1% 12%, 96% 0%, 99% 88%, 2% 98%);
   }
 }
 
-@keyframes glitch-cyan {
+@keyframes beam-deform-cyan {
   0%,
   100% {
     opacity: 0.4;
-    transform: translate(-8px, 1px) skew(-3deg);
+    clip-path: polygon(0% 6%, 96% 0%, 100% 94%, 2% 88%);
   }
-  20% {
+  25% {
     opacity: 0.2;
-    transform: translate(-11px, 0) skew(-2deg);
+    clip-path: polygon(4% 16%, 100% 6%, 96% 86%, 0% 100%);
   }
-  40% {
+  50% {
     opacity: 0.55;
-    transform: translate(-7px, -2px) skew(-4deg);
+    clip-path: polygon(2% 4%, 94% 12%, 100% 96%, 3% 92%);
   }
-  60% {
+  75% {
     opacity: 0.3;
-    transform: translate(-10px, 0.5px) skew(-2.5deg);
-  }
-  80% {
-    opacity: 0.5;
-    transform: translate(-9px, 2px) skew(-3.5deg);
+    clip-path: polygon(5% 10%, 100% 2%, 93% 90%, 1% 84%);
   }
 }
 
-.proj-glitch__copy--red {
-  animation: glitch-red 0.5s steps(1) infinite;
+.proj-row.is-glitching .proj-row-beam--red .proj-row-beam__shape {
+  animation: beam-deform-red 0.5s steps(1) infinite;
 }
 
-.proj-glitch__copy--cyan {
-  animation: glitch-cyan 0.62s steps(1) infinite;
+.proj-row.is-glitching .proj-row-beam--cyan .proj-row-beam__shape {
+  animation: beam-deform-cyan 0.62s steps(1) infinite;
 }
 
-.proj-glitch__copy-text {
-  font-family: var(--font-display);
-  font-size: clamp(1.5rem, 3.2vw, 2.75rem);
-  line-height: 1;
-  text-transform: uppercase;
-  white-space: nowrap;
-  color: var(--color-paper);
-}
-
-/* Wobble continuo del banner base: micro-skews alternos con pasos
-   bruscos (steps(1): cada fotograma salta y se mantiene) en bucle
-   infinito mientras la fila esté seleccionada. El haz y el nombre
-   comparten el MISMO delta por fotograma (el haz parte de -8deg) para
-   que no se despeguen entre sí: +2, -1, +1, -0.5 en cada salto. */
-@keyframes beam-wobble {
-  0% {
-    transform: skewX(-8deg);
-  }
-  20% {
-    transform: skewX(-6deg);
-  }
-  40% {
-    transform: skewX(-9deg);
-  }
-  60% {
-    transform: skewX(-7deg);
-  }
-  80% {
-    transform: skewX(-8.5deg);
-  }
+/* Deriva del eco fantasma: solo translate, sutil y desacoplado de la
+   deformación de las vigas principales. */
+@keyframes ghost-drift {
+  0%,
   100% {
-    transform: skewX(-8deg);
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-3px, 4px);
   }
 }
 
+.proj-row.is-glitching .proj-row-beam--ghost {
+  animation: ghost-drift 0.8s steps(1) infinite;
+}
+
+/* Micro-wobble del texto sobre la colisión: mismos pasos bruscos
+   (steps(1)) que las vigas, en bucle infinito mientras la fila esté
+   seleccionada, para que el nombre se sacuda en tándem con las vigas. */
 @keyframes name-wobble {
   0% {
     transform: skewX(0);
@@ -620,16 +605,13 @@
   }
 }
 
-.proj-row.is-glitching .proj-beam {
-  animation: beam-wobble 0.45s steps(1) infinite;
-}
-
 .proj-row.is-glitching .proj-row-name {
   animation: name-wobble 0.45s steps(1) infinite;
 }
 
 /* ============================================================
-   Inventario — filas tipo tarjeta angular (tratamiento .cmd del hero)
+   Inventario — filas de texto plano (solo la seleccionada lleva
+   la colisión de vigas)
    ============================================================ */
 
 /* El `li` declara el offset/rotación por fila (solo escritorio); la
@@ -659,32 +641,6 @@
 .proj-row:focus-visible {
   transform: translateX(calc(var(--proj-off, 0px) - 8px)) rotate(var(--proj-rot, 0deg));
 }
-
-/* Fondo angular de la tarjeta: borde fino + esquina inferior derecha
-   recortada. El contenido y el haz rojo van por encima (no se recortan). */
-.proj-row-track {
-  position: absolute;
-  inset: 0;
-  background: rgba(26, 26, 26, 0.5);
-  border: 1px solid color-mix(in srgb, var(--color-paper) 30%, transparent);
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 1rem), calc(100% - 1rem) 100%, 0 100%);
-  transition: border-color 0.2s ease, background-color 0.2s ease;
-}
-
-.proj-row:hover .proj-row-track,
-.proj-row:focus-visible .proj-row-track {
-  border-color: var(--color-accent);
-  background: rgba(26, 26, 26, 0.85);
-}
-
-/* Fila seleccionada: el haz rojo pinta la tarjeta; el track se vacía
-   para no pelear con él. Regla declarada después del hover para ganar
-   por orden en igualdad de especificidad. */
-.proj-row.is-selected .proj-row-track {
-  border-color: transparent;
-  background: transparent;
-}
-
 
 /* Marcador angular del indicador de scroll */
 @keyframes scroll-marker {

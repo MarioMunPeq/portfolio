@@ -10,17 +10,17 @@ interface ProjectInventoryItemProps {
 }
 
 /**
- * Fila del inventario tipo tarjeta angular (tratamiento .cmd del hero):
- * borde fino con esquina recortada y rotación/offset por fila. Al estar
- * seleccionada, un haz rojo sesgado la atraviesa y, con movimiento
- * permitido, entra en un glitch continuo 100% CSS (sin temporizadores JS):
- * dos clones completos del banner en rojo #FF1E1E y cian #00E5FF ciclan
- * de forma ininterrumpida por posiciones de offset/skew con opacidad
- * media siempre activa, en loops infinitos de duración independiente para
- * que no se muevan en sincronía ni sus picos coincidan (evita el lavado a
- * blanco del mix-blend screen); el banner base se deforma con micro-skews
- * en otro loop continuo. Bajo reduced-motion no se renderiza nada y la
- * fila queda estática. El estado seleccionado se marca con aria-current.
+ * Fila del inventario. Sin seleccionar es texto plano (sin tarjeta, sin
+ * borde ni fondo). Seleccionada, todo su color sale de DOS vigas
+ * sesgadas que se cruzan a un ligero ángulo (modelo P5), no de un
+ * banner sólido debajo: cian (#00E5FF) asomando por la izquierda, rojo
+ * (#FF1E1E) por la derecha, con mix-blend screen para que el solape se
+ * aclare en un tono pálido donde queda el nombre; un eco fantasma
+ * (cian apagado, desplazado y sin blend) da profundidad. Con movimiento
+ * permitido, ambas vigas jitterean en loops CSS infinite independientes
+ * (clase is-glitching, sin temporizadores JS); bajo reduced-motion se
+ * renderizan estáticas y la fila queda quieta. El estado seleccionado
+ * se marca con aria-current.
  */
 export function ProjectInventoryItem({
   project,
@@ -43,16 +43,8 @@ export function ProjectInventoryItem({
           selected ? 'is-selected' : ''
         } ${selected && !reduced ? 'is-glitching' : ''}`}
       >
-        {/* Fondo angular de la tarjeta */}
-        <span aria-hidden="true" className="proj-row-track" />
-
-        {/* Haz rojo de selección */}
-        <span
-          aria-hidden="true"
-          className={`proj-beam ${selected ? 'is-active' : ''}`}
-        />
-
-        {/* Nombre del proyecto */}
+        {/* Nombre del proyecto (sobre la colisión cuando está
+            seleccionada) */}
         <span
           className={`proj-row-name relative z-10 font-display uppercase leading-none transition-colors duration-200 ${
             selected
@@ -64,19 +56,22 @@ export function ProjectInventoryItem({
           {project.name}
         </span>
 
-        {/* Clones de glitch (solo seleccionado y con movimiento permitido):
-            dos copias completas del banner (haz + texto), rojo #FF1E1E y
-            cian #00E5FF, que ciclan en loops CSS infinite con opacity
-            media siempre activa y posiciones escalonadas independientes */}
-        {selected && !reduced && (
-          <span aria-hidden="true" className="proj-glitch">
-            <span className="proj-glitch__copy proj-glitch__copy--red">
-              <span className="proj-glitch__copy-beam" />
-              <span className="proj-glitch__copy-text">{project.name}</span>
+        {/* Colisión de vigas (solo fila seleccionada): no hay forma
+            sólida debajo; el color visible ES la unión de estas vigas.
+            Cian a la izquierda, rojo a la derecha (se solapan con
+            screen en un tono pálido) y eco fantasma detrás. El jitter
+            continuo corre con is-glitching; bajo reduced-motion quedan
+            en su pose estática */}
+        {selected && (
+          <span aria-hidden="true" className="proj-row-beams">
+            <span className="proj-row-beam proj-row-beam--ghost">
+              <span className="proj-row-beam__shape" />
             </span>
-            <span className="proj-glitch__copy proj-glitch__copy--cyan">
-              <span className="proj-glitch__copy-beam" />
-              <span className="proj-glitch__copy-text">{project.name}</span>
+            <span className="proj-row-beam proj-row-beam--cyan">
+              <span className="proj-row-beam__shape" />
+            </span>
+            <span className="proj-row-beam proj-row-beam--red">
+              <span className="proj-row-beam__shape" />
             </span>
           </span>
         )}

@@ -50,8 +50,9 @@ function ProjectsGraphicLayer() {
 /**
  * Pantalla de proyectos = inventario del sistema. La gran captura del
  * proyecto seleccionado domina la izquierda; a la derecha, el selector
- * tipo inventario con haz rojo sesgado. Hover/foco selecciona, clic
- * abre la ficha (/proyectos/:slug).
+ * tipo inventario: filas de texto plano donde la seleccionada se pinta
+ * con la colisión de dos vigas sesgadas (cian + rojo). Hover/foco
+ * selecciona, clic abre la ficha (/proyectos/:slug).
  */
 export function Projects() {
   const [selected, setSelected] = useState<Project>(projects[0])
