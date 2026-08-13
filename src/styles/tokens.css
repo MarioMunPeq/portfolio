@@ -480,6 +480,20 @@
   animation: bar-breathe 1.2s ease-in-out infinite;
 }
 
+/* Panel del marcador Q: marco rojo con esquinas cortadas y fondo oscuro
+   translúcido, para la composición inferior de la pantalla de carga. */
+.load-panel {
+  position: relative;
+  padding: 2px;
+  background: rgba(230, 0, 18, 0.4);
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+}
+
+.load-panel-inner {
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+  background: rgba(10, 10, 10, 0.66);
+}
+
 /* ============================================================
    Inventario — deformación continua de las vigas (loops infinite)
    ============================================================ */
@@ -892,12 +906,6 @@ html.lenis body {
 
 .load-exit-scan {
   animation: exit-scan 0.55s ease-out 0.05s both;
-}
-
-/* Cursor cuadrado al frente del relleno de progreso. */
-.load-bar-cursor {
-  background-color: var(--color-accent);
-  box-shadow: 0 0 10px rgba(230, 0, 18, 0.55);
 }
 
 /* --- Reduced motion: eliminar movimiento no esencial (spec §9) --- */

@@ -18,6 +18,14 @@ const PROGRESS_EASE: [number, number, number, number] = [0.65, 0, 0.35, 1]
 const EXIT_EASE: [number, number, number, number] = [0.85, 0, 0.15, 1]
 const LOAD_DURATION = 3.5
 
+/** Preguntas tontas del marcador Q: se rota una al azar por carga. */
+const SURVEY_QUESTIONS = [
+  '¿Sirven los fracasos como aprendiazaje?',
+  '¿Sueles leer las notas del parche?',
+  '¿La curiosidad cuenta como habilidad?',
+  '¿Viaje antes que destino?',
+]
+
 /** Antifaz de identidad (imagen PNG en public/). BASE_URL respeta el prefijo
  *  de despliegue (/portfolio/) tanto en dev como en build. */
 const MASK_SRC = `${import.meta.env.BASE_URL}images/ui/persona-mask.png`
@@ -43,10 +51,9 @@ export function LoadScreen() {
   const [exiting, setExiting] = useState(false)
   const [exitScan, setExitScan] = useState(false)
   const [impact, setImpact] = useState(false)
+  const [question, setQuestion] = useState<string | null>(null)
   const barRef = useRef<HTMLDivElement>(null)
   const pctRef = useRef<HTMLSpanElement>(null)
-  const cursorRef = useRef<HTMLSpanElement>(null)
-  const ticksRef = useRef<HTMLDivElement>(null)
 
   const progress = useMotionValue(0)
   const exitProgress = useMotionValue(0)
@@ -103,22 +110,11 @@ export function LoadScreen() {
     window.setTimeout(hide, 980)
   }, [hide, impactScale])
 
-  // Barra, porcentaje, cursor y ticks: escritura directa en el DOM
-  // (sin re-renders de React por fotograma).
+  // Barra y porcentaje: escritura directa en el DOM (sin re-renders de
+  // React por fotograma).
   useMotionValueEvent(progress, 'change', (value) => {
     if (pctRef.current) pctRef.current.textContent = String(Math.round(value * 100))
     if (barRef.current) barRef.current.style.width = `${value * 100}%`
-    if (cursorRef.current) cursorRef.current.style.left = `calc(${value * 100}% - 4px)`
-    if (ticksRef.current) {
-      const lit = Math.round(value * 5)
-      ticksRef.current.querySelectorAll<HTMLElement>('[data-tick]').forEach((tick, i) => {
-        const on = i < lit
-        tick.style.opacity = on ? '1' : '0.25'
-        tick.style.backgroundColor = on
-          ? 'var(--color-accent)'
-          : 'rgba(245, 245, 240, 0.25)'
-      })
-    }
     if (value >= IMPACT_AT && !impactFired.current && !reduced) {
       impactFired.current = true
       animate(impactScale, [1, 1.018, 1], {
@@ -137,6 +133,12 @@ export function LoadScreen() {
 
   useEffect(() => {
     setVisible(true)
+  }, [])
+
+  // Selecciona una pregunta al azar cuando se monta.
+  useEffect(() => {
+    const i = Math.floor(Math.random() * SURVEY_QUESTIONS.length)
+    setQuestion(SURVEY_QUESTIONS[i])
   }, [])
 
   // Carga simulada 0 → 1 en LOAD_DURATION.
@@ -341,49 +343,65 @@ export function LoadScreen() {
         />
       )}
 
-      {/* Progreso — integrado y secundario respecto a la máscara */}
+      {/* Progreso — composición original del menú de juego: Q + pregunta,
+          barra trapezoidal y porcentaje (SÍ %) */}
       <motion.div
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-30 flex justify-center"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-30"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: reduced ? 0 : 0.6, delay: reduced ? 0 : 0.25 }}
       >
-        <div className="w-[min(400px,82vw)] pb-[calc(1.75rem+env(safe-area-inset-bottom))]">
-          <div className="flex items-end justify-between font-anton">
-            <span className="text-[0.95rem] leading-none tracking-[0.1em] text-accent">Q</span>
-            <span className="flex items-baseline text-label leading-none tracking-[0.25em] text-paper/60">
-              <span
-                ref={pctRef}
-                className="min-w-[2.5ch] text-right tabular-nums text-paper/80"
-              >
-                0
-              </span>
-              <span className="ml-0.5 text-accent">%</span>
-            </span>
-          </div>
-          <div className="mt-2.5 [transform:skewX(-6deg)]">
-            <div className="relative h-[4px] w-full bg-paper/12">
-              <div
-                ref={barRef}
-                className={`absolute inset-y-0 left-0 w-0 bg-accent${reduced ? '' : ' bar-breathe'}`}
-              />
-              {!reduced && (
-                <span
-                  ref={cursorRef}
-                  className="load-bar-cursor absolute top-1/2 size-[9px] [transform:translateY(-50%)_skewX(6deg)]"
-                  style={{ left: '-4px' }}
-                />
-              )}
-            </div>
-            <div ref={ticksRef} className="mt-2 flex items-center justify-between">
-              {[0, 1, 2, 3, 4].map((i) => (
-                <span
-                  key={i}
-                  data-tick
-                  className="h-[3px] w-[14px]"
-                  style={{ opacity: 0.25, backgroundColor: 'rgba(245, 245, 240, 0.25)' }}
-                />
-              ))}
+        <div className="load-base absolute inset-x-0 bottom-0 h-[min(38vh,380px)] w-full">
+          <div className="pointer-events-none absolute bottom-12 right-6 z-20 w-[min(35rem,80vw)]">
+            <div className="load-panel">
+              <div className="load-panel-inner px-7 pb-6 pt-[6.5rem]">
+                {/* Pregunta, con la Q a la izquierda; barra y % debajo */}
+                <p
+                  className="load-question max-w-full truncate pl-[2.5rem] text-left font-anton uppercase leading-[1.05] text-paper"
+                  style={{ fontSize: 'clamp(1.3rem, 2.2vw, 2rem)' }}
+                >
+                  {question && (
+                    <>
+                      {question.slice(0, -1)}
+                      <span className="text-accent">?</span>
+                    </>
+                  )}
+                </p>
+
+                {/* Q + barra + % */}
+                <div className="load-bar-block relative mt-2 flex items-center pl-[2.5rem]">
+                  {/* Letra Q suelta, borde inferior solapando la esquina sup-izq de la barra */}
+                  <span
+                    aria-hidden="true"
+                    className="load-q absolute bottom-[50px] left-0 font-anton text-[5.5rem] leading-none text-paper [text-shadow:-2px_-2px_0_#000,2px_-2px_0_#000,-2px_2px_0_#000,2px_2px_0_#000,-3px_-3px_0_#000,3px_-3px_0_#000,-3px_3px_0_#000,3px_3px_0_#000]"
+                  >
+                    Q
+                  </span>
+
+                  {/* Barra trapezoidal larga y fina (~7:1) */}
+                  <div className="relative h-[52px] w-full [transform:skewX(-6deg)]">
+                    {/* Marco blanco + relleno rojo de progreso con pulso de
+                        brillo/glow rítmico (solo con movimiento permitido) */}
+                    <div className="absolute inset-0 bg-paper [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
+                      <div className="absolute inset-[3px] bg-bg-hero [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
+                        <div
+                          ref={barRef}
+                          className={`absolute inset-y-0 left-0 bg-accent${reduced ? '' : ' bar-breathe'}`}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* SÍ {porcentaje}% — caja de ancho fijo para que el
+                      número a 1-3 dígitos nunca desplace la barra */}
+                  <span className="load-pct ml-4 shrink-0 font-anton text-[3.5rem] leading-none text-accent [transform:skewX(-10deg)] [text-shadow:-2px_-2px_0_#000,2px_-2px_0_#000,-2px_2px_0_#000,2px_2px_0_#000,-3px_-3px_0_#000,3px_-3px_0_#000,-3px_3px_0_#000,3px_3px_0_#000,4px_4px_0_rgba(0,0,0,0.5)]">
+                    SÍ{' '}
+                    <span className="inline-block min-w-[4.5ch] text-right tabular-nums">
+                      <span ref={pctRef}>0</span>%
+                    </span>
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
