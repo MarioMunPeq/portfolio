@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react'
-import type { CSSProperties } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, useMotionValue, useReducedMotion } from 'motion/react'
 
 type CursorColor = 'red' | 'white'
@@ -13,7 +12,7 @@ interface CursorState {
 const RED = '#e60012'
 const PAPER = '#f5f5f0'
 
-// Etiqueta y color según el contexto (data-cursor). El color del aro
+// Etiqueta y color según el contexto (data-cursor). El color del contorno
 // cambia rojo/blanco según la acción: VOLVER queda en rojo.
 const CURSOR_STYLES: Record<string, CursorState> = {
   select: { active: true, label: 'SELECCIONAR', color: 'white' },
@@ -41,32 +40,40 @@ function resolveCursor(target: Element): CursorState {
   return CURSOR_STYLES.select
 }
 
-// Transición rápida y cortante (ease-out exponencial, ~180 ms).
-const SNAP: { duration: number; ease: [number, number, number, number] } = {
-  duration: 0.18,
-  ease: [0.16, 1, 0.3, 1],
-}
+// Curva rápida y cortante (ease-out exponencial).
+const BEZIER: [number, number, number, number] = [0.16, 1, 0.3, 1]
+// Transición de estado de la retícula (~160 ms).
+const SNAP = { duration: 0.16, ease: BEZIER }
+// Compresión al pulsar, aún más corta (~120 ms).
+const PRESS = { duration: 0.12, ease: BEZIER }
+// Entrada de la etiqueta contextual.
+const LABEL_IN = { duration: 0.16, ease: BEZIER }
+// Confirmación geométrica del clic.
+const CONFIRM = { duration: 0.13, ease: 'easeOut' as const }
 
-// Octágono asimétrico: dos esquinas opuestas recortadas con distinto corte.
-const RETICLE_CLIP = '[clip-path:polygon(0_37%,38%_0,100%_0,100%_82%,82%_100%,0_100%)]'
+// Diamante: cuadrado girado 45° (vértices arriba/abajo/izquierda/derecha).
+const DIAMOND = 'M 12 2.5 L 21.5 12 L 12 21.5 L 2.5 12 Z'
+// Muesca de acento sobre la arista superior derecha (asimetría P5).
+const TICK = 'M 12 2.5 L 15 5.5'
 
-// Marcas geométricas que se abren hacia fuera al hover.
-const TICKS: Array<{ cls: string; style: CSSProperties }> = [
-  { cls: 'h-[4px] w-[1.5px]', style: { top: -4, left: 'calc(50% - 0.75px)', transform: 'skewX(-16deg)' } },
-  { cls: 'h-[4px] w-[1.5px]', style: { bottom: -4, left: 'calc(50% - 0.75px)', transform: 'skewX(14deg)' } },
-  { cls: 'h-[1.5px] w-[4px]', style: { left: -4, top: 'calc(50% - 0.75px)', transform: 'skewY(16deg)' } },
-  { cls: 'h-[1.5px] w-[4px]', style: { right: -4, top: 'calc(50% - 0.75px)', transform: 'skewY(-14deg)' } },
-]
+// Separación horizontal de la etiqueta respecto al puntero y ancho estimado
+// (se reajusta con la medición real del DOM).
+const LABEL_GAP = 24
+const LABEL_EST = 150
 
 /**
- * Cursor decorativo del sistema, re diseñado como HUD de Persona 5.
- * Con `prefers-reduced-motion` o puntero táctil no se monta: se usa el
- * cursor nativo. Cuando está activo se marca `data-cursor-active` en el
- * documento y CSS oculta el cursor nativo (solo punteros finos).
- * La retícula queda bloqueada al puntero físico (MotionValues crudos,
- * sin spring). Al hover se transforma ella misma (crece, gira, cambia
- * rojo/blanco, abre marcas angulares y muestra la etiqueta contextual
- * con data-cursor). Al clic, una ráfaga geométrica confirma la acción.
+ * Cursor decorativo del sistema: un diamante geométrico fino inspirado en el
+ * indicador de selección de Persona 5. Con `prefers-reduced-motion` o puntero
+ * táctil no se monta: se usa el cursor nativo. Cuando está activo se marca
+ * `data-cursor-active` en el documento y CSS oculta el cursor nativo (solo
+ * punteros finos). La posición sigue al puntero mediante MotionValues crudos
+ * (sin spring, sin lag, sin estado por fotograma).
+ *
+ * Estados: reposo = diamante rojo pequeño; hover = crece ~1.6x, gira y cambia
+ * rojo/blanco según la acción, con muesca de acento y etiqueta contextual;
+ * pulsación = compresión breve + anillo de confirmación geométrico (< 150 ms).
+ * La etiqueta se recoloca al otro lado del puntero cerca de los bordes del
+ * viewport y nunca sale de pantalla.
  */
 export function Cursor() {
   const reduced = useReducedMotion()
@@ -76,10 +83,26 @@ export function Cursor() {
     label: 'SELECCIONAR',
     color: 'white',
   })
-  const [burstKey, setBurstKey] = useState(0)
+  const [pressed, setPressed] = useState(false)
+  const [flipped, setFlipped] = useState(false)
+  const [lift, setLift] = useState(0)
+  const [confirmKey, setConfirmKey] = useState(0)
 
   const x = useMotionValue(-100)
   const y = useMotionValue(-100)
+
+  const viewport = useRef({ w: 1280, h: 720 })
+  const flipRef = useRef(false)
+  const liftRef = useRef(0)
+  const labelRef = useRef<HTMLSpanElement | null>(null)
+  const labelWidth = useRef(LABEL_EST)
+
+  // Anchura real de la etiqueta (con margen) para el volteo en los bordes.
+  useEffect(() => {
+    labelWidth.current = labelRef.current
+      ? Math.max(LABEL_EST, labelRef.current.offsetWidth + 10)
+      : LABEL_EST
+  }, [enabled, cursor.label])
 
   useEffect(() => {
     if (reduced) return
@@ -87,10 +110,31 @@ export function Cursor() {
 
     setEnabled(true)
     document.documentElement.setAttribute('data-cursor-active', 'true')
+    viewport.current = { w: window.innerWidth, h: window.innerHeight }
+
+    const onResize = () => {
+      viewport.current = { w: window.innerWidth, h: window.innerHeight }
+    }
 
     const onMove = (event: MouseEvent) => {
       x.set(event.clientX)
       y.set(event.clientY)
+
+      // Recolocación de la etiqueta según el borde del viewport. Solo se
+      // actualiza el estado al cruzar el umbral (nunca por fotograma).
+      const { w, h } = viewport.current
+      const flip = event.clientX > w - labelWidth.current - LABEL_GAP - 24
+      if (flip !== flipRef.current) {
+        flipRef.current = flip
+        setFlipped(flip)
+      }
+      let next = 0
+      if (event.clientY < 64) next = 1
+      else if (event.clientY > h - 56) next = -1
+      if (next !== liftRef.current) {
+        liftRef.current = next
+        setLift(next)
+      }
     }
 
     const onOver = (event: MouseEvent) => {
@@ -110,24 +154,46 @@ export function Cursor() {
 
     const onDown = (event: MouseEvent) => {
       if (event.button !== 0) return
-      setBurstKey((key) => key + 1)
+      setPressed(true)
+      setConfirmKey((key) => key + 1)
     }
 
+    const onUp = () => setPressed(false)
+
+    const onLeave = () => {
+      setPressed(false)
+      setCursor((prev) => (prev.active ? { ...prev, active: false } : prev))
+    }
+
+    window.addEventListener('resize', onResize)
     window.addEventListener('mousemove', onMove)
     window.addEventListener('mouseover', onOver)
     window.addEventListener('mousedown', onDown)
+    window.addEventListener('mouseup', onUp)
+    window.addEventListener('blur', onLeave)
+    document.addEventListener('mouseleave', onLeave)
+
     return () => {
+      window.removeEventListener('resize', onResize)
       window.removeEventListener('mousemove', onMove)
       window.removeEventListener('mouseover', onOver)
       window.removeEventListener('mousedown', onDown)
+      window.removeEventListener('mouseup', onUp)
+      window.removeEventListener('blur', onLeave)
+      document.removeEventListener('mouseleave', onLeave)
       document.documentElement.removeAttribute('data-cursor-active')
     }
   }, [reduced, x, y])
 
   if (!enabled) return null
 
-  const strokeColor = cursor.active ? (cursor.color === 'red' ? RED : PAPER) : RED
-  const dotColor = cursor.active ? (cursor.color === 'red' ? PAPER : RED) : PAPER
+  // Reposo: contorno rojo, marcador papel. Hover (acción blanca): contorno
+  // papel brillante con acento rojo. Hover (VOLVER): rojo con acento papel.
+  const strokeColor = cursor.active && cursor.color === 'white' ? PAPER : RED
+  const dotColor = cursor.active && cursor.color === 'white' ? RED : PAPER
+
+  const labelX = flipped ? -(labelWidth.current + LABEL_GAP) : LABEL_GAP
+  const labelY = lift === 1 ? 26 : lift === -1 ? -58 : -18
 
   return (
     <motion.div
@@ -136,97 +202,100 @@ export function Cursor() {
       style={{ x, y }}
     >
       <div className="relative -ml-[9px] -mt-[9px]">
-        {/* Reticula */}
+        {/* Retícula */}
         <motion.div
           className="relative flex h-[18px] w-[18px] items-center justify-center"
           animate={{
-            scale: cursor.active ? 1.55 : 1,
-            rotate: cursor.active ? 70 : 45,
+            scale: pressed ? (cursor.active ? 1.32 : 0.86) : cursor.active ? 1.6 : 1,
+            rotate: cursor.active ? 9 : 0,
           }}
-          transition={SNAP}
+          transition={pressed ? PRESS : SNAP}
         >
-          {/* Ráfaga de confirmación al clic (detrás de la retícula) */}
-          <span className="absolute inset-0 flex items-center justify-center">
-            {burstKey > 0 && (
-              <motion.span
-                key={burstKey}
-                className="flex h-[26px] w-[26px] items-center justify-center"
-                initial={{ opacity: 1, scale: 0.45, rotate: 0 }}
-                animate={{ opacity: 0, scale: 1.9, rotate: 16 }}
-                transition={{ duration: 0.2, ease: 'easeOut' }}
-              >
-                <svg viewBox="0 0 24 24" className="h-full w-full">
-                  {[45, 135, 225, 315].map((angle, index) => (
-                    <rect
-                      key={angle}
-                      x="10.75"
-                      y="3"
-                      width="2.5"
-                      height="6"
-                      fill={index % 2 === 0 ? RED : PAPER}
-                      transform={`rotate(${angle} 12 12)`}
-                    />
-                  ))}
-                  <rect
-                    x="10.25"
-                    y="10.25"
-                    width="3.5"
-                    height="3.5"
-                    fill={RED}
-                    transform="rotate(45 12 12)"
-                  />
-                </svg>
-              </motion.span>
+          <svg viewBox="0 0 24 24" className="h-full w-full">
+            {/* Confirmación geométrica al pulsar: contracción breve */}
+            {confirmKey > 0 && (
+              <motion.path
+                key={confirmKey}
+                d={DIAMOND}
+                fill="none"
+                stroke={dotColor}
+                strokeWidth="1.2"
+                initial={{ scale: 1, opacity: 0.9 }}
+                animate={{ scale: 0.55, opacity: 0 }}
+                transition={CONFIRM}
+                style={{ transformBox: 'fill-box', transformOrigin: 'center' }}
+              />
             )}
-          </span>
 
-          {/* Aro exterior (color de estado) */}
-          <motion.span
-            className={`absolute inset-0 p-[2px] ${RETICLE_CLIP}`}
-            animate={{ backgroundColor: strokeColor }}
-            transition={SNAP}
-          >
-            <span className={`block h-full w-full bg-black ${RETICLE_CLIP}`} />
-          </motion.span>
-
-          {/* Punto central */}
-          <motion.span
-            className="relative block h-[5px] w-[5px] rotate-45"
-            animate={{ backgroundColor: dotColor }}
-            transition={SNAP}
-          />
-
-          {/* Marcas geométricas que se abren al hover */}
-          {TICKS.map((tick, index) => (
-            <motion.span
-              key={index}
-              className={`absolute ${tick.cls}`}
-              style={tick.style}
+            {/* Contorno del diamante */}
+            <motion.path
+              d={DIAMOND}
+              fill="none"
               animate={{
-                opacity: cursor.active ? 1 : 0,
-                backgroundColor: strokeColor,
+                stroke: strokeColor,
+                strokeWidth: cursor.active ? 1.6 : 1.2,
               }}
               transition={SNAP}
             />
-          ))}
+
+            {/* Muesca de acento en la arista superior derecha */}
+            <motion.path
+              d={TICK}
+              stroke={dotColor}
+              strokeWidth="1.5"
+              fill="none"
+              animate={{ opacity: cursor.active ? 1 : 0 }}
+              transition={SNAP}
+            />
+
+            {/* Marcador central diminuto */}
+            <motion.g
+              animate={{ scale: cursor.active ? 1.5 : 1 }}
+              transition={SNAP}
+              style={{ transformBox: 'fill-box', transformOrigin: 'center' }}
+            >
+              <rect
+                x="10.9"
+                y="10.9"
+                width="2.2"
+                height="2.2"
+                fill={dotColor}
+                transform="rotate(45 12 12)"
+              />
+            </motion.g>
+          </svg>
         </motion.div>
 
         {/* Etiqueta contextual tipo P5 */}
         <motion.span
-          className="pointer-events-none absolute left-[30px] top-[-3px]"
+          className="pointer-events-none absolute left-0 top-0"
           animate={{
             opacity: cursor.active ? 1 : 0,
-            x: cursor.active ? 0 : 8,
-            rotate: cursor.active ? -1.5 : 0,
+            scale: cursor.active ? 1 : 0.96,
+            x: cursor.active ? labelX : labelX + (flipped ? -8 : 8),
+            y: cursor.active ? labelY : labelY + 6,
           }}
-          transition={{ duration: 0.15, ease: 'easeOut' }}
+          transition={LABEL_IN}
         >
-          <span className="relative block bg-black px-3 py-[5px] [clip-path:polygon(0_0,100%_0,calc(100%_-_6px)_100%,6px_100%)]">
+          <span
+            ref={labelRef}
+            className={`relative block bg-[#010101] px-4 py-[7px] [clip-path:polygon(0_0,100%_0,calc(100%_-_8px)_100%,8px_100%)] ${
+              flipped ? 'text-right' : ''
+            }`}
+          >
+            {/* Línea estructural superior */}
+            <span className="absolute inset-x-0 top-0 h-px bg-paper/60" />
+            {/* Marcador direccional rojo */}
             <span
-              aria-hidden="true"
-              className="absolute inset-y-0 left-0 w-[3px] bg-accent"
+              className={`absolute top-1/2 h-[6px] w-[6px] -translate-y-1/2 rotate-45 bg-accent ${
+                flipped ? 'right-[7px]' : 'left-[7px]'
+              }`}
             />
-            <span className="block pl-2 font-display text-[11px] uppercase leading-none tracking-[0.2em] text-paper">
+            <span
+              className={`block whitespace-nowrap font-display text-[11px] uppercase leading-none tracking-[0.18em] text-paper ${
+                flipped ? 'pr-4' : 'pl-4'
+              }`}
+            >
               {cursor.label}
             </span>
           </span>
