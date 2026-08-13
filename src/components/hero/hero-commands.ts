@@ -39,7 +39,7 @@ export const HERO_COMMANDS: HeroCommand[] = [
   {
     id: 'experiencia',
     icon: 'circle',
-    label: 'estadísticas',
+    label: 'progreso',
     sub: 'Experiencia',
     path: byId('experiencia'),
   },
