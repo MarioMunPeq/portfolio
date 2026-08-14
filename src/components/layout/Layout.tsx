@@ -1,5 +1,8 @@
 import type { ReactNode } from 'react'
+import { useLocation } from 'react-router-dom'
 import { HUD } from './HUD'
+import { TopBar } from '../ui/TopBar'
+import { BottomBar } from '../ui/BottomBar'
 import { Cursor } from './Cursor'
 import { LoadScreen } from '../overlay/LoadScreen'
 import { Grain } from '../primitives/Grain'
@@ -8,7 +11,30 @@ interface LayoutProps {
   children: ReactNode
 }
 
+const CONTEXT: Record<string, string> = {
+  '/about': 'PERFIL',
+  '/projects': 'INVENTARIO',
+  '/experience': 'PROGRESO',
+  '/education': 'FORMACIÓN',
+  '/contact': 'CONTACTO',
+  '/404': 'ERROR 404',
+}
+
+const contextFor = (path: string) => {
+  if (path.startsWith('/proyectos/')) return 'INVENTARIO'
+  return CONTEXT[path] ?? 'SISTEMA'
+}
+
+/**
+ * Marco de las pantallas: TopBar/BottomBar unificadas en todas las
+ * pantallas internas salvo el menú principal (trae su propia topbar) y
+ * Experiencia (conserva su diseño rojo de chat y su HUD). El cargador,
+ * el grano y el cursor viven por encima de todo.
+ */
 export function Layout({ children }: LayoutProps) {
+  const { pathname } = useLocation()
+  const showBars = pathname !== '/' && pathname !== '/experience'
+
   return (
     <div className="min-h-dvh bg-bg-hero text-paper">
       <a
@@ -18,7 +44,9 @@ export function Layout({ children }: LayoutProps) {
         Saltar al contenido
       </a>
       <LoadScreen />
-      <HUD />
+      {pathname === '/experience' ? <HUD /> : null}
+      {showBars && <TopBar context={contextFor(pathname)} />}
+      {showBars && <BottomBar context={contextFor(pathname)} />}
       <Grain />
       <Cursor />
       <main id="main">{children}</main>

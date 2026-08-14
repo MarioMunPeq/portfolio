@@ -2,6 +2,7 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 import { Reveal } from '../components/primitives/Reveal'
 import { Screen } from '../components/transition/Screen'
 import { DiamondMarker } from '../components/shared/DiamondMarker'
+import { PreviewBox } from '../components/ui/PreviewBox'
 import { projects } from '../data/projects'
 import type { ProjectScreenshot } from '../data/projects'
 
@@ -11,46 +12,13 @@ const ROTATIONS = ['-1.5deg', '1deg', '-1deg', '1.5deg', '-0.5deg', '0.5deg']
 
 /**
  * Angular framed image with clip-path border treatment. When the screenshot
- * has no `src` yet, renders the established [PLACEHOLDER] slot in its place.
+ * has no `src` yet, PreviewBox renders the shared "Captura pendiente" slot.
  */
 function GalleryImage({ screenshot }: { screenshot: ProjectScreenshot }) {
-  const pending = !screenshot.src
-
   return (
-    <figure className="relative proj-frame border-2 border-paper bg-bg-content-alt overflow-hidden">
-      {pending ? (
-        <div
-          role="img"
-          aria-label={`Captura pendiente de ${screenshot.alt}`}
-          className="relative flex aspect-[16/10] w-full items-center justify-center overflow-hidden bg-halftone-ink"
-        >
-          <span
-            aria-hidden="true"
-            className="absolute -left-10 -top-8 block h-[130%] w-14 -skew-x-[16deg] bg-accent/20"
-          />
-          <div className="relative flex items-center gap-2 bg-halftone-red px-4 py-2.5 clip-notch border-l-4 border-accent">
-            <DiamondMarker size={6} />
-            <span className="font-expose text-label font-medium uppercase tracking-[0.22em] text-paper">
-              [CAPTURA PENDIENTE]
-            </span>
-          </div>
-        </div>
-      ) : (
-        <img
-          src={screenshot.src!}
-          alt={screenshot.alt}
-          className="block h-auto w-full object-cover"
-        />
-      )}
-      {screenshot.caption && (
-        <figcaption className="absolute left-0 right-0 bottom-0 px-4 py-3 bg-halftone-red/80 border-t border-paper/20">
-          <span className="text-label font-medium uppercase tracking-[0.22em] text-paper">
-            {screenshot.caption}
-          </span>
-        </figcaption>
-      )}
+    <PreviewBox src={screenshot.src} alt={screenshot.alt} caption={screenshot.caption} className="relative">
       <span aria-hidden="true" className="absolute inset-0 bg-halftone-red/5" />
-    </figure>
+    </PreviewBox>
   )
 }
 

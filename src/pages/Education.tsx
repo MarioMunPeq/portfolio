@@ -1,5 +1,5 @@
 import { Reveal } from '../components/primitives/Reveal'
-import { ScreenHeader } from '../components/primitives/ScreenHeader'
+import { SectionTitle } from '../components/ui/SectionTitle'
 import { Screen } from '../components/transition/Screen'
 import { education } from '../data/education'
 
@@ -12,7 +12,7 @@ export function Education() {
         </div>
         <div className="relative mx-auto max-w-5xl">
           <Reveal>
-            <ScreenHeader label="Formación" title="HABILIDADES" usePersonaFont />
+            <SectionTitle label="Formación" title="HABILIDADES" persona />
           </Reveal>
 
           <ol className="mt-14">

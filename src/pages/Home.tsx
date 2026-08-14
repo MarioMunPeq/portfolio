@@ -1,5 +1,6 @@
 import { Screen } from '../components/transition/Screen'
 import { SystemLabel } from '../components/shared/SystemLabel'
+import { Wordmark } from '../components/ui/Wordmark'
 import { DiamondMarker } from '../components/shared/DiamondMarker'
 import { HazardStripe } from '../components/hero/HazardStripe'
 import { GhostBgWord } from '../components/hero/GhostBgWord'
@@ -48,9 +49,7 @@ export function Home() {
         {/* Marco superior */}
         <HazardStripe />
         <div className="hero-topbar absolute inset-x-0 top-[14px] z-40 flex items-center justify-between gap-4 px-6 py-3.5 md:px-10">
-          <SystemLabel className="text-paper/60 tracking-[0.15em]">
-            {profile.branding.system}
-          </SystemLabel>
+          <Wordmark />
           <span className="hidden truncate text-center text-label font-medium uppercase tracking-[0.15em] text-paper/70 sm:block">
             SESIÓN {SESSION_TIME}
           </span>
@@ -121,7 +120,7 @@ export function Home() {
         {/* Pie del sistema */}
         <footer className="hero-footer absolute inset-x-0 bottom-0 z-40 flex items-center justify-center gap-3 border-t border-paper/10 px-6 py-4 md:px-10">
           <SystemLabel className="font-sans absolute left-6 max-sm:hidden text-paper/50 tracking-[0.1em] md:left-10">
-            {profile.hero.roleLine} · {profile.hero.credentialLine}
+            {profile.hero.roleLine}
           </SystemLabel>
           <ContactButton />
         </footer>

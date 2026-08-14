@@ -1,5 +1,5 @@
 import { Reveal } from '../components/primitives/Reveal'
-import { ScreenHeader } from '../components/primitives/ScreenHeader'
+import { SectionTitle } from '../components/ui/SectionTitle'
 import { Annotation } from '../components/primitives/Annotation'
 import { Screen } from '../components/transition/Screen'
 import { profile } from '../data/profile'
@@ -17,7 +17,7 @@ export function Contact() {
 
         <div className="relative mx-auto max-w-5xl">
           <Reveal>
-            <ScreenHeader label="Contacto" title="Hablemos" />
+            <SectionTitle label="Contacto" title="Hablemos" />
           </Reveal>
 
           <Reveal delay={0.12}>

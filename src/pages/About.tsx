@@ -1,9 +1,9 @@
-import type { ReactNode } from 'react'
-import { Link } from 'react-router-dom'
 import { Reveal } from '../components/primitives/Reveal'
 import { Screen } from '../components/transition/Screen'
 import { DiamondMarker } from '../components/shared/DiamondMarker'
 import { Annotation } from '../components/primitives/Annotation'
+import { SectionTitle } from '../components/ui/SectionTitle'
+import { Tag } from '../components/ui/Tag'
 import { profile } from '../data/profile'
 
 // Nombre en tres bloques (mismo tratamiento tipográfico que el hero).
@@ -82,32 +82,6 @@ const LABEL_POSITIONS = [
   { left: 10, top: 30 },
 ]
 const LABEL_ROTATIONS = [0, -2, 2, -2, 1]
-
-/** Etiqueta pegatina angular recortada (estilo pegatinas del menú). */
-function Sticker({
-  children,
-  className = '',
-  tone = 'red',
-}: {
-  children: ReactNode
-  className?: string
-  tone?: 'red' | 'gold' | 'yellow' | 'paper'
-}) {
-  const toneClass = {
-    red: 'bg-accent text-paper',
-    gold: 'bg-gold text-ink',
-    // Amarillo idéntico a las etiquetas de Social Stats (P5Label stat).
-    yellow: 'bg-[#FEFF04] text-[#010101]',
-    paper: 'bg-paper text-ink',
-  }[tone]
-  return (
-    <span
-      className={`inline-flex items-center gap-2 px-3.5 py-1.5 font-display text-sm uppercase tracking-[0.15em] [clip-path:polygon(8px_0,100%_0,calc(100%_-_8px)_100%,0_100%)] ${toneClass} ${className}`}
-    >
-      {children}
-    </span>
-  )
-}
 
 /** Hueco del retrato recortado en ángulo. Sin avatar → placeholder. */
 function PortraitSlot() {
@@ -213,54 +187,12 @@ function StatStar() {
                 transform: `translate(-50%,-50%) rotate(${LABEL_ROTATIONS[i]}deg)`,
               }}
             >
-              <P5Label variant="stat">{label}</P5Label>
+              <Tag tone="dark" size="lg">{label}</Tag>
             </div>
           )
         })}
       </div>
     </div>
-  )
-}
-
-// Etiqueta amarilla recortada con respaldo oscuro (estilo Social Stats de P5).
-// variant="stat" para los nombres de atributo alrededor de la estrella:
-// fuente P5 Menu, amarillo #FEFF04 y texto casi negro #010101. La variante
-// "chip" (intereses/tecnologías) usa la fuente legible del sitio, amarillo
-// #FFD400 y texto negro.
-const LABEL_CLIP = '[clip-path:polygon(6px_0,100%_0,calc(100%_-_6px)_100%,0_100%)]'
-const LABEL_CLIP_STAT = '[clip-path:polygon(8px_0,100%_0,calc(100%_-_8px)_100%,0_100%)]'
-
-function P5Label({
-  children,
-  className = '',
-  variant = 'chip',
-}: {
-  children: ReactNode
-  className?: string
-  variant?: 'chip' | 'stat'
-}) {
-  const stat = variant === 'stat'
-  const clip = stat ? LABEL_CLIP_STAT : LABEL_CLIP
-  return (
-    <span className={`relative inline-flex ${className}`}>
-      <span
-        aria-hidden="true"
-        className={`absolute inset-0 ${clip} ${
-          stat
-            ? 'translate-x-[3px] translate-y-[4px] bg-[#111111]'
-            : 'translate-x-[2.5px] translate-y-[3px] bg-black'
-        }`}
-      />
-      <span
-        className={`relative inline-flex items-center ${clip} ${
-          stat
-            ? 'bg-[#FEFF04] px-4 py-2 text-sm uppercase tracking-[0.05em] text-[#010101] sm:text-lg md:text-xl xl:text-2xl'
-            : 'bg-[#FFD400] px-3.5 py-1.5 text-base uppercase tracking-[0.08em] text-black'
-        }`}
-      >
-        <span className={`leading-none ${stat ? 'font-p5-menu' : 'font-display'}`}>{children}</span>
-      </span>
-    </span>
   )
 }
 
@@ -274,7 +206,7 @@ export function About() {
     <Screen className="min-h-dvh bg-bg-hero text-paper">
       <section className="relative overflow-hidden px-6 pb-28 pt-16 md:px-12 md:pt-20">
         {/* Fondo: estrellas de contorno sutiles (mismo patrón que el inventario) */}
-        <span aria-hidden="true" className="pointer-events-none absolute inset-0 bg-stars" />
+        <span aria-hidden="true" className="pointer-events-none absolute inset-0 bg-stars opacity-70" />
 
         {/* Palabra fantasma de marca */}
         <span
@@ -285,42 +217,10 @@ export function About() {
           PERFIL
         </span>
 
-        {/* Corchetes de retícula HUD en las esquinas del contenido */}
-        <span aria-hidden="true" className="pointer-events-none absolute left-6 top-14 z-0 h-6 w-6">
-          <span className="absolute left-0 top-0 h-[2px] w-6 bg-accent/60" />
-          <span className="absolute left-0 top-0 h-6 w-[2px] bg-accent/60" />
-        </span>
-        <span aria-hidden="true" className="pointer-events-none absolute right-6 top-14 z-0 h-6 w-6">
-          <span className="absolute right-0 top-0 h-[2px] w-6 bg-accent/60" />
-          <span className="absolute right-0 top-0 h-6 w-[2px] bg-accent/60" />
-        </span>
-        <span aria-hidden="true" className="pointer-events-none absolute bottom-6 left-6 z-0 h-6 w-6">
-          <span className="absolute bottom-0 left-0 h-[2px] w-6 bg-accent/60" />
-          <span className="absolute bottom-0 left-0 h-6 w-[2px] bg-accent/60" />
-        </span>
-        <span aria-hidden="true" className="pointer-events-none absolute bottom-6 right-6 z-0 h-6 w-6">
-          <span className="absolute bottom-0 right-0 h-[2px] w-6 bg-accent/60" />
-          <span className="absolute bottom-0 right-0 h-6 w-[2px] bg-accent/60" />
-        </span>
-
         <div className="relative mx-auto max-w-6xl">
           {/* Título de perfil (mismo tratamiento que INVENTARIO) */}
           <Reveal>
-            <div className="relative">
-              <h1
-                className="font-p5-menu uppercase leading-[0.95] text-paper"
-                style={{
-                  fontSize: 'clamp(2.75rem, 6.5vw, 5.5rem)',
-                  textShadow: `${OUTLINE_BLACK}, 6px 6px 0 var(--color-accent-deep)`,
-                }}
-              >
-                PERFIL
-              </h1>
-              <span aria-hidden="true" className="mt-4 flex items-center gap-3">
-                <span className="block h-2 w-44 -skew-x-12 bg-accent" />
-                <span className="block h-3 w-3 rotate-45 bg-gold" />
-              </span>
-            </div>
+            <SectionTitle title="PERFIL" persona />
           </Reveal>
 
           <div className="mt-10 grid items-start gap-16 lg:grid-cols-[minmax(0,0.94fr)_minmax(0,1.06fr)] lg:gap-10 xl:gap-16">
@@ -378,9 +278,12 @@ export function About() {
                   </h1>
                 </div>
 
-                {/* Pegatina de rol */}
-                <div className="relative z-30 mt-4 flex justify-end pr-2">
-                  <Sticker className="rotate-1">{hero.eyebrow}</Sticker>
+                {/* Pegatina de rol + credencial (DAM vive aquí, no en el footer) */}
+                <div className="relative z-30 mt-4 flex flex-wrap items-center justify-end gap-2 pr-2">
+                  <Tag className="rotate-1">{hero.eyebrow}</Tag>
+                  <Tag tone="dark" className="rotate-1">
+                    {hero.credentialLine}
+                  </Tag>
                 </div>
               </div>
             </Reveal>
@@ -392,13 +295,13 @@ export function About() {
                   fondo de página dentro de esta zona. */}
               <span
                 aria-hidden="true"
-                className="pointer-events-none absolute -inset-8 bg-bg-hero bg-stars-charcoal"
+                className="pointer-events-none absolute -inset-8 bg-bg-hero bg-stars-charcoal opacity-80"
               />
               <Reveal delay={0.1}>
                 <div className="relative">
-                  <Sticker tone="yellow" className="absolute right-2 top-0 z-10 -rotate-3">
+                  <Tag className="absolute right-2 top-0 z-10 -rotate-3">
                     Estadísticas sociales
-                  </Sticker>
+                  </Tag>
                   <StatStar />
                 </div>
               </Reveal>
@@ -429,7 +332,7 @@ export function About() {
                       key={interest}
                       className={CHIP_ROTATIONS[index % CHIP_ROTATIONS.length]}
                     >
-                      <P5Label>{interest}</P5Label>
+                      <Tag tone={index % 2 === 0 ? 'red' : 'dark'}>{interest}</Tag>
                     </li>
                   ))}
                 </ul>
@@ -446,29 +349,11 @@ export function About() {
                       key={skill}
                       className={CHIP_ROTATIONS[index % CHIP_ROTATIONS.length]}
                     >
-                      <P5Label>{skill}</P5Label>
+                      <Tag tone={index % 2 === 0 ? 'dark' : 'red'}>{skill}</Tag>
                     </li>
                   ))}
                 </ul>
               </div>
-            </div>
-          </Reveal>
-
-          <Reveal delay={0.22}>
-            <div className="mt-12 flex flex-wrap items-center justify-between gap-6 border-t border-paper/15 pt-6">
-              <Link
-                to="/"
-                data-cursor="back"
-                className="group inline-flex items-center gap-3 border-2 border-paper/60 bg-bg-content-alt px-6 py-3 font-display text-base uppercase tracking-[0.15em] text-paper [clip-path:polygon(10px_0,100%_0,calc(100%_-_10px)_100%,0_100%)] transition-colors duration-200 hover:border-accent hover:bg-accent"
-              >
-                <span
-                  aria-hidden="true"
-                  className="text-accent transition-colors duration-200 group-hover:text-paper"
-                >
-                  ◀
-                </span>
-                Volver al menú
-              </Link>
             </div>
           </Reveal>
         </div>
