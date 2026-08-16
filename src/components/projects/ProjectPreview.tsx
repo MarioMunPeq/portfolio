@@ -1,8 +1,6 @@
 import type { Project } from '../../data/projects'
 import { PreviewBox } from '../ui/PreviewBox'
 
-const OUTLINE = `-2px -2px 0 var(--color-bg-hero), 2px -2px 0 var(--color-bg-hero), -2px 2px 0 var(--color-bg-hero), 2px 2px 0 var(--color-bg-hero)`
-
 /**
  * Panel de captura del inventario: la gran imagen del proyecto en el
  * marco angular compartido (PreviewBox) con sombra roja dura, sello del
@@ -71,7 +69,7 @@ export function ProjectPreview({ project }: { project: Project }) {
             className="font-expose uppercase leading-[0.95] text-paper"
             style={{
               fontSize: 'clamp(2rem, 3.4vw, 3.25rem)',
-              textShadow: OUTLINE,
+              textShadow: '4px 4px 0 var(--color-accent-deep)',
             }}
           >
             {project.name}

@@ -5,12 +5,28 @@
    - "P5 Menu": letras de menú recortadas (estilo cómic). Incluye
      minúsculas; los acentos españoles (á é í ó ú ñ ¿ ¡) NO están en
      la fuente y los aporta el fallback del stack (per-glyph).
+   - unicode-range restringe cada fuente al Basic Latin (ASCII). Cualquier
+     carácter fuera de ese rango (acentos, ¿ ¡ · …) el navegador lo resuelve
+     con el siguiente font del stack (Anton → Arial Narrow → sans-serif),
+     que sí tiene esos glifos. Esto es GLOBAL: este stylesheet lo carga
+     toda la app desde main.tsx, así que vale para todas las páginas.
    La base del proyecto es "/portfolio/", así que las url() llevan ese prefijo.
    ============================================================ */
 @font-face {
   font-family: "P5 Menu";
   src: url("/portfolio/fonts/Persona5MenuFontPrototype-Regular.ttf") format("truetype");
   font-display: swap;
+  unicode-range: U+0000-007F;
+}
+
+/* P5 Hatty: manuscrita de Persona 5 para etiquetas y anotaciones pequeñas
+   (página de Habilidades). Igual que P5 Menu/Expose, NO incluye los acentos
+   españoles (á é í ó ú ñ ¿ ¡): los aporta el fallback del stack (per-glyph). */
+@font-face {
+  font-family: "P5 Hatty";
+  src: url("/portfolio/fonts/p5hatty.ttf") format("truetype");
+  font-display: swap;
+  unicode-range: U+0000-007F;
 }
 
 /* Expose: fuente display para encabezados y etiquetas del inventario y
@@ -21,6 +37,7 @@
   font-family: "Expose";
   src: url("/portfolio/fonts/Expose-Regular.otf") format("opentype");
   font-display: swap;
+  unicode-range: U+0000-007F;
 }
 
 /* Utilidad: texto hueco con trazo en color acento (solo tipografía grande) */
@@ -711,6 +728,9 @@ html.lenis body {
      fichas de proyecto (Rounds posteriores). Sin acentos españoles:
      el fallback los aporta por glifo. */
   --font-expose: "Expose", "Anton", "Arial Narrow", sans-serif;
+  /* P5 Hatty: manuscrita para etiquetas y anotaciones pequeñas de la página
+     de Habilidades. Sin acentos españoles: el fallback los aporta por glifo. */
+  --font-hatty: "P5 Hatty", "Anton", "Arial Narrow", sans-serif;
 
   /* --- Escala tipográfica (min: hero, section-title, subtitle, body, caption) --- */
   --text-hero: clamp(3.25rem, 9vw, 8rem);

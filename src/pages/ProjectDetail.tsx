@@ -6,8 +6,6 @@ import { PreviewBox } from '../components/ui/PreviewBox'
 import { projects } from '../data/projects'
 import type { ProjectScreenshot } from '../data/projects'
 
-const OUTLINE_THICK = `-3px -3px 0 var(--color-bg-hero), 3px -3px 0 var(--color-bg-hero), -3px 3px 0 var(--color-bg-hero), 3px 3px 0 var(--color-bg-hero), -4px -4px 0 var(--color-bg-hero), 4px -4px 0 var(--color-bg-hero), -4px 4px 0 var(--color-bg-hero), 4px 4px 0 var(--color-bg-hero)`
-
 const ROTATIONS = ['-1.5deg', '1deg', '-1deg', '1.5deg', '-0.5deg', '0.5deg']
 
 /**
@@ -239,7 +237,7 @@ export function ProjectDetail() {
                 className="mt-10 font-expose uppercase leading-[0.95] text-paper"
                 style={{
                   fontSize: 'clamp(2.75rem, 6.5vw, 5.5rem)',
-                  textShadow: `${OUTLINE_THICK}, 8px 8px 0 var(--color-accent-deep)`,
+                  textShadow: '4px 4px 0 var(--color-accent-deep)',
                 }}
               >
                 {project.name}

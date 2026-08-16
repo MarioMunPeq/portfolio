@@ -25,6 +25,12 @@ const contextFor = (path: string) => {
   return CONTEXT[path] ?? 'SISTEMA'
 }
 
+/** Contexto del footer: en Formación se muestra la ubicación del hero. */
+const footerContextFor = (path: string) => {
+  if (path === '/education') return 'Valladolid · Es'
+  return contextFor(path)
+}
+
 /**
  * Marco de las pantallas: TopBar/BottomBar unificadas en todas las
  * pantallas internas salvo el menú principal (trae su propia topbar) y
@@ -46,7 +52,7 @@ export function Layout({ children }: LayoutProps) {
       <LoadScreen />
       {pathname === '/experience' ? <HUD /> : null}
       {showBars && <TopBar context={contextFor(pathname)} />}
-      {showBars && <BottomBar context={contextFor(pathname)} />}
+      {showBars && <BottomBar context={footerContextFor(pathname)} />}
       <Grain />
       <Cursor />
       <main id="main">{children}</main>

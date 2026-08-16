@@ -4,6 +4,7 @@ import { DiamondMarker } from '../components/shared/DiamondMarker'
 import { Annotation } from '../components/primitives/Annotation'
 import { SectionTitle } from '../components/ui/SectionTitle'
 import { Tag } from '../components/ui/Tag'
+import { StatTag } from '../components/ui/StatTag'
 import { profile } from '../data/profile'
 
 // Nombre en tres bloques (mismo tratamiento tipográfico que el hero).
@@ -19,14 +20,14 @@ const OUTLINE_RED = `-2px -2px 0 var(--color-accent), 2px -2px 0 var(--color-acc
 // su propio valor (1-5) que decide cuánto se extiende su punta en la estrella
 // interior: a mayor valor, más lejos del centro. El orden fija la posición
 // alrededor de la estrella: arriba, arriba-derecha, abajo-derecha,
-// abajo-izquierda, arriba-izquierda. Sin acentos porque la fuente P5 Menu no
-// tiene glifos acentuados.
+// abajo-izquierda, arriba-izquierda. Los acentos sí son seguros: el
+// unicode-range de P5 Menu/Expose los cae al fallback del stack.
 const STATS = [
-  { label: 'PROGRAMACION', value: 5 },
-  { label: 'CREATIVIDAD', value: 4 },
-  { label: 'CARISMA', value: 2 },
-  { label: 'CURIOSIDAD', value: 3 },
-  { label: 'RESOLUCION', value: 4 },
+  { label: 'PROGRAMACIÓN', value: 5, descriptor: 'DESARROLLO' },
+  { label: 'CREATIVIDAD', value: 4, descriptor: 'DISEÑO' },
+  { label: 'CARISMA', value: 2, descriptor: 'SOCIAL' },
+  { label: 'CURIOSIDAD', value: 3, descriptor: 'INVESTIGACIÓN' },
+  { label: 'RESOLUCIÓN', value: 4, descriptor: 'LÓGICA' },
 ] as const
 
 // Geometría de la estrella de Social Stats de P5. La estrella exterior es una
@@ -175,7 +176,7 @@ function StatStar() {
           />
         </svg>
 
-        {STATS.map(({ label }, i) => {
+        {STATS.map(({ label, value, descriptor }, i) => {
           const pos = LABEL_POSITIONS[i]
           return (
             <div
@@ -187,7 +188,7 @@ function StatStar() {
                 transform: `translate(-50%,-50%) rotate(${LABEL_ROTATIONS[i]}deg)`,
               }}
             >
-              <Tag tone="dark" size="lg">{label}</Tag>
+              <StatTag label={label} rank={value} descriptor={descriptor} />
             </div>
           )
         })}

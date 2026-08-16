@@ -1,6 +1,5 @@
 import { profile } from '../../data/profile'
 import { DiamondMarker } from '../shared/DiamondMarker'
-import { ActionButton } from './ActionButton'
 
 interface BottomBarProps {
   /** Etiqueta de contexto de la pantalla actual (PERFIL, INVENTARIO…). */
@@ -10,9 +9,9 @@ interface BottomBarProps {
 }
 
 /**
- * Barra inferior de sistema de las pantallas internas: tres slots
- * [créditos] [contexto] [◀ volver]. El chip "VOLVER AL MENÚ" comparte
- * tratamiento con CONTACTO (ActionButton).
+ * Barra inferior de sistema de las pantallas internas: dos slots
+ * [créditos] [contexto]. La navegación vive en la TopBar; el footer no
+ * repite "volver" para no duplicarla.
  */
 export function BottomBar({ context, credits }: BottomBarProps) {
   const year = new Date().getFullYear()
@@ -20,7 +19,7 @@ export function BottomBar({ context, credits }: BottomBarProps) {
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-50 border-t border-paper/10 bg-bg-hero text-paper">
-      <div className="flex items-center justify-between gap-4 px-4 py-3 md:px-6">
+      <div className="flex items-center justify-center gap-4 px-4 py-3 sm:justify-between md:px-6">
         <span className="hidden truncate text-label uppercase tracking-[0.2em] text-paper/50 sm:inline">
           {credit}
         </span>
@@ -29,10 +28,6 @@ export function BottomBar({ context, credits }: BottomBarProps) {
           <DiamondMarker size={5} />
           {context}
         </span>
-
-        <ActionButton to="/" arrow="back" dataCursor="back">
-          Volver al menú
-        </ActionButton>
       </div>
     </div>
   )

@@ -1,44 +1,46 @@
 import { Reveal } from '../components/primitives/Reveal'
-import { SectionTitle } from '../components/ui/SectionTitle'
 import { Screen } from '../components/transition/Screen'
-import { education } from '../data/education'
+import { DiamondMarker } from '../components/shared/DiamondMarker'
+import { SectionTitle } from '../components/ui/SectionTitle'
+import { SkillTreeSection } from '../components/skill-tree/SkillTreeSection'
 
+/**
+ * Formación = Árbol de Habilidades: ruta académica real (ESO → DAM → Bootcamp
+ * de IA) como árbol de nodos hexagonales conectados, con panel de detalle.
+ */
 export function Education() {
   return (
     <Screen className="min-h-dvh bg-bg-hero text-paper">
-      <section className="relative overflow-hidden px-6 py-24 md:px-10 md:py-28">
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-          <span className="absolute right-0 top-0 h-2 w-full bg-stripes-faint" />
-        </div>
-        <div className="relative mx-auto max-w-5xl">
+      <section className="relative overflow-hidden px-6 pb-28 pt-16 md:px-10 md:pt-20">
+        {/* Fondo: estrellas de contorno sutiles (mismo patrón que el inventario) */}
+        <span aria-hidden="true" className="pointer-events-none absolute inset-0 bg-stars opacity-70" />
+
+        {/* Palabra fantasma de marca */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute right-0 top-2 z-0 -rotate-6 select-none font-expose uppercase leading-none text-outline-faint opacity-55"
+          style={{ fontSize: 'clamp(7rem, 15vw, 14rem)' }}
+        >
+          HABILIDADES
+        </span>
+
+        <div className="relative mx-auto max-w-6xl">
           <Reveal>
-            <SectionTitle label="Formación" title="HABILIDADES" persona />
+            <SectionTitle label="Árbol de habilidades" labelFont="hatty" title="HABILIDADES" persona />
           </Reveal>
 
-          <ol className="mt-14">
-            {education.map((entry, index) => (
-              <li key={entry.degree} className="border-t border-paper/15 py-6">
-                <Reveal delay={index * 0.05}>
-                  <div className="grid gap-2 md:grid-cols-[10rem_1fr] md:gap-8">
-                    <div className="md:pt-1">
-                      <p className="text-caption uppercase tracking-[0.18em] text-paper/50">
-                        {entry.period}
-                      </p>
-                    </div>
-                    <div>
-                      <h2 className="font-display text-2xl uppercase leading-tight">
-                        {entry.degree}
-                      </h2>
-                      <p className="mt-1 font-medium">{entry.institution}</p>
-                      <p className="mt-3 max-w-2xl text-body leading-relaxed text-paper/80">
-                        {entry.description}
-                      </p>
-                    </div>
-                  </div>
-                </Reveal>
-              </li>
-            ))}
-          </ol>
+          <Reveal delay={0.08}>
+            <div className="mt-10 flex items-center gap-3">
+              <DiamondMarker size={8} />
+              <h2 className="font-hatty text-label font-medium uppercase tracking-[0.22em] text-accent">
+                Recorrido académico
+              </h2>
+            </div>
+          </Reveal>
+
+          <Reveal delay={0.14} amount={0.1}>
+            <SkillTreeSection />
+          </Reveal>
         </div>
       </section>
     </Screen>
