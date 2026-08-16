@@ -5,8 +5,9 @@ import { SectionTitle } from '../components/ui/SectionTitle'
 import { SkillTreeSection } from '../components/skill-tree/SkillTreeSection'
 
 /**
- * Formación = Árbol de Habilidades: ruta académica real (ESO → DAM → Bootcamp
- * de IA) como árbol de nodos hexagonales conectados, con panel de detalle.
+ * Formación = Árbol de Habilidades: ruta académica real (Telecomunicaciones →
+ * Robótica y DAM → Bootcamp de IA) como árbol de nodos hexagonales conectados,
+ * con panel de detalle.
  */
 export function Education() {
   return (

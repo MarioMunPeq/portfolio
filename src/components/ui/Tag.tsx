@@ -7,8 +7,9 @@ interface TagProps {
   /** Relleno del sello: rojo, oscuro o claro. El amarillo queda reservado a la estrella. */
   tone?: 'red' | 'dark' | 'light'
   size?: 'sm' | 'md' | 'lg'
-  /** Fuente del texto del sello: P5 Menu (por defecto) o P5 Hatty (etiquetas de la página de Habilidades). */
-  font?: 'p5-menu' | 'hatty'
+  /** Fuente del texto del sello: P5 Menu (por defecto), P5 Hatty (página de
+      Habilidades) o 'sans' (información legible en Space Grotesk). */
+  font?: 'p5-menu' | 'hatty' | 'sans'
   className?: string
 }
 
@@ -25,8 +26,9 @@ const sizeClass = {
 } as const
 
 const fontClass = {
-  'p5-menu': 'font-p5-menu',
-  hatty: 'font-hatty',
+  'p5-menu': 'font-p5-menu uppercase tracking-[0.08em]',
+  hatty: 'font-hatty uppercase tracking-[0.08em]',
+  sans: 'font-sans normal-case tracking-normal',
 } as const
 
 /**
@@ -42,7 +44,7 @@ export function Tag({ children, tone = 'red', size = 'md', font = 'p5-menu', cla
       style={{ filter: 'drop-shadow(3px 3px 0 rgba(0, 0, 0, 0.9))' }}
     >
       <span
-        className={`relative inline-flex items-center gap-2 ${CLIP} ${toneClass[tone]} ${sizeClass[size]} ${fontClass[font]} uppercase leading-none tracking-[0.08em]`}
+        className={`relative inline-flex items-center gap-2 ${CLIP} ${toneClass[tone]} ${sizeClass[size]} ${fontClass[font]} leading-none`}
       >
         {children}
       </span>

@@ -1,9 +1,24 @@
-// PLACEHOLDER — Contenido provisional. Sustituir por información real.
-// Regla: no inventar logros ni datos presentados como reales.
-
 export interface ProfileLink {
   label: string
   url: string
+}
+
+export interface SpokenLanguage {
+  name: string
+  level: string
+  /** Nota opcional (certificados oficiales). */
+  note?: string
+}
+
+export interface ProfileSkills {
+  /** Lenguajes de programación. */
+  programming: string[]
+  /** Tecnologías y herramientas. */
+  technologies: string[]
+  /** Inteligencia artificial y datos. */
+  aiData: string[]
+  /** Otras herramientas. */
+  other: string[]
 }
 
 export interface Profile {
@@ -12,7 +27,7 @@ export interface Profile {
   role: string
   roleFull: string
   location: string
-  /** Frase corta del hero. PLACEHOLDER. */
+  /** Frase corta del hero. */
   tagline: string
   /** Textos tipográficos del hero. */
   hero: {
@@ -44,29 +59,33 @@ export interface Profile {
     /** Versión mostrada en la franja superior del menú. */
     version: string
   }
-  /** Enlaces de contacto. url null = pendiente de definir. */
+  /** Enlaces de contacto. url null = sin enlace disponible. */
   links: {
     github: ProfileLink | null
     linkedin: ProfileLink | null
     email: ProfileLink | null
-    /** Ruta pública del CV en PDF. null = pendiente de incorporar. */
+    /** Ruta pública del CV en PDF. null = no disponible. */
     cvPdf: string | null
   }
   about: {
-    /** Párrafos de la sección "Sobre mí". PLACEHOLDER. */
+    /** Párrafos de la sección "Sobre mí". */
     paragraphs: string[]
-    /** Bio corta de la pantalla de personaje (Perfil). PLACEHOLDER. */
+    /** Bio corta de la pantalla de personaje (Perfil). */
     bio: string
-    /** Intereses personales (aparecen de forma sutil). */
+    /** Áreas de interés. */
     interests: string[]
-    /** Idiomas de programación / tecnologías. PLACEHOLDER. */
-    techSkills: string[]
+    /** Habilidades técnicas por categorías. */
+    skills: ProfileSkills
+    /** Idiomas hablados. */
+    languages: SpokenLanguage[]
+    /** Otros datos (permiso de conducir…). */
+    license: string
     /** Foto/avatar. null = usar placeholder visual. */
     avatar: { src: string; alt: string } | null
   }
   /** Sección de contacto. */
   contact: {
-    /** Llamada inicial. PLACEHOLDER. */
+    /** Llamada inicial. */
     intro: string
   }
 }
@@ -75,16 +94,17 @@ export const profile: Profile = {
   name: 'Mario Muñoz Pequeño',
   alias: 'Mario Muñoz Pequeño',
   role: 'SOFTWARE DEVELOPER',
-  roleFull: 'Desarrollador de Aplicaciones',
+  roleFull: 'Desarrollador de aplicaciones',
   location: 'Valladolid, España',
-  tagline: 'Bienvenido a mi portfolio inspirado en Persona 5.',
+  tagline:
+    'Desarrollador de aplicaciones con interés en inteligencia artificial, automatización y desarrollo.',
   hero: {
     nameFirst: 'Mario',
     nameLast: 'Muñoz Pequeño',
-    eyebrow: 'Desarrollador de software',
+    eyebrow: 'Desarrollador de aplicaciones',
     region: 'Valladolid · Es',
     ghost: 'Menú',
-    roleLine: 'Aplicaciones multiplataforma',
+    roleLine: 'Software Developer',
     credentialLine: 'F.P. Grado Superior — DAM',
     coordinates: '41.6523° N, 4.7245° O',
   },
@@ -95,22 +115,42 @@ export const profile: Profile = {
     version: 'v.2026',
   },
   links: {
-    github: null,
-    linkedin: null,
+    github: { label: 'GitHub', url: 'https://github.com/MarioMunPeq' },
+    linkedin: {
+      label: 'LinkedIn',
+      url: 'https://www.linkedin.com/in/mario-mu%C3%B1oz-peque%C3%B1o/',
+    },
     email: null,
     cvPdf: null,
   },
   about: {
     paragraphs: [
-      '[PLACEHOLDER] Párrafo 1 — Presentación breve: quién soy, qué hago y cómo trabajo.',
-      '[PLACEHOLDER] Párrafo 2 — Personalidad, curiosidad y enfoque técnico.',
+      'Desarrollador de aplicaciones con interés en inteligencia artificial, automatización y desarrollo. Disfruto creando soluciones que resuelvan problemas reales y aprendiendo nuevas tecnologías mediante proyectos prácticos.',
     ],
-    bio: '[PLACEHOLDER] Bio corta de la pantalla de personaje: quién es Mario, qué le mueve y a qué se dedica.',
-    interests: ['programación', 'videojuegos', 'D&D', 'libros'],
-    techSkills: ['JavaScript', 'TypeScript', 'React', 'SQL', 'Git'],
+    bio: 'Desarrollador de aplicaciones con interés en inteligencia artificial, automatización y desarrollo. Disfruto creando soluciones que resuelvan problemas reales y aprendiendo nuevas tecnologías mediante proyectos prácticos.',
+    interests: ['Inteligencia Artificial', 'Backend', 'Automatización', 'Videojuegos'],
+    skills: {
+      programming: ['Java', 'Python', 'Kotlin', 'C#', 'SQL', 'HTML/CSS'],
+      technologies: [
+        'Git/GitHub',
+        'Liferay',
+        'Odoo',
+        'Power Platform',
+        'Android Studio',
+        'Unity/Godot',
+      ],
+      aiData: ['Scikit-learn', 'Pandas', 'PyTorch'],
+      other: ['Office', 'Figma', 'Firebase'],
+    },
+    languages: [
+      { name: 'Castellano', level: 'Nativo' },
+      { name: 'Inglés', level: 'B2', note: 'Certificado (Oxford, Trinity)' },
+    ],
+    license: 'Permiso de conducir B',
     avatar: null,
   },
   contact: {
-    intro: '[PLACEHOLDER] Texto de contacto — pendiente de definir.',
+    intro:
+      'Si quieres hablar de un proyecto, una oportunidad laboral o simplemente saludar, puedes contactarme a través de mis perfiles.',
   },
 }

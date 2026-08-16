@@ -21,12 +21,13 @@ const OUTLINE_RED = `-2px -2px 0 var(--color-accent), 2px -2px 0 var(--color-acc
 // interior: a mayor valor, más lejos del centro. El orden fija la posición
 // alrededor de la estrella: arriba, arriba-derecha, abajo-derecha,
 // abajo-izquierda, arriba-izquierda. Los acentos sí son seguros: el
-// unicode-range de P5 Menu/Expose los cae al fallback del stack.
+// unicode-range de P5 Menu/Expose los cae al fallback del stack. Valores
+// aproximados y honestos, sin presentarse como datos objetivos.
 const STATS = [
-  { label: 'PROGRAMACIÓN', value: 5, descriptor: 'DESARROLLO' },
-  { label: 'CREATIVIDAD', value: 4, descriptor: 'DISEÑO' },
+  { label: 'PROGRAMACIÓN', value: 4, descriptor: 'DESARROLLO' },
+  { label: 'CREATIVIDAD', value: 3, descriptor: 'DISEÑO' },
   { label: 'CARISMA', value: 2, descriptor: 'SOCIAL' },
-  { label: 'CURIOSIDAD', value: 3, descriptor: 'INVESTIGACIÓN' },
+  { label: 'CURIOSIDAD', value: 5, descriptor: 'INVESTIGACIÓN' },
   { label: 'RESOLUCIÓN', value: 4, descriptor: 'LÓGICA' },
 ] as const
 
@@ -200,6 +201,25 @@ function StatStar() {
 // Inclinaciones suaves y alternadas para las etiquetas de intereses/tecnologías.
 const CHIP_ROTATIONS = ['-rotate-1', 'rotate-1']
 
+/** Tarjeta de una categoría de habilidades (Lenguajes, Tecnologías…). */
+function SkillCategory({ title, skills }: { title: string; skills: string[] }) {
+  return (
+    <div>
+      <h2 className="flex items-center gap-2 text-label font-medium uppercase tracking-[0.22em] text-accent">
+        <DiamondMarker size={6} />
+        {title}
+      </h2>
+      <ul className="mt-5 flex flex-wrap gap-x-4 gap-y-4">
+        {skills.map((skill, index) => (
+          <li key={skill} className={CHIP_ROTATIONS[index % CHIP_ROTATIONS.length]}>
+            <Tag font="sans" tone={index % 2 === 0 ? 'dark' : 'red'}>{skill}</Tag>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
 export function About() {
   const { about, hero, branding } = profile
 
@@ -281,8 +301,8 @@ export function About() {
 
                 {/* Pegatina de rol + credencial (DAM vive aquí, no en el footer) */}
                 <div className="relative z-30 mt-4 flex flex-wrap items-center justify-end gap-2 pr-2">
-                  <Tag className="rotate-1">{hero.eyebrow}</Tag>
-                  <Tag tone="dark" className="rotate-1">
+                  <Tag font="sans" className="rotate-1">{hero.eyebrow}</Tag>
+                  <Tag font="sans" tone="dark" className="rotate-1">
                     {hero.credentialLine}
                   </Tag>
                 </div>
@@ -309,17 +329,44 @@ export function About() {
             </div>
           </div>
 
-          {/* ===== Contenido: Bio / Intereses / Tecnologías ===== */}
+          {/* ===== Contenido: Bio / Habilidades / Idiomas / Intereses ===== */}
           <Reveal delay={0.16}>
-            <div className="mt-14 grid gap-x-12 gap-y-12 md:grid-cols-2 lg:mt-16 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.96fr)_minmax(0,0.96fr)]">
-              <div>
+            <div className="mt-14 grid gap-x-12 gap-y-12 md:grid-cols-2 lg:mt-16 lg:grid-cols-3">
+              <div className="md:col-span-2 lg:col-span-3">
                 <h2 className="flex items-center gap-2 text-label font-medium uppercase tracking-[0.22em] text-accent">
                   <DiamondMarker size={6} />
                   Bio
                 </h2>
-                <p className="mt-4 max-w-md text-body leading-relaxed text-paper/75">
+                <p className="mt-4 max-w-2xl text-body leading-relaxed text-paper/75">
                   {about.bio}
                 </p>
+              </div>
+
+              <SkillCategory title="Lenguajes" skills={about.skills.programming} />
+              <SkillCategory title="Tecnologías" skills={about.skills.technologies} />
+              <SkillCategory title="IA & Data" skills={about.skills.aiData} />
+              <SkillCategory title="Otros" skills={about.skills.other} />
+
+              <div>
+                <h2 className="flex items-center gap-2 text-label font-medium uppercase tracking-[0.22em] text-accent">
+                  <DiamondMarker size={6} />
+                  Idiomas
+                </h2>
+                <ul className="mt-5 space-y-4" aria-label="Idiomas">
+                  {about.languages.map((lang) => (
+                    <li key={lang.name}>
+                      <p className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                        <span className="font-medium text-paper">{lang.name}</span>
+                        <span className="text-caption uppercase tracking-[0.15em] text-paper/60">
+                          — {lang.level}
+                        </span>
+                      </p>
+                      {lang.note ? (
+                        <p className="mt-0.5 text-caption text-paper/50">{lang.note}</p>
+                      ) : null}
+                    </li>
+                  ))}
+                </ul>
               </div>
 
               <div>
@@ -327,35 +374,24 @@ export function About() {
                   <DiamondMarker size={6} />
                   Intereses
                 </h2>
-                <ul className="mt-5 flex flex-wrap gap-x-4 gap-y-4" aria-label="Intereses personales">
+                <ul className="mt-5 flex flex-wrap gap-x-4 gap-y-4" aria-label="Áreas de interés">
                   {about.interests.map((interest, index) => (
                     <li
                       key={interest}
                       className={CHIP_ROTATIONS[index % CHIP_ROTATIONS.length]}
                     >
-                      <Tag tone={index % 2 === 0 ? 'red' : 'dark'}>{interest}</Tag>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div>
-                <h2 className="flex items-center gap-2 text-label font-medium uppercase tracking-[0.22em] text-accent">
-                  <DiamondMarker size={6} />
-                  Tecnologías
-                </h2>
-                <ul className="mt-5 flex flex-wrap gap-x-4 gap-y-4" aria-label="Tecnologías y lenguajes">
-                  {about.techSkills.map((skill, index) => (
-                    <li
-                      key={skill}
-                      className={CHIP_ROTATIONS[index % CHIP_ROTATIONS.length]}
-                    >
-                      <Tag tone={index % 2 === 0 ? 'dark' : 'red'}>{skill}</Tag>
+                      <Tag font="sans" tone={index % 2 === 0 ? 'red' : 'dark'}>{interest}</Tag>
                     </li>
                   ))}
                 </ul>
               </div>
             </div>
+
+            {/* Otros datos (protagonismo mínimo, por petición expresa) */}
+            <p className="mt-12 flex items-center gap-2 text-caption uppercase tracking-[0.2em] text-paper/50">
+              <DiamondMarker size={5} />
+              {about.license}
+            </p>
           </Reveal>
         </div>
       </section>

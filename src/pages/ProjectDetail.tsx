@@ -333,33 +333,33 @@ export function ProjectDetail() {
                 </h2>
               </div>
               <div className="mt-8 flex flex-wrap gap-4">
-                <AngularButton
-                  href={project.links.demo ?? '#'}
-                  external={Boolean(project.links.demo)}
-                >
-                  Ver demo
-                </AngularButton>
-                <AngularButton
-                  href={project.links.github ?? '#'}
-                  external={Boolean(project.links.github)}
-                >
-                  Código
-                </AngularButton>
+                {project.links.demo && (
+                  <AngularButton href={project.links.demo} external>
+                    Ver demo
+                  </AngularButton>
+                )}
+                {project.links.github && (
+                  <AngularButton href={project.links.github} external>
+                    Código
+                  </AngularButton>
+                )}
               </div>
-              {(!project.links.demo || !project.links.github) && (
+              {!project.links.demo && !project.links.github && (
                 <p className="mt-4 text-label uppercase tracking-[0.25em] text-paper/40">
-                  Enlaces pendientes — se publicarán próximamente
+                  Sin enlaces públicos disponibles
                 </p>
               )}
             </div>
           </Reveal>
 
           {/* Prev/Next navigation */}
-          <Reveal delay={0.35}>
-            <div className="mt-16">
-              <PrevNextNav prev={prevProject} next={nextProject} />
-            </div>
-          </Reveal>
+          {prevProject || nextProject ? (
+            <Reveal delay={0.35}>
+              <div className="mt-16">
+                <PrevNextNav prev={prevProject} next={nextProject} />
+              </div>
+            </Reveal>
+          ) : null}
 
           {/* Bottom accent */}
           <div

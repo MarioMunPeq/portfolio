@@ -1,7 +1,6 @@
-// Árbol de Habilidades — ruta académica real, de ESO a Bootcamp de IA.
-// Regla: no inventar estudios ni fechas presentados como reales. Centro,
-// periodo y descripción quedan como [PLACEHOLDER] hasta definir los datos.
-// El nodo "locked" es decorativo (etapa futura, camino en construcción).
+// Árbol de Habilidades — ruta académica real, de Telecomunicaciones a Bootcamp
+// de IA. Centro, periodo y titulaciones proceden del CV. El nodo "locked" es
+// decorativo (etapa futura, camino en construcción).
 
 export type SkillNodeKind = 'unlocked' | 'locked'
 
@@ -20,6 +19,10 @@ export interface SkillNode {
   kind: SkillNodeKind
   /** Texto del sello de estado del panel. */
   status: string
+  /** Nivel de la titulación (Grado medio, Grado superior…). */
+  level?: string
+  /** Nota destacada del expediente (TFG, horas…). */
+  detail?: string
   institution?: string
   period?: string
   description?: string
@@ -35,90 +38,74 @@ export interface SkillEdge {
 export const SKILL_TREE: { nodes: SkillNode[]; edges: SkillEdge[] } = {
   nodes: [
     {
-      id: 'eso',
-      x: 9,
-      y: 50,
-      label: 'ESO',
-      title: 'Educación Secundaria Obligatoria (ESO)',
-      icon: 'cap',
-      kind: 'unlocked',
-      status: 'Completado',
-      institution: '[PLACEHOLDER: Centro — pendiente de definir]',
-      period: '[PLACEHOLDER: AAAA — AAAA]',
-      description: '[PLACEHOLDER] Etapa formativa base — pendiente de definir.',
-    },
-    {
-      id: 'teleco',
-      x: 30,
-      y: 50,
+      id: 'telecomunicaciones',
+      x: 50,
+      y: 82,
       label: 'TELECO',
-      title: 'Grado Medio en Telecomunicaciones',
+      title: 'Instalaciones de Telecomunicaciones',
       icon: 'antenna',
       kind: 'unlocked',
       status: 'Completado',
-      institution: '[PLACEHOLDER: Centro — pendiente de definir]',
-      period: '[PLACEHOLDER: AAAA — AAAA]',
-      description:
-        '[PLACEHOLDER] Formación en telecomunicaciones — pendiente de definir.',
+      level: 'Grado medio',
+      institution: 'IES La Merced',
+      period: 'Septiembre 2018 — Junio 2020',
     },
     {
-      id: 'robotica',
-      x: 52,
-      y: 24,
+      id: 'ari',
+      x: 28,
+      y: 50,
       label: 'ROBÓTICA',
-      title: 'Grado Superior en Robótica',
+      title: 'Automatización y Robótica Industrial',
       icon: 'robot',
       kind: 'unlocked',
       status: 'Completado',
-      institution: '[PLACEHOLDER: Centro — pendiente de definir]',
-      period: '[PLACEHOLDER: AAAA — AAAA]',
-      description: '[PLACEHOLDER] Formación en robótica — pendiente de definir.',
+      level: 'Grado superior',
+      detail: 'Sin TFG',
+      institution: 'IES Galileo',
+      period: 'Septiembre 2020 — Junio 2022',
     },
     {
       id: 'dam',
-      x: 52,
-      y: 76,
+      x: 72,
+      y: 50,
       label: 'DAM',
-      title: 'Grado Superior en Desarrollo de Aplicaciones Multiplataforma (DAM)',
+      title: 'Desarrollo de Aplicaciones Multiplataforma',
       icon: 'code',
       kind: 'unlocked',
       status: 'Completado',
-      institution: '[PLACEHOLDER: Centro — pendiente de definir]',
-      period: '[PLACEHOLDER: AAAA — AAAA]',
-      description:
-        '[PLACEHOLDER] Formación en desarrollo de aplicaciones multiplataforma — pendiente de definir.',
+      level: 'Grado superior',
+      detail: 'Mención honorífica en el TFG',
+      institution: 'IES Julián Marías',
+      period: 'Septiembre 2022 — Junio 2024',
     },
     {
       id: 'bootcamp',
-      x: 74,
-      y: 76,
+      x: 72,
+      y: 18,
       label: 'BOOTCAMP IA',
       title: 'Bootcamp de Inteligencia Artificial',
       icon: 'chip',
       kind: 'unlocked',
       status: 'Completado',
-      institution: '[PLACEHOLDER: Centro — pendiente de definir]',
-      period: '[PLACEHOLDER: AAAA — AAAA]',
-      description:
-        '[PLACEHOLDER] Formación en inteligencia artificial — pendiente de definir.',
+      level: 'Bootcamp',
+      detail: '450 horas',
+      institution: 'Qualentum',
+      period: 'Junio 2024 — Enero 2025',
     },
     {
       id: 'siguiente',
-      x: 90,
-      y: 46,
+      x: 50,
+      y: 18,
       label: '?',
       title: 'Próxima etapa',
       icon: 'question',
       kind: 'locked',
       status: 'En construcción',
-      description:
-        '[PLACEHOLDER] Siguiente etapa formativa — camino en construcción.',
     },
   ],
   edges: [
-    { from: 'eso', to: 'teleco', kind: 'solid' },
-    { from: 'teleco', to: 'robotica', kind: 'solid' },
-    { from: 'teleco', to: 'dam', kind: 'solid' },
+    { from: 'telecomunicaciones', to: 'ari', kind: 'solid' },
+    { from: 'telecomunicaciones', to: 'dam', kind: 'solid' },
     { from: 'dam', to: 'bootcamp', kind: 'solid' },
     { from: 'bootcamp', to: 'siguiente', kind: 'future' },
   ],

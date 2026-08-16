@@ -1,8 +1,10 @@
 import { motion, useReducedMotion } from 'motion/react'
+import { useState } from 'react'
 import type { CSSProperties } from 'react'
 import { Screen } from '../components/transition/Screen'
 import { experience } from '../data/experience'
 import type { ExperienceEntry } from '../data/experience'
+import { companyLogoCandidates } from '../lib/company-logo'
 
 // Curva de interacción rápida y cortante (menú de juego, no SaaS).
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1]
@@ -62,19 +64,7 @@ const CONNECTORS: Connector[] = [
   { ang: 28, leftPct: 48, shiftPx: 34 }, // 3 → 4 (baja a la derecha)
 ]
 
-// Los placeholders crudos del sitio siguen visibles, pero fuera del acento
-// principal: las líneas que aún son "[PLACEHOLDER..." se atenúan.
-const isPh = (text: string) => text.trim().startsWith('[')
-
-// Candado mínimo en negro/blanco (sin iconografía ajena al proyecto).
-function Padlock({ className = '' }: { className?: string }) {
-  return (
-    <span aria-hidden="true" className={`relative inline-block h-3 w-3 border-2 border-current ${className}`}>
-      <span className="absolute left-1/2 top-[55%] h-[5px] w-[2px] -translate-x-1/2 -translate-y-1/2 bg-current" />
-      <span className="absolute -top-[6px] left-1/2 h-2 w-2.5 -translate-x-1/2 rounded-t-full border-2 border-b-0 border-current" />
-    </span>
-  )
-}
+const TOTAL = experience.length
 
 // Recibo de lectura estilo chat de Persona 5: dos tildes separadas dibujadas
 // con SVG (no Unicode), la trasera fina y la delantera gruesa, en rojo.
@@ -152,13 +142,49 @@ function ConversationLabel() {
       </span>
       <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.3em] text-white [text-shadow:2px_2px_0_#000]">
         <span aria-hidden="true" className="h-2 w-2 rotate-45 bg-white" />
-        4 mensajes
+        {TOTAL} mensajes
       </span>
       <span className="ml-auto inline-flex items-center gap-2 bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.3em] text-black [clip-path:polygon(0_0,calc(100%_-_8px)_0,100%_100%,0_100%)]">
         <span aria-hidden="true" className="h-2 w-2 rotate-45 bg-black" />
-        1 nuevo
+        En curso
       </span>
     </div>
+  )
+}
+
+/* ============================================================
+   Logo de chat de la empresa: se resuelve automáticamente desde el
+   nombre de la empresa (public/images/experience/<empresa>.png|webp).
+   ============================================================ */
+
+/**
+ * Logo de la empresa dentro del avatar de chat. Resuelve el archivo desde
+ * el campo `company` (PNG primero, WebP después). Si no existe ninguno o la
+ * carga falla (onError), se avanza al siguiente candidato y, agotados, se
+ * muestra la inicial de la empresa como placeholder. object-contain mantiene
+ * la proporción del logo sin recortarlo y centrado dentro del recuadro.
+ */
+function CompanyLogo({ company }: { company: string }) {
+  const candidates = companyLogoCandidates(company)
+  const [failed, setFailed] = useState<number[]>([])
+
+  const index = candidates.findIndex((_, i) => !failed.includes(i))
+
+  if (index === -1) {
+    return (
+      <span className="flex h-full w-full items-center justify-center font-p5-menu text-2xl uppercase leading-none text-black md:text-3xl">
+        {company.charAt(0)}
+      </span>
+    )
+  }
+
+  return (
+    <img
+      src={candidates[index]}
+      alt={company}
+      className="h-full w-full object-contain p-1.5"
+      onError={() => setFailed((prev) => [...prev, index])}
+    />
   )
 }
 
@@ -182,13 +208,7 @@ function SpeakerAvatar({ entry, right }: { entry: ExperienceEntry; right: boolea
         className="h-full w-full border-[3px] border-black bg-white"
         style={{ boxShadow: '0 0 0 2px #fff, 6px 6px 0 #000' }}
       >
-        {entry.logo ? (
-          <img src={entry.logo} alt={entry.logoAlt ?? entry.company} className="h-full w-full object-cover" />
-        ) : (
-          <span className="flex h-full w-full items-center justify-center font-p5-menu text-2xl uppercase leading-none text-black md:text-3xl">
-            {entry.company.charAt(0)}
-          </span>
-        )}
+        <CompanyLogo company={entry.company} />
       </div>
     </div>
   )
@@ -200,11 +220,6 @@ function SpeakerAvatar({ entry, right }: { entry: ExperienceEntry; right: boolea
 
 function OpenMessage({ entry, index }: { entry: ExperienceEntry; index: number }) {
   const nn = String(index + 1).padStart(2, '0')
-  const phRole = isPh(entry.role)
-  const phPeriod = isPh(entry.period)
-  const phMeta = isPh(entry.meta ?? '')
-  const phLoc = isPh(entry.location ?? '')
-  const phSummary = isPh(entry.summary)
 
   return (
     <div className="relative px-6 py-8 md:px-10 md:py-9">
@@ -217,46 +232,39 @@ function OpenMessage({ entry, index }: { entry: ExperienceEntry; index: number }
         className="mt-3 block h-[5px] w-16 -skew-x-12 bg-[#B80404] transition-all duration-200 group-hover:w-28"
       />
 
-      <p
-        className={`mt-5 inline-block bg-black px-3 py-1.5 text-label font-bold uppercase tracking-[0.25em] text-white [clip-path:polygon(0_0,100%_0,calc(100%_-_8px)_100%,0_100%)] ${
-          phRole ? 'opacity-70' : ''
-        }`}
-      >
+      <p className="mt-5 inline-block bg-black px-3 py-1.5 text-label font-bold uppercase tracking-[0.25em] text-white [clip-path:polygon(0_0,100%_0,calc(100%_-_8px)_100%,0_100%)]">
         {entry.role}
       </p>
 
       <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-black">
         {entry.period && (
-          <span className={`flex items-center gap-2 ${phPeriod ? 'opacity-70' : ''}`}>
+          <span className="flex items-center gap-2">
             <span aria-hidden="true" className="h-2 w-2 rotate-45 bg-[#B80404]" />
             {entry.period}
           </span>
         )}
         {entry.location && (
-          <span className={`flex items-center gap-2 ${phLoc ? 'opacity-70' : ''}`}>
+          <span className="flex items-center gap-2">
             <span aria-hidden="true" className="h-2 w-2 rotate-45 bg-[#B80404]" />
             {entry.location}
           </span>
         )}
         {entry.meta && (
-          <span className={`flex items-center gap-2 ${phMeta ? 'opacity-70' : ''}`}>
+          <span className="flex items-center gap-2">
             <span aria-hidden="true" className="h-2 w-2 rotate-45 bg-[#B80404]" />
             {entry.meta}
           </span>
         )}
       </div>
 
-      <p className={`mt-5 font-sans text-[15px] leading-relaxed text-black ${phSummary ? 'opacity-70' : ''}`}>
+      <p className="mt-5 font-sans text-[15px] leading-relaxed text-black">
         {entry.summary}
       </p>
 
       {entry.highlights.length > 0 && (
         <ul className="mt-5 space-y-2.5 border-l-[3px] border-black pl-4">
           {entry.highlights.map((highlight) => (
-            <li
-              key={highlight}
-              className={`flex gap-2.5 text-[13px] leading-snug text-black ${isPh(highlight) ? 'opacity-70' : ''}`}
-            >
+            <li key={highlight} className="flex gap-2.5 text-[13px] leading-snug text-black">
               <span aria-hidden="true" className="mt-[6px] h-2 w-2 shrink-0 rotate-45 bg-[#B80404]" />
               {highlight}
             </li>
@@ -264,55 +272,25 @@ function OpenMessage({ entry, index }: { entry: ExperienceEntry; index: number }
         </ul>
       )}
 
+      {entry.tech && entry.tech.length > 0 && (
+        <div className="mt-5 flex flex-wrap gap-2">
+          {entry.tech.map((tech) => (
+            <span
+              key={tech}
+              className="inline-flex items-center gap-1.5 border-2 border-black px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-black"
+            >
+              <span aria-hidden="true" className="h-1.5 w-1.5 rotate-45 bg-[#B80404]" />
+              {tech}
+            </span>
+          ))}
+        </div>
+      )}
+
       <div className="mt-6 flex items-center justify-between border-t border-black pt-3 text-[10px] font-bold uppercase tracking-[0.25em] text-black">
-        <span>Mensaje {nn} / 04</span>
+        <span>Mensaje {nn} / {String(TOTAL).padStart(2, '0')}</span>
         <span className="flex items-center gap-2">
           <span>Leído</span>
           <ReadChecks />
-        </span>
-      </div>
-    </div>
-  )
-}
-
-/* ============================================================
-   Contenido del capítulo futuro (COGNIZANT): metadata velada
-   ============================================================ */
-
-function LockedMessage({ entry, index }: { entry: ExperienceEntry; index: number }) {
-  const nn = String(index + 1).padStart(2, '0')
-  return (
-    <div className="relative px-6 py-8 md:px-10 md:py-9">
-      <h3 className="font-display uppercase leading-[0.9] text-black" style={{ fontSize: 'clamp(1.7rem, 2.6vw, 2.6rem)' }}>
-        {entry.company}
-      </h3>
-
-      <div className="mt-4 flex flex-wrap items-center gap-3">
-        <span className="inline-flex items-center gap-2 bg-black px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.25em] text-white [clip-path:polygon(0_0,100%_0,calc(100%_-_8px)_100%,0_100%)]">
-          <Padlock className="text-white" />
-          Próximo desbloqueo
-        </span>
-        <span className="inline-flex items-center gap-2 bg-black px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.25em] text-white [clip-path:polygon(8px_0,100%_0,calc(100%_-_8px)_100%,0_100%)]">
-          <Padlock className="text-white" />
-          Bloqueado
-        </span>
-      </div>
-
-      <p className="mt-5 inline-flex items-center gap-2 text-label font-bold uppercase tracking-[0.22em] text-black">
-        <span aria-hidden="true" className="h-2 w-2 rotate-45 bg-[#B80404]" />
-        <span className="select-none blur-[2px]">{entry.role}</span>
-      </p>
-      <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-black">
-        <span className="select-none blur-[1.5px]">{entry.period}</span>
-      </p>
-
-      <p className="mt-5 font-sans text-[15px] leading-relaxed text-black">{entry.summary}</p>
-
-      <div className="mt-6 flex items-center justify-between border-t border-black pt-3 text-[10px] font-bold uppercase tracking-[0.25em] text-black">
-        <span>Mensaje {nn} / 04</span>
-        <span className="flex items-center gap-2">
-          <Padlock className="text-black" />
-          Bloqueado
         </span>
       </div>
     </div>
@@ -328,7 +306,6 @@ function LockedMessage({ entry, index }: { entry: ExperienceEntry; index: number
 function MessageBlock({ entry, index }: { entry: ExperienceEntry; index: number }) {
   const reduced = useReducedMotion()
   const right = index % 2 === 1
-  const locked = entry.upcoming === true
   const poly = right ? BUBBLE_RIGHT : BUBBLE_LEFT
   const layout = LAYOUTS[index % LAYOUTS.length]
   const conn = CONNECTORS[index - 1] ?? null
@@ -392,7 +369,7 @@ function MessageBlock({ entry, index }: { entry: ExperienceEntry; index: number 
             {/* Panel: negro (contorno grueso) con relleno blanco */}
             <div data-cursor="select" className="relative bg-black p-[6px] md:p-[7px]" style={{ clipPath: poly }}>
               <div className="relative bg-white">
-                {locked ? <LockedMessage entry={entry} index={index} /> : <OpenMessage entry={entry} index={index} />}
+                <OpenMessage entry={entry} index={index} />
               </div>
             </div>
             {/* Avatar de chat de la empresa */}

@@ -202,9 +202,16 @@ function DetailPanel({ node }: { node: SkillNode }) {
             Detalle
           </h3>
         </div>
-        <Tag font="hatty" tone={locked ? 'dark' : 'red'} size="sm">
-          {node.status}
-        </Tag>
+        <div className="flex flex-wrap items-center gap-2">
+          {node.level && (
+            <Tag font="hatty" tone="dark" size="sm">
+              {node.level}
+            </Tag>
+          )}
+          <Tag font="hatty" tone={locked ? 'dark' : 'red'} size="sm">
+            {node.status}
+          </Tag>
+        </div>
       </div>
 
       <h4 className="mt-6 font-display text-2xl uppercase leading-tight">{node.title}</h4>
@@ -226,6 +233,12 @@ function DetailPanel({ node }: { node: SkillNode }) {
         </dl>
       )}
 
+      {node.detail && (
+        <p className="mt-4 inline-flex items-center gap-2 border-l-2 border-accent pl-3 font-hatty text-caption uppercase tracking-[0.18em] text-accent">
+          {node.detail}
+        </p>
+      )}
+
       {node.description && (
         <p className="mt-6 max-w-2xl text-body leading-relaxed text-paper/80">
           {node.description}
@@ -237,8 +250,9 @@ function DetailPanel({ node }: { node: SkillNode }) {
 
 /**
  * Sección Árbol de Habilidades: hexágonos conectados por dobles líneas rojas
- * (radiando del tronco ESO), con panel de detalle bajo el árbol. La selección
- * es por clic; por defecto se muestra el nodo más reciente (Bootcamp de IA).
+ * (radiando del tronco de Telecomunicaciones), con panel de detalle bajo el
+ * árbol. La selección es por clic; por defecto se muestra el nodo más
+ * reciente (Bootcamp de IA).
  */
 export function SkillTreeSection() {
   const { ref, size } = useContainerSize()

@@ -35,34 +35,6 @@ export interface Project {
 
 export const projects: Project[] = [
   {
-    slug: 'cosmere-archive',
-    name: 'Cosmere Archive',
-    summary:
-      '[PLACEHOLDER] Descripción breve del proyecto — pendiente de definir.',
-    description:
-      '[PLACEHOLDER] Descripción completa para la página del proyecto — pendiente de definir.',
-    stack: ['React', 'TypeScript', 'Tailwind CSS', 'Vite'],
-    links: { demo: null, github: null },
-    images: null,
-    screenshots: [
-      {
-        src: null,
-        alt: 'Captura pendiente de la vista principal de Cosmere Archive',
-        caption: 'Vista principal del archivo',
-      },
-      {
-        src: null,
-        alt: 'Captura pendiente del catálogo de Cosmere Archive',
-        caption: 'Catálogo de obras',
-      },
-      {
-        src: null,
-        alt: 'Captura pendiente de la ficha de lectura de Cosmere Archive',
-        caption: 'Ficha de lectura',
-      },
-    ],
-  },
-  {
     slug: 'dungeon-archive',
     name: 'Dungeon Archive',
     summary:
@@ -87,6 +59,34 @@ export const projects: Project[] = [
         src: null,
         alt: 'Captura pendiente de la sala del tesoro de Dungeon Archive',
         caption: 'Sala del tesoro',
+      },
+    ],
+  },
+  {
+    slug: 'cosmere-archive',
+    name: 'Cosmere Archive',
+    summary:
+      '[PLACEHOLDER] Descripción breve del proyecto — pendiente de definir.',
+    description:
+      '[PLACEHOLDER] Descripción completa para la página del proyecto — pendiente de definir.',
+    stack: ['React', 'TypeScript', 'Tailwind CSS', 'Vite'],
+    links: { demo: null, github: null },
+    images: null,
+    screenshots: [
+      {
+        src: null,
+        alt: 'Captura pendiente de la vista principal de Cosmere Archive',
+        caption: 'Vista principal del archivo',
+      },
+      {
+        src: null,
+        alt: 'Captura pendiente del catálogo de Cosmere Archive',
+        caption: 'Catálogo de obras',
+      },
+      {
+        src: null,
+        alt: 'Captura pendiente de la ficha de lectura de Cosmere Archive',
+        caption: 'Ficha de lectura',
       },
     ],
   },
@@ -117,5 +117,17 @@ export const projects: Project[] = [
         caption: 'Historial de partidas',
       },
     ],
+  },
+  {
+    slug: 'gnu-health',
+    name: 'GNU Health',
+    summary:
+      'Participación en un proyecto solidario para la ONG GNU Health, desarrollando una aplicación Android.',
+    description:
+      'Participación en un proyecto solidario para la ONG GNU Health, desarrollando una aplicación Android.',
+    stack: ['Android'],
+    links: { demo: null, github: null },
+    images: null,
+    screenshots: null,
   },
 ]

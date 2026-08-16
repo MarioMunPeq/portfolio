@@ -25,9 +25,11 @@ const contextFor = (path: string) => {
   return CONTEXT[path] ?? 'SISTEMA'
 }
 
-/** Contexto del footer: en Formación se muestra la ubicación del hero. */
-const footerContextFor = (path: string) => {
+/** Contexto del footer: en Formación se muestra la ubicación del hero.
+    En Perfil el footer queda solo con créditos y enlaces (sin contexto). */
+const footerContextFor = (path: string): string | undefined => {
   if (path === '/education') return 'Valladolid · Es'
+  if (path === '/about') return undefined
   return contextFor(path)
 }
 
