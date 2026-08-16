@@ -10,12 +10,16 @@ import { SkillTreeSection } from '../components/skill-tree/SkillTreeSection'
  */
 export function Education() {
   return (
-    <Screen className="min-h-dvh bg-bg-hero text-paper">
-      <section className="relative overflow-hidden px-6 pb-28 pt-16 md:px-10 md:pt-20">
-        {/* Palabra fantasma de marca */}
+    <Screen className="h-dvh bg-bg-hero text-paper">
+      <section className="relative flex h-full flex-col overflow-hidden px-6 pt-14 md:px-10 md:pt-16">
+        {/* Fondo: estrellas de contorno + halftone tenue (mismo lenguaje que Perfil/Inventario) */}
+        <span aria-hidden="true" className="pointer-events-none absolute inset-0 bg-stars opacity-70" />
+        <span aria-hidden="true" className="pointer-events-none absolute inset-0 bg-halftone-dots opacity-25" />
+
+        {/* Palabra fantasma de marca, centrada para rellenar ambos flancos */}
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute right-0 top-2 z-0 -rotate-6 select-none font-expose uppercase leading-none text-outline-faint opacity-55"
+          className="pointer-events-none absolute inset-x-0 top-[26%] z-0 -rotate-6 select-none text-center font-expose uppercase leading-none text-outline-faint opacity-55"
           style={{ fontSize: 'clamp(7rem, 15vw, 14rem)' }}
         >
           HABILIDADES

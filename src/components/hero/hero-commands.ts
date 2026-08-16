@@ -17,9 +17,8 @@ const byId = (id: string) => {
 
 /**
  * Comandos del menú principal — etiqueta grande de "sistema" (contexto de
- * juego) con el nombre real de la sección como subtítulo. Inicio y Contacto
- * no aparecen aquí: esta pantalla ES el menú principal y CONTACTO vive en el
- * pie de pantalla. Los destinos salen de NAV_ITEMS.
+ * juego) con el nombre real de la sección como subtítulo. Inicio no aparece
+ * aquí: esta pantalla ES el menú principal. Los destinos salen de NAV_ITEMS.
  */
 export const HERO_COMMANDS: HeroCommand[] = [
   {

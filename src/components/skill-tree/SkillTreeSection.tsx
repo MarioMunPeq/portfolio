@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useReducedMotion } from 'motion/react'
 import { DiamondMarker } from '../shared/DiamondMarker'
 import { Tag } from '../ui/Tag'
 import { NodeIcon } from './NodeIcon'
@@ -30,6 +31,7 @@ function useContainerSize() {
 
 interface HexNodeProps {
   node: SkillNode
+  index: number
   selected: boolean
   onSelect: (id: string) => void
 }
@@ -37,9 +39,10 @@ interface HexNodeProps {
 /**
  * Nodo hexagonal: botón accesible con hexágono rojo relleno y en glow
  * (desbloqueado) o silueta gris (etapa futura), icono de campo dentro y
- * etiqueta corta debajo.
+ * etiqueta corta debajo. Entrada escalonada desde la raíz hacia fuera
+ * (CSS, escalonada por índice).
  */
-function HexNode({ node, selected, onSelect }: HexNodeProps) {
+function HexNode({ node, index, selected, onSelect }: HexNodeProps) {
   const locked = node.kind === 'locked'
   const glow = selected
     ? 'drop-shadow(3px 3px 0 rgba(0,0,0,0.85)) drop-shadow(0 0 18px rgba(230,0,18,0.9))'
@@ -47,8 +50,13 @@ function HexNode({ node, selected, onSelect }: HexNodeProps) {
 
   return (
     <div
-      className="absolute z-10"
-      style={{ left: `${node.x}%`, top: `${node.y}%`, transform: 'translate(-50%, -50%)' }}
+      className="absolute z-10 skill-node-enter"
+      style={{
+        left: `${node.x}%`,
+        top: `${node.y}%`,
+        transform: 'translate(-50%, -50%)',
+        animationDelay: `${index * 0.12}s`,
+      }}
     >
       <button
         type="button"
@@ -58,13 +66,18 @@ function HexNode({ node, selected, onSelect }: HexNodeProps) {
         className="group flex cursor-pointer flex-col items-center gap-2 border-0 bg-transparent p-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
       >
         <span
-          className="relative block h-14 w-14 transition-transform duration-200 sm:h-[76px] sm:w-[76px]"
+          className={`relative block h-14 w-14 transition-transform duration-200 sm:h-[68px] sm:w-[68px] ${
+            locked
+              ? 'group-hover:[animation:hex-locked_0.35s_ease-in-out]'
+              : 'group-hover:scale-105'
+          }`}
           style={{
             filter: locked ? 'drop-shadow(3px 3px 0 rgba(0,0,0,0.85))' : glow,
             transform: selected && !locked ? 'scale(1.08)' : undefined,
           }}
         >
-          <svg viewBox="0 0 100 100" className="h-full w-full" aria-hidden="true">
+          {!locked && <span aria-hidden="true" className="hex-halo" />}
+          <svg viewBox="0 0 100 100" className="relative h-full w-full" aria-hidden="true">
             <defs>
               <radialGradient id={`skill-hex-${node.id}`} cx="42%" cy="38%" r="75%">
                 <stop offset="0%" stopColor="#ff3b30" />
@@ -89,7 +102,7 @@ function HexNode({ node, selected, onSelect }: HexNodeProps) {
           <span className="absolute inset-0 flex items-center justify-center text-paper">
             <NodeIcon
               kind={node.icon}
-              className={locked ? 'h-7 w-7 opacity-40 sm:h-8 sm:w-8' : 'h-7 w-7 sm:h-8 sm:w-8'}
+              className={locked ? 'h-7 w-7 opacity-40' : 'h-7 w-7'}
             />
           </span>
         </span>
@@ -117,6 +130,7 @@ function HexNode({ node, selected, onSelect }: HexNodeProps) {
  */
 function ConnectorLayer({ size }: { size: { w: number; h: number } }) {
   const { w, h } = size
+  const reduced = useReducedMotion()
   if (w <= 0 || h <= 0) return null
 
   const center = (node: SkillNode) => ({
@@ -159,7 +173,10 @@ function ConnectorLayer({ size }: { size: { w: number; h: number } }) {
         return (
           <g
             key={index}
-            style={{ filter: 'drop-shadow(0 0 5px rgba(230,0,18,0.45))' }}
+            style={{
+              filter: 'drop-shadow(0 0 5px rgba(230,0,18,0.45))',
+              ['--skill-line-d' as string]: `${index * 0.15}s`,
+            }}
           >
             <line
               x1={a.x + nx}
@@ -169,6 +186,8 @@ function ConnectorLayer({ size }: { size: { w: number; h: number } }) {
               stroke={stroke}
               strokeWidth={2.5}
               strokeLinecap="round"
+              pathLength={1}
+              className="skill-line-draw"
             />
             <line
               x1={a.x - nx}
@@ -178,10 +197,47 @@ function ConnectorLayer({ size }: { size: { w: number; h: number } }) {
               stroke={stroke}
               strokeWidth={2.5}
               strokeLinecap="round"
+              pathLength={1}
+              className="skill-line-draw"
             />
           </g>
         )
       })}
+
+      {/* Pulso de energía: un punto brillante recorre cada conexión real desde
+          el tronco (TELECO) hacia los nodos desbloqueados, en bucle lento.
+          Animación SMIL nativa (cx/cy/opacity): loops del navegador, no
+          dependen de JS; escalonados por borde. reduced-motion lo oculta. */}
+      {!reduced &&
+        SKILL_TREE.edges.map((edge, index) => {
+          if (edge.kind === 'future') return null
+          const from = SKILL_TREE.nodes.find((node) => node.id === edge.from)
+          const to = SKILL_TREE.nodes.find((node) => node.id === edge.to)
+          if (!from || !to) return null
+
+          const a = center(from)
+          const b = center(to)
+          const begin = `${index * 0.7}s`
+          const ease = {
+            calcMode: 'spline' as const,
+            keySplines: '0.42 0 0.58 1',
+          }
+
+          return (
+            <g key={`pulse-${index}`}>
+              <circle r={8} fill="var(--color-accent)" opacity={0} style={{ filter: 'blur(2px)' }}>
+                <animate attributeName="cx" values={`${a.x};${b.x}`} dur="2.8s" begin={begin} repeatCount="indefinite" {...ease} />
+                <animate attributeName="cy" values={`${a.y};${b.y}`} dur="2.8s" begin={begin} repeatCount="indefinite" {...ease} />
+                <animate attributeName="opacity" values="0;1;0" keyTimes="0;0.5;1" dur="2.8s" begin={begin} repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1" />
+              </circle>
+              <circle r={2.5} fill="var(--color-paper)" opacity={0} style={{ filter: 'drop-shadow(0 0 5px rgba(230,0,18,0.95))' }}>
+                <animate attributeName="cx" values={`${a.x};${b.x}`} dur="2.8s" begin={begin} repeatCount="indefinite" {...ease} />
+                <animate attributeName="cy" values={`${a.y};${b.y}`} dur="2.8s" begin={begin} repeatCount="indefinite" {...ease} />
+                <animate attributeName="opacity" values="0;1;0" keyTimes="0;0.5;1" dur="2.8s" begin={begin} repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1;0.42 0 0.58 1" />
+              </circle>
+            </g>
+          )
+        })}
     </svg>
   )
 }
@@ -193,8 +249,8 @@ function ConnectorLayer({ size }: { size: { w: number; h: number } }) {
 function DetailPanel({ node }: { node: SkillNode }) {
   const locked = node.kind === 'locked'
 
-  return (
-    <div className="clip-cut-br border border-paper/30 bg-bg-content-alt p-6 md:p-8">
+  const content = (
+    <>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <DiamondMarker size={8} />
@@ -214,10 +270,10 @@ function DetailPanel({ node }: { node: SkillNode }) {
         </div>
       </div>
 
-      <h4 className="mt-6 font-display text-2xl uppercase leading-tight">{node.title}</h4>
+      <h4 className="mt-4 font-display text-2xl uppercase leading-tight">{node.title}</h4>
 
       {(node.period || node.institution) && (
-        <dl className="mt-6 space-y-4">
+        <dl className="mt-4 space-y-3">
           {node.period && (
             <div>
               <dt className="font-hatty text-caption uppercase tracking-[0.18em] text-paper/50">Periodo</dt>
@@ -240,10 +296,18 @@ function DetailPanel({ node }: { node: SkillNode }) {
       )}
 
       {node.description && (
-        <p className="mt-6 max-w-2xl text-body leading-relaxed text-paper/80">
+        <p className="mt-4 max-w-2xl text-body leading-relaxed text-paper/80">
           {node.description}
         </p>
       )}
+    </>
+  )
+
+  return (
+    <div className="clip-cut-br border border-paper/30 bg-bg-content-alt p-5 md:p-6">
+      <div key={node.id} className="skill-panel-in">
+        {content}
+      </div>
     </div>
   )
 }
@@ -261,23 +325,24 @@ export function SkillTreeSection() {
     SKILL_TREE.nodes.find((node) => node.id === selected) ?? SKILL_TREE.nodes[0]
 
   return (
-    <div className="mt-8">
+    <div className="mt-6">
       <div
         ref={ref}
-        className="relative mx-auto h-[26rem] max-w-4xl sm:h-[28rem] lg:h-[30rem]"
+        className="relative mx-auto h-[19rem] max-w-4xl sm:h-[20rem] lg:h-[21rem]"
       >
         <ConnectorLayer size={size} />
-        {SKILL_TREE.nodes.map((node) => (
+        {SKILL_TREE.nodes.map((node, index) => (
           <HexNode
             key={node.id}
             node={node}
+            index={index}
             selected={node.id === selected}
             onSelect={setSelected}
           />
         ))}
       </div>
 
-      <div className="mx-auto mt-12 max-w-4xl">
+      <div className="mx-auto mt-6 max-w-4xl">
         <DetailPanel node={active} />
       </div>
     </div>

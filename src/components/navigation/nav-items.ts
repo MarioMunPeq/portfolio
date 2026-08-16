@@ -10,5 +10,4 @@ export const NAV_ITEMS: NavItem[] = [
   { id: 'proyectos', label: 'Proyectos', path: '/projects' },
   { id: 'experiencia', label: 'Experiencia', path: '/experience' },
   { id: 'formacion', label: 'Formación', path: '/education' },
-  { id: 'contacto', label: 'Contacto', path: '/contact' },
 ]

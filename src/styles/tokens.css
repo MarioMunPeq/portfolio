@@ -497,6 +497,53 @@
   animation: bar-breathe 1.2s ease-in-out infinite;
 }
 
+/* ============================================================
+   Árbol de Habilidades — halo respirante y bloqueo
+   ============================================================ */
+
+/* Halo de brillo tras los hexágonos desbloqueados: círculo rojo
+   difuminado que respira (opacidad) en un ciclo lento (~3.6s). El
+   resplandor fijo del hexágono lo aporta su drop-shadow; este halo
+   añade el latido. En hover el halo se enciende más (la respiración
+   no se detiene). reduced-motion lo anula vía la regla global. */
+@keyframes hex-breathe {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.75;
+  }
+}
+
+.hex-halo {
+  position: absolute;
+  inset: -8px;
+  border-radius: 9999px;
+  background-color: rgba(230, 0, 18, 0.45);
+  filter: blur(10px);
+  animation: hex-breathe 3.6s ease-in-out infinite;
+}
+
+.group:hover .hex-halo {
+  background-color: rgba(255, 72, 54, 0.7);
+}
+
+/* Sacudida tenue del nodo bloqueado al hacer hover: aviso físico de que
+   no es seleccionable (sin escala ni glow). Una pasada breve, sutil. */
+@keyframes hex-locked {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-2px);
+  }
+  75% {
+    transform: translateX(2px);
+  }
+}
+
 /* Panel del marcador Q: marco rojo con esquinas cortadas y fondo oscuro
    translúcido, para la composición inferior de la pantalla de carga. */
 .load-panel {
@@ -1342,6 +1389,58 @@ html.lenis body {
 
 .load-exit-scan {
   animation: exit-scan 0.55s ease-out 0.05s both;
+}
+
+/* ÁRBOL DE HABILIDADES — entrada del contenido del panel de detalle al
+   cambiar de nodo: fundido + deslizamiento corto. Se re-dispara al cambiar
+   la key (nodo seleccionado). reduced-motion lo colapsa vía la regla global. */
+@keyframes skill-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.skill-panel-in {
+  animation: skill-panel-in 0.3s cubic-bezier(0.76, 0, 0.24, 1) both;
+}
+
+/* ÁRBOL DE HABILIDADES — entrada escalonada de los hexágonos desde la raíz
+   (TELECO) hacia fuera. Escalado por índice vía animation-delay inline. */
+@keyframes skill-node-enter {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 14px));
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.skill-node-enter {
+  animation: skill-node-enter 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ÁRBOL DE HABILIDADES — dibujado en cascada de las líneas conectoras reales
+   (stroke-dashoffset normalizado con pathLength=1). El retardo por borde
+   llega como custom property --skill-line-d desde el <g>. */
+@keyframes skill-line-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.skill-line-draw {
+  stroke-dasharray: 1;
+  animation: skill-line-draw 0.6s cubic-bezier(0.76, 0, 0.24, 1) var(--skill-line-d, 0s) both;
 }
 
 /* --- Reduced motion: eliminar movimiento no esencial (spec §9) --- */

@@ -63,9 +63,6 @@ export interface Profile {
   links: {
     github: ProfileLink | null
     linkedin: ProfileLink | null
-    email: ProfileLink | null
-    /** Ruta pública del CV en PDF. null = no disponible. */
-    cvPdf: string | null
   }
   about: {
     /** Párrafos de la sección "Sobre mí". */
@@ -82,11 +79,6 @@ export interface Profile {
     license: string
     /** Foto/avatar. null = usar placeholder visual. */
     avatar: { src: string; alt: string } | null
-  }
-  /** Sección de contacto. */
-  contact: {
-    /** Llamada inicial. */
-    intro: string
   }
 }
 
@@ -120,8 +112,6 @@ export const profile: Profile = {
       label: 'LinkedIn',
       url: 'https://www.linkedin.com/in/mario-mu%C3%B1oz-peque%C3%B1o/',
     },
-    email: null,
-    cvPdf: null,
   },
   about: {
     paragraphs: [
@@ -148,9 +138,5 @@ export const profile: Profile = {
     ],
     license: 'Permiso de conducir B',
     avatar: null,
-  },
-  contact: {
-    intro:
-      'Si quieres hablar de un proyecto, una oportunidad laboral o simplemente saludar, puedes contactarme a través de mis perfiles.',
   },
 }

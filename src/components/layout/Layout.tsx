@@ -16,7 +16,6 @@ const CONTEXT: Record<string, string> = {
   '/projects': 'INVENTARIO',
   '/experience': 'PROGRESO',
   '/education': 'FORMACIÓN',
-  '/contact': 'CONTACTO',
   '/404': 'ERROR 404',
 }
 
@@ -25,23 +24,16 @@ const contextFor = (path: string) => {
   return CONTEXT[path] ?? 'SISTEMA'
 }
 
-/** Contexto del footer: en Formación se muestra la ubicación del hero.
-    En Perfil el footer queda solo con créditos y enlaces (sin contexto). */
-const footerContextFor = (path: string): string | undefined => {
-  if (path === '/education') return 'Valladolid · Es'
-  if (path === '/about') return undefined
-  return contextFor(path)
-}
-
 /**
- * Marco de las pantallas: TopBar/BottomBar unificadas en todas las
- * pantallas internas salvo el menú principal (trae su propia topbar) y
- * Experiencia (conserva su diseño rojo de chat y su HUD). El cargador,
+ * Marco de las pantallas: TopBar unificada en todas las pantallas internas
+ * salvo el menú principal (trae su propia topbar) y Experiencia (conserva
+ * su diseño rojo de chat y su HUD). El footer global (◆ GITHUB ◆ LINKEDIN)
+ * se monta en TODAS las pantallas, incluido el menú principal. El cargador,
  * el grano y el cursor viven por encima de todo.
  */
 export function Layout({ children }: LayoutProps) {
   const { pathname } = useLocation()
-  const showBars = pathname !== '/' && pathname !== '/experience'
+  const showTopBar = pathname !== '/' && pathname !== '/experience'
 
   return (
     <div className="min-h-dvh bg-bg-hero text-paper">
@@ -53,8 +45,8 @@ export function Layout({ children }: LayoutProps) {
       </a>
       <LoadScreen />
       {pathname === '/experience' ? <HUD /> : null}
-      {showBars && <TopBar context={contextFor(pathname)} />}
-      {showBars && <BottomBar context={footerContextFor(pathname)} />}
+      {showTopBar && <TopBar context={contextFor(pathname)} />}
+      <BottomBar />
       <Grain />
       <Cursor />
       <main id="main">{children}</main>
