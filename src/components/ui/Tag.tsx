@@ -28,7 +28,7 @@ const sizeClass = {
 const fontClass = {
   'p5-menu': 'font-p5-menu uppercase tracking-[0.08em]',
   hatty: 'font-hatty uppercase tracking-[0.08em]',
-  sans: 'font-sans normal-case tracking-normal',
+  sans: 'font-sans',
 } as const
 
 /**

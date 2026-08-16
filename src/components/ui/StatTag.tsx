@@ -25,12 +25,12 @@ export function StatTag({ label, rank, descriptor, className = '' }: StatTagProp
           <span className="inline-flex min-w-[1.3rem] items-center justify-center rounded-[2px] bg-white px-1 py-px text-[0.65rem] font-extrabold leading-none text-ink">
             {rank}
           </span>
-          <span className="font-p5-menu text-body uppercase leading-none tracking-[0.06em] text-ink">
+          <span className="font-sans text-body font-bold uppercase leading-none tracking-[0.06em] text-ink">
             {label}
           </span>
         </div>
         {descriptor ? (
-          <span className="mt-1 pl-[1.8rem] font-expose text-[0.6rem] uppercase leading-tight tracking-[0.18em] text-ink/75">
+          <span className="mt-1 pl-[1.8rem] font-sans text-[0.6rem] font-semibold uppercase leading-tight tracking-[0.18em] text-ink/75">
             {descriptor}
           </span>
         ) : null}

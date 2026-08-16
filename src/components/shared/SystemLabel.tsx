@@ -14,7 +14,7 @@ interface SystemLabelProps {
  */
 export function SystemLabel({ children, as: Tag = 'span', className = '' }: SystemLabelProps) {
   return (
-    <Tag className={`inline-flex items-center gap-2 text-label font-medium uppercase ${className}`}>
+    <Tag font="sans" className={`inline-flex items-center gap-2 text-label font-medium uppercase ${className}`}>
       {children}
     </Tag>
   )
