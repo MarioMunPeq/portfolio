@@ -200,17 +200,6 @@
   );
 }
 
-/* Snapshot: fuerza opacidad y transform en todos los descendientes.
-   Se usa en AnimatedRoutes para que la pagina antigua (overlay) se
-   muestre estatica, sin las animaciones de entrada/salida de Screen. */
-@utility snapshot {
-  &,
-  & * {
-    opacity: 1 !important;
-    transform: none !important;
-  }
-}
-
 /* ============================================================
    Menu principal (hero) — tarjeta de comando con glitch-slice
    ============================================================ */
