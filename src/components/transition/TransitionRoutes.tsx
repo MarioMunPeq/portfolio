@@ -21,6 +21,7 @@ interface TransitionRoutesProps {
  *   4. Destination page is now fully visible.
  *
  * Falls back to instant swap when a transition is already in progress.
+ * Also skips if the transition was started externally (by CommandNavItem).
  */
 export function TransitionRoutes({ children }: TransitionRoutesProps) {
   const location = useLocation()
@@ -32,6 +33,20 @@ export function TransitionRoutes({ children }: TransitionRoutesProps) {
 
     if (transitioning.current) {
       setDisplayed(location)
+      return
+    }
+
+    /* If CommandNavItem already started the transition externally,
+       just mount the destination — the video is already playing. */
+    if (transitionBus.consumeExternallyStarted()) {
+      transitioning.current = true
+      flushSync(() => {
+        setDisplayed(location)
+      })
+      window.scrollTo(0, 0)
+      transitionBus.play(() => {
+        transitioning.current = false
+      })
       return
     }
 

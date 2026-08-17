@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom'
+import { useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { transitionBus } from '../transition/transition-bus'
 
 export type HeroIcon = 'triangle' | 'square' | 'circle' | 'cross' | 'asterisk'
 
@@ -25,6 +27,10 @@ interface CommandNavItemProps {
  * Item de navegación del menú principal — placa angular con icono de
  * mando (△ □ ○ ✕), label y subtítulo. Cada item recibe rotación y
  * offset individuales para composición caótica tipo Persona 5.
+ *
+ * Navigation triggers the transition video FIRST, then navigates once
+ * the screen is visually covered. This prevents the destination from
+ * flashing before the transition overlay appears.
  */
 export function CommandNavItem({
   icon,
@@ -37,6 +43,17 @@ export function CommandNavItem({
   widthPx = 380,
 }: CommandNavItemProps) {
   const { glyph, colorClass } = ICONS[icon]
+  const navigate = useNavigate()
+  const navigating = useRef(false)
+
+  const handleNav = async () => {
+    if (navigating.current) return
+    navigating.current = true
+
+    transitionBus.markExternallyStarted()
+    await transitionBus.playUntilCovered()
+    navigate(path)
+  }
 
   return (
     <li
@@ -49,10 +66,11 @@ export function CommandNavItem({
         } as React.CSSProperties
       }
     >
-      <Link
-        to={path}
+      <button
+        type="button"
+        onClick={handleNav}
         data-cursor="open"
-        className="hero-cmd metro-menu-btn group"
+        className="hero-cmd metro-menu-btn group w-full border-none text-left"
         style={{ animationDelay: `${animDelay}s` }}
       >
         <span aria-hidden="true" className="hero-cmd-track" />
@@ -68,7 +86,7 @@ export function CommandNavItem({
         <span className="ml-auto hidden self-center whitespace-nowrap font-display text-[14px] uppercase tracking-[0.06em] text-paper/50 [transform:skewX(11deg)] transition-colors duration-200 group-hover:text-ink/70 group-focus-visible:text-ink/70 md:block lg:text-[15px]">
           {sub}
         </span>
-      </Link>
+      </button>
     </li>
   )
 }
