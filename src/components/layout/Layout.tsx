@@ -6,7 +6,6 @@ import { BottomBar } from '../ui/BottomBar'
 import { Cursor } from './Cursor'
 import { LoadScreen } from '../overlay/LoadScreen'
 import { Grain } from '../primitives/Grain'
-import { MusicPlayer } from '../audio/MusicPlayer'
 
 interface LayoutProps {
   children: ReactNode
@@ -48,7 +47,6 @@ export function Layout({ children }: LayoutProps) {
       {pathname === '/experience' ? <HUD /> : null}
       {showTopBar && <TopBar context={contextFor(pathname)} />}
       <BottomBar />
-      <MusicPlayer />
       <Grain />
       <Cursor />
       <main id="main">{children}</main>

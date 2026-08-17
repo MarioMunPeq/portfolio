@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { TRACKS, DEFAULT_VOLUME } from '../../data/music'
+import { useBooted } from '../../lib/boot'
 
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                            */
@@ -15,6 +16,13 @@ function formatTime(s: number): string {
 function trackUrl(file: string): string {
   return `${import.meta.env.BASE_URL}audio/${encodeURIComponent(file)}`
 }
+
+/* ------------------------------------------------------------------ */
+/*  Session guard — survives StrictMode double-mount, route changes,   */
+/*  and component unmount/remount. Module-level, not a useRef.         */
+/* ------------------------------------------------------------------ */
+
+let sessionDispatched = false
 
 /* ------------------------------------------------------------------ */
 /*  Track Selector                                                     */
@@ -131,6 +139,8 @@ function Visualizer({ analyser }: { analyser: AnalyserNode | null }) {
 /* ------------------------------------------------------------------ */
 
 export function MusicPlayer() {
+  const booted = useBooted()
+
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
   /* Web Audio API — created lazily on first user gesture to avoid
@@ -152,12 +162,16 @@ export function MusicPlayer() {
   const [expanded, setExpanded] = useState(false)
   const [duration, setDuration] = useState(0)
   const [selectorOpen, setSelectorOpen] = useState(false)
+  const [autoplayBlocked, setAutoplayBlocked] = useState(false)
 
   /* Ref mirrors (avoid stale closures) */
   const isPlayingRef = useRef(false)
   const volumeRef = useRef(DEFAULT_VOLUME)
   const mutedRef = useRef(false)
   const trackIndexRef = useRef(1)
+
+  /* Cleanup ref for pending canplay listener */
+  const canplayCleanupRef = useRef<(() => void) | null>(null)
 
   /* ================================================================ */
   /*  AudioContext + Web Audio graph (created lazily on first gesture)  */
@@ -243,6 +257,13 @@ export function MusicPlayer() {
     const wasMuted = mutedRef.current
 
     a.pause()
+
+    /* Clean up any pending canplay from a previous loadAndPlay call */
+    if (canplayCleanupRef.current) {
+      canplayCleanupRef.current()
+      canplayCleanupRef.current = null
+    }
+
     a.src = trackUrl(TRACKS[index].file)
     a.load()
 
@@ -253,6 +274,7 @@ export function MusicPlayer() {
     if (timeLabelRef.current) timeLabelRef.current.textContent = '0:00'
 
     const onReady = async () => {
+      canplayCleanupRef.current = null
       a.removeEventListener('canplay', onReady)
       a.volume = wasMuted ? 0 : prevVol
       if (shouldPlay) {
@@ -263,24 +285,56 @@ export function MusicPlayer() {
             await a.play()
             setIsPlaying(true)
             isPlayingRef.current = true
+            setAutoplayBlocked(false)
           } catch (err) {
             console.warn('[BGM] Auto-play blocked:', err)
+            setAutoplayBlocked(true)
             setIsPlaying(false)
             isPlayingRef.current = false
           }
         }
       }
     }
+    canplayCleanupRef.current = () => a.removeEventListener('canplay', onReady)
     a.addEventListener('canplay', onReady)
   }, [ensureAudioGraph])
 
   /* ================================================================ */
-  /*  Auto-play Phantom on mount                                       */
+  /*  Auto-play Phantom ONCE on first boot (no route dependency)        */
+  /*  Module-level guard survives StrictMode and route changes.         */
   /* ================================================================ */
 
   useEffect(() => {
+    if (sessionDispatched || !booted) return
+    sessionDispatched = true
     loadAndPlay(1, true)
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [booted, loadAndPlay])
+
+  /* ================================================================ */
+  /*  Retry playback on first user interaction if autoplay was blocked  */
+  /* ================================================================ */
+
+  useEffect(() => {
+    if (!autoplayBlocked) return
+    const retry = async () => {
+      const a = audioRef.current
+      if (!a) return
+      await ensureAudioGraph()
+      try {
+        await a.play()
+        setIsPlaying(true)
+        isPlayingRef.current = true
+        setAutoplayBlocked(false)
+      } catch { /* still blocked — will retry on next interaction */ }
+    }
+    const onInteract = () => { retry() }
+    document.addEventListener('pointerdown', onInteract)
+    document.addEventListener('keydown', onInteract)
+    return () => {
+      document.removeEventListener('pointerdown', onInteract)
+      document.removeEventListener('keydown', onInteract)
+    }
+  }, [autoplayBlocked, ensureAudioGraph])
 
   /* ================================================================ */
   /*  Controls                                                         */
@@ -300,26 +354,30 @@ export function MusicPlayer() {
         await a.play()
         setIsPlaying(true)
         isPlayingRef.current = true
+        setAutoplayBlocked(false)
       } catch (err) {
         console.warn('[BGM] Play blocked:', err)
       }
     }
   }, [ensureAudioGraph])
 
-  const nextTrack = useCallback(() => {
+  const nextTrack = useCallback(async () => {
+    await ensureAudioGraph()
     loadAndPlay((trackIndexRef.current + 1) % TRACKS.length, isPlayingRef.current)
-  }, [loadAndPlay])
+  }, [loadAndPlay, ensureAudioGraph])
 
-  const prevTrack = useCallback(() => {
+  const prevTrack = useCallback(async () => {
+    await ensureAudioGraph()
     loadAndPlay(
       (trackIndexRef.current - 1 + TRACKS.length) % TRACKS.length,
       isPlayingRef.current,
     )
-  }, [loadAndPlay])
+  }, [loadAndPlay, ensureAudioGraph])
 
-  const selectTrack = useCallback((i: number) => {
+  const selectTrack = useCallback(async (i: number) => {
+    await ensureAudioGraph()
     loadAndPlay(i, true)
-  }, [loadAndPlay])
+  }, [loadAndPlay, ensureAudioGraph])
 
   const toggleMute = useCallback(() => {
     const a = audioRef.current
@@ -405,6 +463,41 @@ export function MusicPlayer() {
       <div className="bgm-player" aria-label="BGM Player">
         <div className="bgm-accent-line" aria-hidden="true" />
 
+        {/* Collapsed bar — inline content inside bottom bar */}
+        <div
+          className="bgm-bar-inline"
+          onClick={() => setExpanded((v) => !v)}
+          role="button"
+          tabIndex={0}
+          aria-expanded={expanded}
+          aria-label={`BGM: ${t.title}`}
+          onKeyDown={(e) => { if (e.key === 'Enter') setExpanded((v) => !v) }}
+        >
+          <span className="bgm-label">BGM</span>
+          <span
+            className="bgm-track-num"
+            onClick={(e) => { e.stopPropagation(); setSelectorOpen((v) => !v) }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); setSelectorOpen((v) => !v) } }}
+          >
+            {String(trackIndex + 1).padStart(2, '0')}/{String(TRACKS.length).padStart(2, '0')}
+          </span>
+          <span className="bgm-title">{t.title}</span>
+          <span
+            className="bgm-mini-play"
+            onClick={(e) => { e.stopPropagation(); togglePlay() }}
+            role="button"
+            tabIndex={0}
+            aria-label={isPlaying ? 'Pause' : 'Play'}
+            onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); togglePlay() } }}
+          >
+            {isPlaying ? '❚❚' : '▶'}
+          </span>
+          <Visualizer analyser={analyser} />
+        </div>
+
+        {/* Expanded panel — positioned above the bottom bar */}
         {expanded && (
           <div className="bgm-expanded">
             <div className="bgm-expanded-head">
@@ -493,36 +586,6 @@ export function MusicPlayer() {
             <Visualizer analyser={analyser} />
           </div>
         )}
-
-        <button
-          className="bgm-bar"
-          onClick={() => setExpanded((v) => !v)}
-          aria-expanded={expanded}
-          aria-label={`BGM: ${t.title}`}
-        >
-          <span className="bgm-label">BGM</span>
-          <span
-            className="bgm-track-num"
-            onClick={(e) => { e.stopPropagation(); setSelectorOpen((v) => !v) }}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); setSelectorOpen((v) => !v) } }}
-          >
-            {String(trackIndex + 1).padStart(2, '0')}/{String(TRACKS.length).padStart(2, '0')}
-          </span>
-          <span className="bgm-title">{t.title}</span>
-          <span
-            className="bgm-mini-play"
-            onClick={(e) => { e.stopPropagation(); togglePlay() }}
-            role="button"
-            tabIndex={0}
-            aria-label={isPlaying ? 'Pause' : 'Play'}
-            onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); togglePlay() } }}
-          >
-            {isPlaying ? '❚❚' : '▶'}
-          </span>
-          <Visualizer analyser={analyser} />
-        </button>
 
         {selectorOpen && (
           <TrackSelector current={trackIndex} onSelect={selectTrack} onClose={() => setSelectorOpen(false)} />

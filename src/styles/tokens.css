@@ -265,7 +265,7 @@
   align-items: center;
   gap: 12px;
   width: 100%;
-  padding: 26px 44px 26px 22px;
+  padding: 26px 50px 26px 22px;
   background-color: var(--color-paper);
   clip-path: polygon(0 18%, 5% 0, 93% 0, 100% 50%, 93% 100%, 5% 100%, 0 82%);
   transform: skewX(-11deg);
@@ -1620,12 +1620,14 @@ html.lenis body {
    MUSIC PLAYER (BGM)
    ================================================================ */
 
-/* --- Positioning wrapper (fixed bottom-left) --- */
+/* --- Positioning wrapper (inside bottom bar, relative for expanded panel) --- */
 .bgm-player {
-  position: fixed;
-  bottom: 1rem;
-  left: 1rem;
-  z-index: 55;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
   font-family: var(--font-p5menu);
   animation: bgm-snap-in 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
   user-select: none;
@@ -1636,39 +1638,32 @@ html.lenis body {
   to   { opacity: 1; transform: translateY(0) skewX(0); }
 }
 
-/* --- Red accent line (top of bar) --- */
+/* --- Red accent line (top of music section) --- */
 .bgm-accent-line {
   position: absolute;
   top: 0;
   left: 0;
-  height: 3px;
+  height: 2px;
   width: 100%;
   background: var(--color-accent);
   transform-origin: left;
   z-index: 2;
 }
 
-/* --- Collapsed bar (always visible) --- */
-.bgm-bar {
+/* --- Collapsed bar (inline content inside bottom bar) --- */
+.bgm-bar-inline {
   display: flex;
   align-items: center;
   gap: 12px;
-  height: 52px;
-  padding: 0 18px;
-  background: rgba(10, 2, 14, 0.92);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-top: none;
-  clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%, 0 8px);
   cursor: pointer;
   font-family: var(--font-p5menu);
   color: var(--color-paper);
   font-size: 13px;
   letter-spacing: 0.08em;
-  transition: background 0.15s;
+  transition: opacity 0.15s;
 }
-.bgm-bar:hover {
-  background: rgba(10, 2, 14, 0.97);
+.bgm-bar-inline:hover {
+  opacity: 0.85;
 }
 
 .bgm-label {
@@ -1729,19 +1724,24 @@ html.lenis body {
   border-radius: 1px;
 }
 
-/* --- Expanded panel --- */
+/* --- Expanded panel (above bottom bar) --- */
 .bgm-expanded {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 0;
   display: flex;
   flex-direction: column;
   gap: 10px;
   padding: 16px 18px 14px;
   width: 300px;
+  max-width: calc(100vw - 2rem);
   background: rgba(10, 2, 14, 0.95);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-top: 3px solid var(--color-accent);
   clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%, 0 8px);
   animation: bgm-panel-enter 0.18s cubic-bezier(0.22, 1, 0.36, 1) both;
+  z-index: 10;
 }
 
 @keyframes bgm-panel-enter {
@@ -1862,18 +1862,19 @@ html.lenis body {
   text-align: right;
 }
 
-/* --- Track selector dropdown --- */
+/* --- Track selector dropdown (above bottom bar) --- */
 .bgm-selector {
   position: absolute;
-  bottom: 56px;
+  bottom: calc(100% + 4px);
   left: 0;
   width: 300px;
+  max-width: calc(100vw - 2rem);
   background: rgba(10, 2, 14, 0.97);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.08);
   clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%, 0 8px);
   animation: bgm-selector-enter 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
-  z-index: 10;
+  z-index: 20;
 }
 
 @keyframes bgm-selector-enter {

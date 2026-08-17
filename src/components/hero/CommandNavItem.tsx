@@ -18,6 +18,7 @@ interface CommandNavItemProps {
   animDelay?: number
   rotation?: number
   offsetX?: number
+  widthPx?: number
 }
 
 /**
@@ -33,6 +34,7 @@ export function CommandNavItem({
   animDelay = 0,
   rotation = 0,
   offsetX = 0,
+  widthPx = 380,
 }: CommandNavItemProps) {
   const { glyph, colorClass } = ICONS[icon]
 
@@ -43,6 +45,7 @@ export function CommandNavItem({
         {
           '--off': `${offsetX}px`,
           '--rot': `${rotation}deg`,
+          width: `min(${widthPx}px, 100%)`,
         } as React.CSSProperties
       }
     >

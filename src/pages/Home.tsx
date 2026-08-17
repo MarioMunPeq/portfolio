@@ -7,10 +7,10 @@ import { HERO_COMMANDS } from '../components/hero/hero-commands'
 const SESSION_TIME = new Date().toTimeString().slice(0, 8)
 
 const MENU_CHAOS = [
-  { rotation: -2, offsetX: 10 },
-  { rotation: 1.5, offsetX: -5 },
-  { rotation: -1, offsetX: 16 },
-  { rotation: 2, offsetX: 2 },
+  { rotation: -2, offsetX: 10, widthPx: 375 },
+  { rotation: 1.5, offsetX: -5, widthPx: 400 },
+  { rotation: -1, offsetX: 16, widthPx: 390 },
+  { rotation: 2, offsetX: 2, widthPx: 410 },
 ]
 
 /**
@@ -80,7 +80,7 @@ export function Home() {
           aria-label="Menu principal del portfolio"
           className="absolute left-[4%] top-1/2 z-20 -translate-y-1/2 sm:left-[5%] lg:left-[6%]"
         >
-          <ol className="flex w-[min(82vw,380px)] flex-col gap-3">
+          <ol className="flex w-[min(85vw,425px)] flex-col gap-3">
             {HERO_COMMANDS.map((command, i) => (
               <CommandNavItem
                 key={command.id}
@@ -88,6 +88,7 @@ export function Home() {
                 animDelay={i * 0.1}
                 rotation={MENU_CHAOS[i].rotation}
                 offsetX={MENU_CHAOS[i].offsetX}
+                widthPx={MENU_CHAOS[i].widthPx}
               />
             ))}
           </ol>
