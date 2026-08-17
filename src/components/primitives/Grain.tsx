@@ -1,7 +1,7 @@
 /**
  * Grano de imprenta fijo sobre toda la interfaz — firma visual Persona 5.
- * Capa estática (no anima) por encima del contenido pero bajo el cursor
- * y el cargador. Decorativa, nunca intercepta interacción.
+ * Capa estatica (no anima) por encima del contenido pero bajo el cursor
+ * y el cargador. Decorativa, nunca intercepta interaccion.
  */
 export function Grain() {
   return (

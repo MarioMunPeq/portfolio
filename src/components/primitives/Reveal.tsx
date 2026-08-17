@@ -9,7 +9,7 @@ interface RevealProps {
   delay?: number
   /** Distancia vertical inicial en px. */
   y?: number
-  /** Fracción del elemento visible que dispara la entrada. */
+  /** Fraccion del elemento visible que dispara la entrada. */
   amount?: number
   className?: string
 }
@@ -17,7 +17,7 @@ interface RevealProps {
 /**
  * Entrada por bloque al entrar en viewport. Contenido discreto tras el
  * hero: opacidad + desplazamiento corto, una sola vez. Con
- * `prefers-reduced-motion` el contenido aparece sin animación.
+ * `prefers-reduced-motion` el contenido aparece sin animacion.
  */
 export function Reveal({
   children,

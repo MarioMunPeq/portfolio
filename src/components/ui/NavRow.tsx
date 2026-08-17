@@ -5,20 +5,20 @@ interface NavRowProps {
   /** Nombre visible de la fila (uno solo). */
   label: string
   path: string
-  /** Fila seleccionada: colisión de vigas cian/rojo + jitter continuo. */
+  /** Fila seleccionada: colision de vigas cian/rojo + jitter continuo. */
   active?: boolean
   onSelect?: () => void
   setItemRef?: (el: HTMLAnchorElement | null) => void
-  /** Etiqueta de acción que aparece en hover/foco. */
+  /** Etiqueta de accion que aparece en hover/foco. */
   tag?: string
 }
 
 /**
- * Fila de navegación de inventario (sistema P5), variantes active/inactive.
+ * Fila de navegacion de inventario (sistema P5), variantes active/inactive.
  * Sin seleccionar es texto plano; seleccionada, su color sale de DOS vigas
  * sesgadas que se cruzan (cian/rojo con mix-blend screen) y jitterean en
  * bucle (clases .proj-row-* de tokens.css). El `li` declara el offset/
- * rotación por fila en escritorio. Un único nombre visible por fila.
+ * rotacion por fila en escritorio. Un unico nombre visible por fila.
  */
 export function NavRow({
   label,

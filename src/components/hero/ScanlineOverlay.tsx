@@ -1,5 +1,5 @@
 /**
- * Scanlines horizontales sutiles ("menú digital") — solo del menú
+ * Scanlines horizontales sutiles ("menu digital") — solo del menu
  * principal. Decorativa (aria-hidden).
  */
 export function ScanlineOverlay() {

@@ -28,12 +28,12 @@ const SURVEY_QUESTIONS = [
 const MASK_SRC = `${import.meta.env.BASE_URL}images/ui/persona-mask.png`
 
 /** Fases de entrada del antifaz (fracciones de la carga simulada):
- *  AUSENCIA [0 – REVEAL_START]: sin antifaz; solo indicios (línea roja,
+ *  AUSENCIA [0 – REVEAL_START]: sin antifaz; solo indicios (linea roja,
  *  barrido vertical).
  *  REVELADO [REVEAL_START – REVEAL_END]: el clip-path diagonal lo ensambla,
- *  el rim-light gana intensidad y una línea de escaneo lo cruza una vez.
+ *  el rim-light gana intensidad y una linea de escaneo lo cruza una vez.
  *  IMPACTO [≈IMPACT_AT]: micro-overshoot, destello radial y diamantes.
- *  ESTABILIZACIÓN [0.6 – 1]: respiración casi imperceptible.
+ *  ESTABILIZACIoN [0.6 – 1]: respiracion casi imperceptible.
  */
 const REVEAL_START = 0.08
 const REVEAL_END = 0.52
@@ -75,7 +75,7 @@ export function LoadScreen() {
   const scanTop = useTransform(progress, [0.16, 0.5], ['0%', '100%'])
   const scanOpacity = useTransform(progress, [0.16, 0.2, 0.46, 0.5], [0, 0.55, 0.55, 0])
 
-  // --- Salida (transición de escena hacia la HOME) ---
+  // --- Salida (transicion de escena hacia la HOME) ---
   const clipY = useTransform(exitProgress, (p) => `${-50 - p * 11}%`)
   const clipScale = useTransform(exitProgress, [0, 1], [1, 0.98])
   const rootClip = useTransform(exitProgress, (p) =>
@@ -212,7 +212,7 @@ export function LoadScreen() {
         </>
       )}
 
-      {/* Anillos: composición gráfica tenue que enmarca el antifaz */}
+      {/* Anillos: composicion grafica tenue que enmarca el antifaz */}
       <ConcentricRings revealed={impact} reduced={!!reduced} />
 
       {/* Antifaz protagonista */}
@@ -242,7 +242,7 @@ export function LoadScreen() {
             }}
           />
 
-          {/* FASE 2 — REVELADO: línea de escaneo cruzando el antifaz */}
+          {/* FASE 2 — REVELADO: linea de escaneo cruzando el antifaz */}
           {!reduced && (
             <motion.div
               aria-hidden="true"
@@ -279,7 +279,7 @@ export function LoadScreen() {
         )}
       </div>
 
-      {/* Destello radial del impacto (detrás del antifaz) */}
+      {/* Destello radial del impacto (detras del antifaz) */}
       {!reduced && (
         <motion.div
           aria-hidden="true"
@@ -295,7 +295,7 @@ export function LoadScreen() {
 
       <HudCorners />
 
-      {/* HUD periférico superior — muy discreto */}
+      {/* HUD periferico superior — muy discreto */}
       <motion.div
         className="pointer-events-none absolute inset-x-0 top-0 z-30"
         initial={{ opacity: 0 }}
@@ -340,8 +340,8 @@ export function LoadScreen() {
         />
       )}
 
-      {/* Progreso — composición original del menú de juego: Q + pregunta,
-          barra trapezoidal y porcentaje (SÍ %) */}
+      {/* Progreso — composicion original del menu de juego: Q + pregunta,
+          barra trapezoidal y porcentaje (Si %) */}
       <motion.div
         className="pointer-events-none absolute inset-x-0 bottom-0 z-30"
         initial={{ opacity: 0, y: 12 }}
@@ -378,7 +378,7 @@ export function LoadScreen() {
                   {/* Barra trapezoidal larga y fina (~7:1) */}
                   <div className="relative h-[52px] w-full [transform:skewX(-6deg)]">
                     {/* Marco blanco + relleno rojo de progreso con pulso de
-                        brillo/glow rítmico (solo con movimiento permitido) */}
+                        brillo/glow ritmico (solo con movimiento permitido) */}
                     <div className="absolute inset-0 bg-paper [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
                       <div className="absolute inset-[3px] bg-bg-hero [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
                         <div
@@ -389,10 +389,10 @@ export function LoadScreen() {
                     </div>
                   </div>
 
-                  {/* SÍ {porcentaje}% — caja de ancho fijo para que el
-                      número a 1-3 dígitos nunca desplace la barra */}
+                  {/* Si {porcentaje}% — caja de ancho fijo para que el
+                      numero a 1-3 digitos nunca desplace la barra */}
                   <span className="load-pct ml-4 shrink-0 font-anton text-[3.5rem] leading-none text-accent [transform:skewX(-10deg)] [text-shadow:-2px_-2px_0_#000,2px_-2px_0_#000,-2px_2px_0_#000,2px_2px_0_#000,-3px_-3px_0_#000,3px_-3px_0_#000,-3px_3px_0_#000,3px_3px_0_#000,4px_4px_0_rgba(0,0,0,0.5)]">
-                    SÍ{' '}
+                    Si{' '}
                     <span className="inline-block min-w-[4.5ch] text-right tabular-nums">
                       <span ref={pctRef}>0</span>%
                     </span>

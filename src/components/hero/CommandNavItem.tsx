@@ -18,10 +18,10 @@ interface CommandNavItemProps {
 }
 
 /**
- * Ítem de la navegación de comandos del menú principal: tarjeta angular
- * sesgada con icono de botón de mando (△ □ ○ ✕ ※), label y subtítulo.
+ * item de la navegacion de comandos del menu principal: tarjeta angular
+ * sesgada con icono de boton de mando (△ □ ○ ✕ ※), label y subtitulo.
  * El `li` declara las variables --off/--rot (ver .hero-command-item en
- * tokens.css); la tarjeta hereda el offset/rotación por ítem y se inclina
+ * tokens.css); la tarjeta hereda el offset/rotacion por item y se inclina
  * a la izquierda con un glitch-slice al hacer hover. Navegable por teclado
  * (Link) y dispara el cursor decorativo.
  */

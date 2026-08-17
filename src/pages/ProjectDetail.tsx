@@ -151,7 +151,7 @@ function PrevNextNav({
   const linkClass = `group flex flex-col gap-2 border-2 border-paper/25 bg-bg-content-alt px-6 py-5 clip-cut-br transition-all duration-200 hover:border-accent hover:bg-accent hover:text-ink focus-visible:border-accent focus-visible:bg-accent focus-visible:text-ink`
 
   return (
-    <nav aria-label="Navegación entre proyectos">
+    <nav aria-label="Navegacion entre proyectos">
       <div className="grid gap-4 sm:grid-cols-2">
         {prev ? (
           <Link to={`/proyectos/${prev.slug}`} data-cursor="project" className={linkClass}>
@@ -269,14 +269,14 @@ export function ProjectDetail() {
             <SectionDivider />
           </Reveal>
 
-          {/* ===== SECTION 3 — Stack técnico ===== */}
+          {/* ===== SECTION 3 — Stack tecnico ===== */}
           {project.stack && project.stack.length > 0 && (
             <Reveal delay={0.2}>
               <div className="mt-12">
                 <div className="flex items-center gap-3">
                   <DiamondMarker size={8} />
                   <h2 className="font-expose text-label font-medium uppercase tracking-[0.22em] text-accent">
-                    Stack técnico
+                    Stack tecnico
                   </h2>
                 </div>
                 <div className="mt-8 flex flex-wrap gap-4">
@@ -296,14 +296,14 @@ export function ProjectDetail() {
             </Reveal>
           )}
 
-          {/* ===== SECTION 4 — Galería ===== */}
+          {/* ===== SECTION 4 — Galeria ===== */}
           {project.screenshots && project.screenshots.length > 0 && (
             <Reveal delay={0.25}>
               <div className="mt-12">
                 <div className="flex items-center gap-3">
                   <DiamondMarker size={8} />
                   <h2 className="font-expose text-label font-medium uppercase tracking-[0.22em] text-accent">
-                    Galería
+                    Galeria
                   </h2>
                 </div>
                 <div className="mt-10 space-y-20">
@@ -340,13 +340,13 @@ export function ProjectDetail() {
                 )}
                 {project.links.github && (
                   <AngularButton href={project.links.github} external>
-                    Código
+                    Codigo
                   </AngularButton>
                 )}
               </div>
               {!project.links.demo && !project.links.github && (
                 <p className="mt-4 text-label uppercase tracking-[0.25em] text-paper/40">
-                  Sin enlaces públicos disponibles
+                  Sin enlaces publicos disponibles
                 </p>
               )}
             </div>

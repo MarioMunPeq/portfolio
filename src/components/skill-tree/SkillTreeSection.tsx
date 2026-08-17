@@ -6,10 +6,10 @@ import { NodeIcon } from './NodeIcon'
 import { SKILL_TREE } from '../../data/skill-tree'
 import type { SkillNode } from '../../data/skill-tree'
 
-/** Hexágono apuntando hacia arriba, circunradio 50 en un viewBox 0-100. */
+/** Hexagono apuntando hacia arriba, circunradio 50 en un viewBox 0-100. */
 const HEX_POINTS = '93.3,75 50,100 6.7,75 6.7,25 50,0 93.3,25'
 
-/** Offset perpendicular de cada línea del conector doble. */
+/** Offset perpendicular de cada linea del conector doble. */
 const LINE_OFFSET = 4
 
 function useContainerSize() {
@@ -37,10 +37,10 @@ interface HexNodeProps {
 }
 
 /**
- * Nodo hexagonal: botón accesible con hexágono rojo relleno y en glow
+ * Nodo hexagonal: boton accesible con hexagono rojo relleno y en glow
  * (desbloqueado) o silueta gris (etapa futura), icono de campo dentro y
- * etiqueta corta debajo. Entrada escalonada desde la raíz hacia fuera
- * (CSS, escalonada por índice).
+ * etiqueta corta debajo. Entrada escalonada desde la raiz hacia fuera
+ * (CSS, escalonada por indice).
  */
 function HexNode({ node, index, selected, onSelect }: HexNodeProps) {
   const locked = node.kind === 'locked'
@@ -123,9 +123,9 @@ function HexNode({ node, index, selected, onSelect }: HexNodeProps) {
 }
 
 /**
- * Líneas conectoras entre nodos, dibujadas en el espacio de píxeles real del
- * contenedor (medido con ResizeObserver) para que el par de líneas paralelas
- * rojas quede perpendicular de verdad. La conexión a la etapa futura es un
+ * Lineas conectoras entre nodos, dibujadas en el espacio de pixeles real del
+ * contenedor (medido con ResizeObserver) para que el par de lineas paralelas
+ * rojas quede perpendicular de verdad. La conexion a la etapa futura es un
  * trazo punteado gris (locked).
  */
 function ConnectorLayer({ size }: { size: { w: number; h: number } }) {
@@ -204,9 +204,9 @@ function ConnectorLayer({ size }: { size: { w: number; h: number } }) {
         )
       })}
 
-      {/* Pulso de energía: un punto brillante recorre cada conexión real desde
+      {/* Pulso de energia: un punto brillante recorre cada conexion real desde
           el tronco (TELECO) hacia los nodos desbloqueados, en bucle lento.
-          Animación SMIL nativa (cx/cy/opacity): loops del navegador, no
+          Animacion SMIL nativa (cx/cy/opacity): loops del navegador, no
           dependen de JS; escalonados por borde. reduced-motion lo oculta. */}
       {!reduced &&
         SKILL_TREE.edges.map((edge, index) => {
@@ -243,7 +243,7 @@ function ConnectorLayer({ size }: { size: { w: number; h: number } }) {
 }
 
 /**
- * Panel de detalle de la titulación seleccionada, en el mismo estilo de
+ * Panel de detalle de la titulacion seleccionada, en el mismo estilo de
  * ficha de proyecto (marco angular con esquinas cortadas y fondo oscuro).
  */
 function DetailPanel({ node }: { node: SkillNode }) {
@@ -313,9 +313,9 @@ function DetailPanel({ node }: { node: SkillNode }) {
 }
 
 /**
- * Sección Árbol de Habilidades: hexágonos conectados por dobles líneas rojas
+ * Seccion arbol de Habilidades: hexagonos conectados por dobles lineas rojas
  * (radiando del tronco de Telecomunicaciones), con panel de detalle bajo el
- * árbol. La selección es por clic; por defecto se muestra el nodo más
+ * arbol. La seleccion es por clic; por defecto se muestra el nodo mas
  * reciente (Bootcamp de IA).
  */
 export function SkillTreeSection() {

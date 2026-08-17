@@ -8,11 +8,11 @@ export interface ExperienceEntry {
   summary: string
   /** Responsabilidades concretas. */
   highlights: string[]
-  /** Metadato corto opcional (modalidad/contrato/duración). */
+  /** Metadato corto opcional (modalidad/contrato/duracion). */
   meta?: string
-  /** Ubicación / centro de trabajo. */
+  /** Ubicacion / centro de trabajo. */
   location?: string
-  /** Tecnologías y herramientas empleadas. */
+  /** Tecnologias y herramientas empleadas. */
   tech?: string[]
   /** Logo/avatar opcional de la empresa (se muestra como avatar de chat). */
   logo?: string
@@ -24,23 +24,23 @@ export const experience: ExperienceEntry[] = [
   {
     id: 'synersight',
     company: 'Synersight, S.L.',
-    role: 'Técnico — Prácticas Grado Superior ARI',
+    role: 'Tecnico — Practicas Grado Superior ARI',
     period: 'Mar 2022 — Jun 2022',
     summary:
-      'Participación activa en reuniones, relacionada con automatización y robotica industrial.',
+      'Participacion activa en reuniones, relacionada con automatizacion y robotica industrial.',
     highlights: [],
-    meta: 'Prácticas',
+    meta: 'Practicas',
     tech: ['SEE Electrical', 'Robots', 'AGV'],
   },
   {
     id: 'michelin',
     company: 'Michelin',
-    role: 'Técnico — Prácticas Grado Superior DAM',
+    role: 'Tecnico — Practicas Grado Superior DAM',
     period: 'Mar 2024 — Jun 2024',
     summary:
-      'Participación en tareas relacionadas con desarrollo de aplicaciones, análisis de datos y herramientas de Microsoft y entornos industriales.',
+      'Participacion en tareas relacionadas con desarrollo de aplicaciones, analisis de datos y herramientas de Microsoft y entornos industriales.',
     highlights: [],
-    meta: 'Prácticas',
+    meta: 'Practicas',
     tech: ['Power Apps', 'Power BI', 'PI Vision', 'Python', 'SharePoint'],
   },
   {
@@ -55,17 +55,17 @@ export const experience: ExperienceEntry[] = [
   },
   {
     id: 'diputacion',
-    company: 'Diputación de Valladolid',
+    company: 'Diputacion de Valladolid',
     role: 'Desarrollador web',
     period: 'Feb 2026 — Actualidad',
-    summary: 'Desarrollo web Liferay, Odoo y soporte técnico.',
+    summary: 'Desarrollo web Liferay, Odoo y soporte tecnico.',
     highlights: [
       'Desarrollo web con Liferay',
       'Desarrollo con Odoo',
-      'Soporte técnico',
+      'Soporte tecnico',
     ],
-    meta: 'Sector público',
+    meta: 'Sector publico',
     location: 'Valladolid, España',
-    tech: ['Liferay', 'Odoo', 'Desarrollo web', 'Soporte técnico'],
+    tech: ['Liferay', 'Odoo', 'Desarrollo web', 'Soporte tecnico'],
   },
 ]

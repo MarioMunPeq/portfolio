@@ -11,7 +11,7 @@ interface ProjectInventoryProps {
 /**
  * Selector tipo inventario: lista vertical de proyectos con NavRow
  * (variantes active/inactive). Pasar el cursor (o el foco) por encima
- * selecciona la fila; las flechas arriba/abajo mueven la selección con
+ * selecciona la fila; las flechas arriba/abajo mueven la seleccion con
  * teclado y el clic navega a la ficha.
  */
 export function ProjectInventory({

@@ -14,8 +14,8 @@ interface PreviewBoxProps {
 /**
  * Marco angular (esquinas cortadas) para capturas de proyecto. Mientras
  * no exista captura (src null) muestra "Captura pendiente" en manuscrito
- * rojo sobre trama de tinta — sin placeholders crudos. Deduplica el patrón
- * de la vista previa del inventario y de la galería de las fichas.
+ * rojo sobre trama de tinta — sin placeholders crudos. Deduplica el patron
+ * de la vista previa del inventario y de la galeria de las fichas.
  */
 export function PreviewBox({ src, alt, caption, children, className = '' }: PreviewBoxProps) {
   return (

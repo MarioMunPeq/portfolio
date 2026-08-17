@@ -1,15 +1,15 @@
 /**
- * Logos de empresas para la sección Experiencia laboral (basado en archivos).
+ * Logos de empresas para la seccion Experiencia laboral (basado en archivos).
  *
- * Para añadir el logo de una empresa NO hace falta tocar código:
+ * Para añadir el logo de una empresa NO hace falta tocar codigo:
  *   1. Colocar el archivo en  public/images/experience/
  *   2. Nombrarlo con el nombre de la empresa:
  *        michelin.png · synersight.webp · cognizant.png
- *   3. El logo se resuelve automáticamente desde el campo `company`
+ *   3. El logo se resuelve automaticamente desde el campo `company`
  *      (se busca primero .png y luego .webp; sin archivo se muestra
  *      la inicial de la empresa como placeholder).
  *
- * El nombre se normaliza solo: minúsculas, sin acentos, espacios → guiones,
+ * El nombre se normaliza solo: minusculas, sin acentos, espacios → guiones,
  * y se ignoran sufijos legales comunes (", S.L.", " Inc.", etc.).
  */
 
@@ -23,7 +23,7 @@ const LEGAL_SUFFIX =
 /**
  * Normaliza el nombre de la empresa a un slug de archivo tolerante:
  * "Michelin" → "michelin" · "Synersight, S.L." → "synersight"
- * · "Diputación de Valladolid" → "diputacion-de-valladolid".
+ * · "Diputacion de Valladolid" → "diputacion-de-valladolid".
  */
 export function companyToSlug(company: string): string {
   const base = company.match(LEGAL_SUFFIX)?.[1] ?? company.split(',')[0]

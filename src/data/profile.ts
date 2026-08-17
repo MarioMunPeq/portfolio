@@ -11,9 +11,9 @@ export interface SpokenLanguage {
 }
 
 export interface ProfileSkills {
-  /** Lenguajes de programación. */
+  /** Lenguajes de programacion. */
   programming: string[]
-  /** Tecnologías y herramientas. */
+  /** Tecnologias y herramientas. */
   technologies: string[]
   /** Inteligencia artificial y datos. */
   aiData: string[]
@@ -29,21 +29,21 @@ export interface Profile {
   location: string
   /** Frase corta del hero. */
   tagline: string
-  /** Textos tipográficos del hero. */
+  /** Textos tipograficos del hero. */
   hero: {
-    /** Primer bloque del nombre (sólido). */
+    /** Primer bloque del nombre (solido). */
     nameFirst: string
     /** Segundo bloque del nombre (contorno). */
     nameLast: string
-    /** Eyebrow rojo con prefijo ◄ bajo el título. */
+    /** Eyebrow rojo con prefijo ◄ bajo el titulo. */
     eyebrow: string
-    /** Región corta mostrada en la franja superior. */
+    /** Region corta mostrada en la franja superior. */
     region: string
     /** Palabra gigante de fondo del hero (agua de marca). */
     ghost: string
-    /** Línea principal del bloque derecho. */
+    /** Linea principal del bloque derecho. */
     roleLine: string
-    /** Línea secundaria del bloque derecho. */
+    /** Linea secundaria del bloque derecho. */
     credentialLine: string
     /** Coordenadas decorativas del bloque derecho. */
     coordinates: string
@@ -56,7 +56,7 @@ export interface Profile {
     cvViviente: string
     /** "Cargando". */
     loading: string
-    /** Versión mostrada en la franja superior del menú. */
+    /** Version mostrada en la franja superior del menu. */
     version: string
   }
   /** Enlaces de contacto. url null = sin enlace disponible. */
@@ -65,13 +65,13 @@ export interface Profile {
     linkedin: ProfileLink | null
   }
   about: {
-    /** Párrafos de la sección "Sobre mí". */
+    /** Parrafos de la seccion "Sobre mi". */
     paragraphs: string[]
     /** Bio corta de la pantalla de personaje (Perfil). */
     bio: string
-    /** Áreas de interés. */
+    /** areas de interes. */
     interests: string[]
-    /** Habilidades técnicas por categorías. */
+    /** Habilidades tecnicas por categorias. */
     skills: ProfileSkills
     /** Idiomas hablados. */
     languages: SpokenLanguage[]
@@ -89,19 +89,19 @@ export const profile: Profile = {
   roleFull: 'Desarrollador de aplicaciones',
   location: 'Valladolid, España',
   tagline:
-    'Desarrollador de aplicaciones con interés en inteligencia artificial, automatización y desarrollo.',
+    'Desarrollador de aplicaciones con interes en inteligencia artificial, automatizacion y desarrollo.',
   hero: {
     nameFirst: 'Mario',
     nameLast: 'Muñoz Pequeño',
     eyebrow: 'Desarrollador de aplicaciones',
     region: 'Valladolid · Es',
-    ghost: 'Menú',
+    ghost: 'Menu',
     roleLine: 'Software Developer',
     credentialLine: 'F.P. Grado Superior — DAM',
     coordinates: '41.6523° N, 4.7245° O',
   },
   branding: {
-    system: 'Menú principal',
+    system: 'Menu principal',
     cvViviente: 'CV Viviente',
     loading: 'Cargando',
     version: 'v.2026',
@@ -115,10 +115,10 @@ export const profile: Profile = {
   },
   about: {
     paragraphs: [
-      'Desarrollador de aplicaciones con interés en inteligencia artificial, automatización y desarrollo. Disfruto creando soluciones que resuelvan problemas reales y aprendiendo nuevas tecnologías mediante proyectos prácticos.',
+      'Desarrollador de aplicaciones con interes en inteligencia artificial, automatizacion y desarrollo. Disfruto creando soluciones que resuelvan problemas reales y aprendiendo nuevas tecnologias mediante proyectos practicos.',
     ],
-    bio: 'Desarrollador de aplicaciones con interés en inteligencia artificial, automatización y desarrollo. Disfruto creando soluciones que resuelvan problemas reales y aprendiendo nuevas tecnologías mediante proyectos prácticos.',
-    interests: ['Inteligencia Artificial', 'Backend', 'Automatización', 'Videojuegos'],
+    bio: 'Desarrollador de aplicaciones con interes en inteligencia artificial, automatizacion y desarrollo. Disfruto creando soluciones que resuelvan problemas reales y aprendiendo nuevas tecnologias mediante proyectos practicos.',
+    interests: ['Inteligencia Artificial', 'Backend', 'Automatizacion', 'Videojuegos'],
     skills: {
       programming: ['Java', 'Python', 'Kotlin', 'C#', 'SQL', 'HTML/CSS'],
       technologies: [
@@ -134,7 +134,7 @@ export const profile: Profile = {
     },
     languages: [
       { name: 'Castellano', level: 'Nativo' },
-      { name: 'Inglés', level: 'B2', note: 'Certificado (Oxford, Trinity)' },
+      { name: 'Ingles', level: 'B2', note: 'Certificado (Oxford, Trinity)' },
     ],
     license: 'Permiso de conducir B',
     avatar: null,

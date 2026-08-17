@@ -37,7 +37,7 @@ export function SkillMenuSection({ skills, languages, interests }: Props) {
       clip: 'clip-cut-bl',
     },
     {
-      title: 'COGNICIÓN',
+      title: 'COGNICIoN',
       sys: 'SYS.03',
       items: skills.aiData,
       span: 'lg:col-span-5',
@@ -53,7 +53,7 @@ export function SkillMenuSection({ skills, languages, interests }: Props) {
       clip: '',
     },
     {
-      title: 'COMUNICACIÓN',
+      title: 'COMUNICACIoN',
       sys: 'SYS.05',
       languages,
       span: 'lg:col-span-4',

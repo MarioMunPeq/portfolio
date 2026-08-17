@@ -7,9 +7,9 @@ import { projects } from '../data/projects'
 import type { Project } from '../data/projects'
 
 /**
- * Capa gráfica de fondo del inventario: estrellas de contorno por toda la
- * página, palabra fantasma, cuñas diagonales y scanlines. Todo
- * decorativo y detrás del contenido (z-10).
+ * Capa grafica de fondo del inventario: estrellas de contorno por toda la
+ * pagina, palabra fantasma, cuñas diagonales y scanlines. Todo
+ * decorativo y detras del contenido (z-10).
  */
 function ProjectsGraphicLayer() {
   return (
@@ -20,9 +20,9 @@ function ProjectsGraphicLayer() {
       {/* Estrellas de contorno sutiles de fondo */}
       <span className="absolute inset-0 bg-stars opacity-70" />
 
-      {/* Starbackground: textura atmosférica compartida con la página de perfil.
-          Posicionada hacia la izquierda/centro con rotación diagonal sutil.
-          Máscara angular para crear un recorte tipo panel gráfico de P5.
+      {/* Starbackground: textura atmosferica compartida con la pagina de perfil.
+          Posicionada hacia la izquierda/centro con rotacion diagonal sutil.
+          Mascara angular para crear un recorte tipo panel grafico de P5.
           Opacidad ligeramente menor que en perfil para variedad visual. */}
       <span
         className="absolute -left-16 top-[10%] h-[120%] w-[65%] opacity-[0.12]"
@@ -55,7 +55,7 @@ function ProjectsGraphicLayer() {
  * Pantalla de proyectos = inventario del sistema. La gran captura del
  * proyecto seleccionado domina la izquierda; a la derecha, el selector
  * tipo inventario: filas de texto plano donde la seleccionada se pinta
- * con la colisión de dos vigas sesgadas (cian + rojo). Hover/foco
+ * con la colision de dos vigas sesgadas (cian + rojo). Hover/foco
  * selecciona, clic abre la ficha (/proyectos/:slug).
  */
 export function Projects() {

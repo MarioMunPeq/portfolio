@@ -4,7 +4,7 @@ interface VisualPanelProps {
   children?: ReactNode
   /** Borde y tono base. */
   tone?: 'ink' | 'paper'
-  /** Índice display grande en la esquina superior izquierda. */
+  /** indice display grande en la esquina superior izquierda. */
   index?: string
   /** Etiqueta pequeña con rayas rojas bajo el panel. */
   tag?: string
@@ -22,7 +22,7 @@ const cornerClass = {
 } as const
 
 /**
- * Panel enmarcado tipo "viñeta de cómic": borde doble angular con esquinas
+ * Panel enmarcado tipo "viñeta de comic": borde doble angular con esquinas
  * cortadas, numeral display y franja de rayas rojas bajo el pie. Es el
  * contenedor base para tarjetas y bloques destacados del sistema P5.
  */

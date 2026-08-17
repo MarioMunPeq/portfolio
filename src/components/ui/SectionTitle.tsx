@@ -3,9 +3,9 @@ import { DiamondMarker } from '../shared/DiamondMarker'
 
 interface SectionTitleProps {
   title: ReactNode
-  /** Etiqueta pequeña con marcador angular bajo la que va el título. */
+  /** Etiqueta pequeña con marcador angular bajo la que va el titulo. */
   label?: string
-  /** Fuente Persona 5 (ransom-note) para el título. */
+  /** Fuente Persona 5 (ransom-note) para el titulo. */
   persona?: boolean
   /** Fuente de la etiqueta: P5 Hatty (por defecto, legible como microcopy) o
       Expose (solo contextos grandes donde la fuente display se puede leer). */
@@ -14,7 +14,7 @@ interface SectionTitleProps {
 }
 
 /**
- * Título de sección unificado: etiqueta opcional + título grande (2 familias:
+ * Titulo de seccion unificado: etiqueta opcional + titulo grande (2 familias:
  * P5 Menu o display) + subrayado rojo sesgado + rombo dorado. La etiqueta
  * pequeña usa P5 Hatty por defecto — el mismo microcopy que el resto del
  * sitio — para que nunca se imprima una fuente display a tamaño ilegible.

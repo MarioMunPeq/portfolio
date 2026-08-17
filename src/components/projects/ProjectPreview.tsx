@@ -4,7 +4,7 @@ import { PreviewBox } from '../ui/PreviewBox'
 /**
  * Panel de captura del inventario: la gran imagen del proyecto en el
  * marco angular compartido (PreviewBox) con sombra roja dura, sello del
- * número sobre la esquina y franja de rayas en el pie. El placeholder
+ * numero sobre la esquina y franja de rayas en el pie. El placeholder
  * unificado de "Captura pendiente" vive dentro de PreviewBox.
  */
 export function ProjectPreview({ project }: { project: Project }) {

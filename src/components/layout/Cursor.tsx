@@ -13,7 +13,7 @@ const RED = '#e60012'
 const PAPER = '#f5f5f0'
 const CYAN = '#5ad1ff'
 
-// Etiqueta según el contexto (data-cursor). El color sigue existiendo para el
+// Etiqueta segun el contexto (data-cursor). El color sigue existiendo para el
 // dedupe de estado, aunque el diamante ya no lo use: el tratamiento visual
 // (rojo relleno + borde cian fantasma) es fijo en el hover.
 const CURSOR_STYLES: Record<string, CursorState> = {
@@ -33,7 +33,7 @@ function resolveCursor(target: Element): CursorState {
     if (explicit === 'red' || explicit === 'white') return { ...style, color: explicit }
     return style
   }
-  // Fallback por semántica cuando no hay data-cursor.
+  // Fallback por semantica cuando no hay data-cursor.
   const href = target.closest('a')?.getAttribute('href') ?? ''
   if (href.startsWith('mailto:')) return CURSOR_STYLES.contact
   if (href.includes('/proyectos')) return CURSOR_STYLES.project
@@ -42,43 +42,43 @@ function resolveCursor(target: Element): CursorState {
   return CURSOR_STYLES.select
 }
 
-// Curva rápida y cortante (ease-out exponencial).
+// Curva rapida y cortante (ease-out exponencial).
 const BEZIER: [number, number, number, number] = [0.16, 1, 0.3, 1]
-// Transición de estado del diamante (~180 ms).
+// Transicion de estado del diamante (~180 ms).
 const SNAP = { duration: 0.18, ease: BEZIER }
-// Compresión al pulsar, aún más corta (~120 ms).
+// Compresion al pulsar, aun mas corta (~120 ms).
 const PRESS = { duration: 0.12, ease: BEZIER }
 // Entrada de la etiqueta contextual.
 const LABEL_IN = { duration: 0.16, ease: BEZIER }
-// Rotación continua y lenta del diamante, independiente del movimiento.
+// Rotacion continua y lenta del diamante, independiente del movimiento.
 const SPIN = { duration: 6, ease: 'linear' as const, repeat: Infinity }
 
-// Diamante: cuadrado girado 45° (vértices arriba/abajo/izquierda/derecha).
+// Diamante: cuadrado girado 45° (vertices arriba/abajo/izquierda/derecha).
 const DIAMOND = 'M 12 2.5 L 21.5 12 L 12 21.5 L 2.5 12 Z'
 
-// Separación horizontal de la etiqueta respecto al puntero y ancho estimado
-// (se reajusta con la medición real del DOM).
+// Separacion horizontal de la etiqueta respecto al puntero y ancho estimado
+// (se reajusta con la medicion real del DOM).
 const LABEL_GAP = 24
 const LABEL_EST = 150
 
-// Factor de easing del fantasma (más alto = más pegajoso al puntero).
+// Factor de easing del fantasma (mas alto = mas pegajoso al puntero).
 const GHOST_EASING = 16
 
 /**
  * Cursor decorativo del sistema — "Diamond Selector". Dos capas de un mismo
- * diamante blanco fino de 2px, inspirado en el marcador de selección que ante
- * a los comandos del menú de Persona 5:
+ * diamante blanco fino de 2px, inspirado en el marcador de seleccion que ante
+ * a los comandos del menu de Persona 5:
  *
  *  - Capa principal: diamante blanco de contorno que rota de forma continua y
- *    lenta (animación CSS, no ligada al movimiento). En hover crece y se
- *    rellena de rojo sólido manteniendo el borde blanco.
- *  - Capa fantasma: copia ligeramente menor, roja, desplazada unos píxeles y
+ *    lenta (animacion CSS, no ligada al movimiento). En hover crece y se
+ *    rellena de rojo solido manteniendo el borde blanco.
+ *  - Capa fantasma: copia ligeramente menor, roja, desplazada unos pixeles y
  *    con retraso suavizado respecto al puntero (requestAnimationFrame +
  *    easing exponencial, no 1:1), creando el doble perfil tipo glitch. En
  *    hover su borde pasa a cian.
  *
- * Con `prefers-reduced-motion` o puntero táctil no se monta: se usa el cursor
- * nativo. Cuando está activo se marca `data-cursor-active` y CSS oculta el
+ * Con `prefers-reduced-motion` o puntero tactil no se monta: se usa el cursor
+ * nativo. Cuando esta activo se marca `data-cursor-active` y CSS oculta el
  * nativo (solo punteros finos). La etiqueta contextual se recoloca al otro
  * lado del puntero cerca de los bordes y nunca sale de pantalla.
  */
@@ -96,7 +96,7 @@ export function Cursor() {
 
   const x = useMotionValue(-100)
   const y = useMotionValue(-100)
-  // Posición del fantasma: se aproxima a (x, y) con easing por fotograma.
+  // Posicion del fantasma: se aproxima a (x, y) con easing por fotograma.
   const ghostX = useMotionValue(-100)
   const ghostY = useMotionValue(-100)
 
@@ -131,7 +131,7 @@ export function Cursor() {
       x.set(event.clientX)
       y.set(event.clientY)
 
-      // Recolocación de la etiqueta según el borde del viewport. Solo se
+      // Recolocacion de la etiqueta segun el borde del viewport. Solo se
       // actualiza el estado al cruzar el umbral (nunca por fotograma).
       const { w, h } = viewport.current
       const flip = event.clientX > w - labelWidth.current - LABEL_GAP - 24
@@ -195,7 +195,7 @@ export function Cursor() {
     }
   }, [reduced, x, y, ghostX, ghostY])
 
-  // Retraso del fantasma: easing exponencial hacia la posición real del
+  // Retraso del fantasma: easing exponencial hacia la posicion real del
   // puntero, una vez por fotograma (lag suave, no seguimiento 1:1).
   useEffect(() => {
     if (!enabled) return
@@ -215,7 +215,7 @@ export function Cursor() {
 
   if (!enabled) return null
 
-  // Hover: el principal se rellena de rojo sólido con borde blanco; el borde
+  // Hover: el principal se rellena de rojo solido con borde blanco; el borde
   // del fantasma pasa de rojo a cian.
   const ghostStroke = cursor.active ? CYAN : RED
   const mainFill = cursor.active ? RED : 'transparent'
@@ -226,7 +226,7 @@ export function Cursor() {
   return (
     <>
       {/* Fantasma retrasado: diamante menor rojo (cian en hover), desplazado
-          unos píxeles detrás del principal y con lag suavizado. */}
+          unos pixeles detras del principal y con lag suavizado. */}
       <motion.div
         aria-hidden="true"
         className="pointer-events-none fixed left-0 top-0 z-[119]"
@@ -287,7 +287,7 @@ export function Cursor() {
                 flipped ? 'text-right' : ''
               }`}
             >
-              {/* Línea estructural superior */}
+              {/* Linea estructural superior */}
               <span className="absolute inset-x-0 top-0 h-px bg-paper/60" />
               {/* Marcador direccional rojo */}
               <span

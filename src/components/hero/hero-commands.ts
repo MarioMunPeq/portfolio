@@ -16,16 +16,16 @@ const byId = (id: string) => {
 }
 
 /**
- * Comandos del menú principal — etiqueta grande de "sistema" (contexto de
- * juego) con el nombre real de la sección como subtítulo. Inicio no aparece
- * aquí: esta pantalla ES el menú principal. Los destinos salen de NAV_ITEMS.
+ * Comandos del menu principal — etiqueta grande de "sistema" (contexto de
+ * juego) con el nombre real de la seccion como subtitulo. Inicio no aparece
+ * aqui: esta pantalla ES el menu principal. Los destinos salen de NAV_ITEMS.
  */
 export const HERO_COMMANDS: HeroCommand[] = [
   {
     id: 'sobre-mi',
     icon: 'triangle',
     label: 'perfil',
-    sub: 'Sobre mí',
+    sub: 'Sobre mi',
     path: byId('sobre-mi'),
   },
   {
@@ -46,7 +46,7 @@ export const HERO_COMMANDS: HeroCommand[] = [
     id: 'formacion',
     icon: 'cross',
     label: 'habilidades',
-    sub: 'Formación',
+    sub: 'Formacion',
     path: byId('formacion'),
   },
 ]

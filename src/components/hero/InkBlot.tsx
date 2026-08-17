@@ -1,6 +1,6 @@
 /**
- * Cristal roto rojo detrás de la navegación de comandos: forma angulosa de
- * shard con quiebros agudos (estética Persona 5), blur moderado. Decorativa.
+ * Cristal roto rojo detras de la navegacion de comandos: forma angulosa de
+ * shard con quiebros agudos (estetica Persona 5), blur moderado. Decorativa.
  */
 export function InkBlot() {
   return (

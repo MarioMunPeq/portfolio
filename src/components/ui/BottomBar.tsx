@@ -6,7 +6,7 @@ const linkClass =
 /**
  * Footer global de sistema: la misma barra en todas las pantallas — solo
  * los enlaces externos ◆ GITHUB ◆ LINKEDIN, alineados a la derecha (centrados
- * en móvil). Se monta siempre, incluidos el menú principal y Experiencia.
+ * en movil). Se monta siempre, incluidos el menu principal y Experiencia.
  */
 export function BottomBar() {
   return (

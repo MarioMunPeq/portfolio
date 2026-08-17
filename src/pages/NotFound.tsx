@@ -12,7 +12,7 @@ export function NotFound() {
           Sin ruta
         </h1>
         <p className="mt-6 max-w-xl text-body leading-relaxed text-paper/80">
-          Esta página no existe. O quizá nunca existió.
+          Esta pagina no existe. O quiza nunca existio.
         </p>
         <Link
           to="/"

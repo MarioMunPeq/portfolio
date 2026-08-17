@@ -12,17 +12,17 @@ const INITIALS = profile.name
 
 interface WordmarkProps {
   className?: string
-  /** Versión estática (solo menú principal): sin flecha ni enlace, la marca
+  /** Version estatica (solo menu principal): sin flecha ni enlace, la marca
       se renderiza como etiqueta fija — en Inicio el enlace "volver a inicio"
-      sería redundante. */
+      seria redundante. */
   static?: boolean
 }
 
 /**
  * Marca de sistema: monograma corto (MMP) sobre la etiqueta completa
  * "SISTEMA PERSONAL". Es el primer slot de la TopBar y de la barra del
- * menú principal; enlaza a la pantalla de inicio (salvo en la variante
- * estática, que se usa precisamente en la pantalla de inicio).
+ * menu principal; enlaza a la pantalla de inicio (salvo en la variante
+ * estatica, que se usa precisamente en la pantalla de inicio).
  */
 export function Wordmark({ className = '', static: isStatic = false }: WordmarkProps) {
   if (isStatic) {

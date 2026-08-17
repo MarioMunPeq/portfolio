@@ -11,7 +11,7 @@ import { SocialStar } from '../components/social-star/SocialStar'
 import { SkillMenuSection } from '../components/skill-menu/SkillMenuSection'
 import { profile } from '../data/profile'
 
-// Nombre en tres bloques (mismo tratamiento tipográfico que el hero).
+// Nombre en tres bloques (mismo tratamiento tipografico que el hero).
 const nameParts = profile.name.trim().split(/\s+/)
 const nameLine1 = nameParts[0] ?? ''
 const nameLine2 = nameParts[1] ?? ''
@@ -21,36 +21,36 @@ const OUTLINE_BLACK = `-2px -2px 0 var(--color-bg-hero), 2px -2px 0 var(--color-
 const OUTLINE_RED = `-2px -2px 0 var(--color-accent), 2px -2px 0 var(--color-accent), -2px 2px 0 var(--color-accent), 2px 2px 0 var(--color-accent), -3px -3px 0 var(--color-accent), 3px 3px 0 var(--color-accent)`
 
 // Atributos sociales del personaje (Social Stats de P5). Cada atributo tiene
-// su propio valor (1-5) que decide cuánto se extiende su punta en la estrella
-// interior: a mayor valor, más lejos del centro. El orden fija la posición
+// su propio valor (1-5) que decide cuanto se extiende su punta en la estrella
+// interior: a mayor valor, mas lejos del centro. El orden fija la posicion
 // alrededor de la estrella: arriba, arriba-derecha, abajo-derecha,
-// abajo-izquierda, arriba-izquierda. Los acentos sí son seguros: el
+// abajo-izquierda, arriba-izquierda. Los acentos si son seguros: el
 // unicode-range de P5 Menu/Expose los cae al fallback del stack. Valores
 // aproximados y honestos, sin presentarse como datos objetivos.
 const STATS = [
-  { label: 'PROGRAMACIÓN', value: 4, descriptor: 'DESARROLLO' },
+  { label: 'PROGRAMACIoN', value: 4, descriptor: 'DESARROLLO' },
   { label: 'CREATIVIDAD', value: 3, descriptor: 'DISEÑO' },
   { label: 'CARISMA', value: 3, descriptor: 'SOCIAL' },
-  { label: 'CURIOSIDAD', value: 5, descriptor: 'INVESTIGACIÓN' },
-  { label: 'RESOLUCIÓN', value: 4, descriptor: 'LÓGICA' },
+  { label: 'CURIOSIDAD', value: 5, descriptor: 'INVESTIGACIoN' },
+  { label: 'RESOLUCIoN', value: 4, descriptor: 'LoGICA' },
 ] as const
 
 // Detalle animado junto al dato "Permiso de conducir": motion graphic corto al
-// estilo de una tarjeta de menú de Persona 5. El coche entra con un "snap" y
-// ejecuta una coreografía en bucle de 4.0 s: IDLE (reposo largo 36%) →
-// anticipación (compresión + retroceso) → ACELERACIÓN explosiva (estela roja
-// diagonal, marcas de velocidad, partículas) → SALTO (arco airborne) →
-// CONGELACIÓN AÉREA (pausa visual breve) → IMPACTO duro (squash + fragmentos
-// + líneas + sombra aplastada) → RECOUPERACIÓN con rebote → retorno al idle.
+// estilo de una tarjeta de menu de Persona 5. El coche entra con un "snap" y
+// ejecuta una coreografia en bucle de 4.0 s: IDLE (reposo largo 36%) →
+// anticipacion (compresion + retroceso) → ACELERACIoN explosiva (estela roja
+// diagonal, marcas de velocidad, particulas) → SALTO (arco airborne) →
+// CONGELACIoN AeREA (pausa visual breve) → IMPACTO duro (squash + fragmentos
+// + lineas + sombra aplastada) → RECOUPERACIoN con rebote → retorno al idle.
 // Al hover reacciona con un destello de estela ("rev"). Las ruedas llevan
 // muescas y giran solo durante las fases de movimiento. Con reduced-motion
-// las capas de efectos no se dibujan y el coche queda estático y perfectamente
+// las capas de efectos no se dibujan y el coche queda estatico y perfectamente
 // visible.
 function DrivingCar({ className = '' }: { className?: string }) {
   const reduceMotion = useReducedMotion()
 
   // Las capas de efectos solo tienen sentido si hay movimiento: con
-  // reduced-motion se ocultan y el coche queda estático y visible.
+  // reduced-motion se ocultan y el coche queda estatico y visible.
   const fx = reduceMotion ? 'hidden' : 'block'
 
   return (
@@ -58,7 +58,7 @@ function DrivingCar({ className = '' }: { className?: string }) {
       aria-hidden="true"
       className={`group relative block h-8 w-28 md:w-32 ${className}`}
     >
-      {/* Carretera: se estira con la aceleración y recibe el golpe del
+      {/* Carretera: se estira con la aceleracion y recibe el golpe del
           aterrizaje */}
       <span
         className={`absolute bottom-0 left-0 h-[2px] w-full origin-left bg-accent/50 ${
@@ -66,7 +66,7 @@ function DrivingCar({ className = '' }: { className?: string }) {
         }`}
       />
 
-      {/* Estelas de velocidad: cortes gráficos afilados que quedan atrás
+      {/* Estelas de velocidad: cortes graficos afilados que quedan atras
           (el coche acelera hacia la derecha) */}
       <span
         className={`absolute bottom-[2px] left-[calc(50%_-_40px)] h-[14px] w-[34px] origin-right bg-accent/80 opacity-0 ${fx} ${
@@ -87,7 +87,7 @@ function DrivingCar({ className = '' }: { className?: string }) {
         style={{ transform: 'skewX(-28deg)' }}
       />
 
-      {/* Marcas de velocidad: rasguños finos que pasan hacia atrás */}
+      {/* Marcas de velocidad: rasguños finos que pasan hacia atras */}
       <span
         className={`absolute bottom-[9px] left-[calc(50%_-_26px)] h-[1px] w-[7px] bg-paper/70 opacity-0 ${fx} ${
           reduceMotion ? '' : 'animate-car-speed'
@@ -103,9 +103,9 @@ function DrivingCar({ className = '' }: { className?: string }) {
 
       {/* Rigger: centra el coche sobre la pista */}
       <span className="absolute bottom-0 left-1/2 -ml-7">
-        {/* Entrada: "snap" y asiento de la suspensión (one-shot) */}
+        {/* Entrada: "snap" y asiento de la suspension (one-shot) */}
         <span className={`block ${reduceMotion ? '' : 'animate-car-enter'}`}>
-          {/* Coreografía: idle → aceleración → salto → aterrizaje → idle */}
+          {/* Coreografia: idle → aceleracion → salto → aterrizaje → idle */}
           <span className={`block ${reduceMotion ? '' : 'animate-car-run'}`}>
             <svg viewBox="0 0 24 12" className="block h-7 w-14">
               <path
@@ -143,7 +143,7 @@ function DrivingCar({ className = '' }: { className?: string }) {
         }`}
       />
 
-      {/* Partículas angulares de la aceleración */}
+      {/* Particulas angulares de la aceleracion */}
       <span
         className={`absolute bottom-[4px] left-[calc(50%_-_16px)] h-[3px] w-[3px] bg-accent opacity-0 ${fx} ${
           reduceMotion ? '' : 'animate-car-particle'
@@ -189,7 +189,7 @@ function DrivingCar({ className = '' }: { className?: string }) {
         style={{ '--ix': '6px', '--iy': '-9px' } as CSSProperties}
       />
 
-      {/* Líneas de impacto junto a las ruedas al aterrizar */}
+      {/* Lineas de impacto junto a las ruedas al aterrizar */}
       <span
         className={`absolute bottom-[2px] left-[calc(50%_-_4px)] h-[10px] w-[2px] bg-paper/80 opacity-0 ${fx} ${
           reduceMotion ? '' : 'animate-car-impact-line'
@@ -213,7 +213,7 @@ function DrivingCar({ className = '' }: { className?: string }) {
   )
 }
 
-// Posiciones fijas de las etiquetas en las esquinas, fuera del área de la
+// Posiciones fijas de las etiquetas en las esquinas, fuera del area de la
 // estrella, y sus inclinaciones suaves (casi horizontales).
 const LABEL_POSITIONS = [
   { left: 50, top: 2 },
@@ -224,7 +224,7 @@ const LABEL_POSITIONS = [
 ]
 const LABEL_ROTATIONS = [0, -2, 2, -2, 1]
 
-/** Hueco del retrato recortado en ángulo. Sin avatar → placeholder. */
+/** Hueco del retrato recortado en angulo. Sin avatar → placeholder. */
 function PortraitSlot() {
   const { avatar } = profile.about
   const CUTOUT = '[clip-path:polygon(10%_0,100%_0,100%_82%,86%_100%,0_100%,0_14%)]'
@@ -306,11 +306,11 @@ export function About() {
   return (
     <Screen className="min-h-dvh bg-bg-hero text-paper">
       <section className="relative overflow-hidden px-6 pb-28 pt-16 md:px-12 md:pt-20">
-        {/* Fondo: estrellas de contorno sutiles (mismo patrón que el inventario) */}
+        {/* Fondo: estrellas de contorno sutiles (mismo patron que el inventario) */}
         <span aria-hidden="true" className="pointer-events-none absolute inset-0 bg-stars opacity-70" />
 
-        {/* Starbackground: textura atmosférica sutil detrás de la composición.
-            Sesgada a la derecha (zona de estadísticas), con máscara que
+        {/* Starbackground: textura atmosferica sutil detras de la composicion.
+            Sesgada a la derecha (zona de estadisticas), con mascara que
             desvanece hacia la izquierda para no competir con la tarjeta
             de perfil. Opacidad baja para mantener la legibilidad. */}
         <span
@@ -335,7 +335,7 @@ export function About() {
         </span>
 
         <div className="relative mx-auto max-w-6xl">
-          {/* Título de perfil (mismo tratamiento que INVENTARIO) */}
+          {/* Titulo de perfil (mismo tratamiento que INVENTARIO) */}
           <Reveal>
             <SectionTitle title="PERFIL" persona />
           </Reveal>
@@ -395,7 +395,7 @@ export function About() {
                   </h1>
                 </div>
 
-                {/* Pegatina de rol + credencial (DAM vive aquí, no en el footer) */}
+                {/* Pegatina de rol + credencial (DAM vive aqui, no en el footer) */}
                 <div className="relative z-30 mt-4 flex flex-wrap items-center justify-end gap-2 pr-2">
                   <Tag font="sans" className="rotate-1">{hero.eyebrow}</Tag>
                   <Tag font="sans" tone="dark" className="rotate-1">
@@ -407,9 +407,9 @@ export function About() {
 
             {/* ===== Columna derecha: Social Stats (pieza central) ===== */}
             <div className="relative">
-              {/* Panel de fondo de la composición: textura de estrellas en
+              {/* Panel de fondo de la composicion: textura de estrellas en
                   gris oscuro (sin rojo) que tapa las estrellas rojas del
-                  fondo de página dentro de esta zona. */}
+                  fondo de pagina dentro de esta zona. */}
               <span
                 aria-hidden="true"
                 className="pointer-events-none absolute -inset-8 bg-bg-hero bg-stars-charcoal opacity-80"
@@ -417,7 +417,7 @@ export function About() {
               <Reveal delay={0.1}>
                 <div className="relative">
                   <Tag font="sans" className="absolute right-2 top-0 z-10 -rotate-3">
-                    Estadísticas sociales
+                    Estadisticas sociales
                   </Tag>
                   <StatStar />
                 </div>
@@ -438,7 +438,7 @@ export function About() {
             </div>
           </Reveal>
 
-          {/* ===== Habilidades (menú de juego) ===== */}
+          {/* ===== Habilidades (menu de juego) ===== */}
           <SkillMenuSection
             skills={about.skills}
             languages={about.languages}

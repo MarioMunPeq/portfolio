@@ -4,16 +4,16 @@ interface MenuOptionProps {
   index: string
   label: string
   path: string
-  /** Etiqueta de acción que aparece al hacer hover/focus (p. ej. "SELECCIONAR"). */
+  /** Etiqueta de accion que aparece al hacer hover/focus (p. ej. "SELECCIONAR"). */
   tag?: string
   current?: boolean
 }
 
 /**
- * Opción de menú de videojuego: fila con índice display, etiqueta enorme
- * (alterna sólido/contorno), flecha roja que aparece al seleccionar y
+ * Opcion de menu de videojuego: fila con indice display, etiqueta enorme
+ * (alterna solido/contorno), flecha roja que aparece al seleccionar y
  * desplazamiento del texto. El estado activo (pantalla actual) se marca
- * con bloque rojo sesgado. Interacción por hover y por teclado (focus).
+ * con bloque rojo sesgado. Interaccion por hover y por teclado (focus).
  */
 export function MenuOption({
   index,

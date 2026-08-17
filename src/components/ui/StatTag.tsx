@@ -11,8 +11,8 @@ interface StatTagProps {
 
 /**
  * Sello de atributo social (Social Stats de P5): pegatina dorada de borde
- * rasgado con texto negro, insignia de rango (rectángulo blanco) en la
- * esquina superior izquierda y línea de descriptor bajo la etiqueta.
+ * rasgado con texto negro, insignia de rango (rectangulo blanco) en la
+ * esquina superior izquierda y linea de descriptor bajo la etiqueta.
  */
 export function StatTag({ label, rank, descriptor, className = '' }: StatTagProps) {
   return (

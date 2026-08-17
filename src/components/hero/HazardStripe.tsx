@@ -1,5 +1,5 @@
 /**
- * Barra superior de rayas diagonales rojo/negro — marco superior del menú
+ * Barra superior de rayas diagonales rojo/negro — marco superior del menu
  * principal. Decorativa (aria-hidden).
  */
 export function HazardStripe() {

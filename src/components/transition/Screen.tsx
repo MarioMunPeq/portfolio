@@ -13,11 +13,11 @@ interface ScreenProps {
 
 /**
  * Contenedor de pantalla de ruta. Aporta la entrada/salida de la
- * transición entre rutas (junto a AnimatedRoutes y el Sweep) y resetea
+ * transicion entre rutas (junto a AnimatedRoutes y el Sweep) y resetea
  * el scroll al montar para que cada pantalla empiece arriba.
  *
- * Cuando un star-mask transition está activo (TransitionContext),
- * se saltan las animaciones de entrada/salida: la máscara es la transición.
+ * Cuando un star-mask transition esta activo (TransitionContext),
+ * se saltan las animaciones de entrada/salida: la mascara es la transicion.
  */
 export function Screen({ children, className }: ScreenProps) {
   const reduced = useReducedMotion()

@@ -2,14 +2,14 @@ import type { ElementType, ReactNode } from 'react'
 
 interface SystemLabelProps {
   children: ReactNode
-  /** Etiqueta semántica (span, p, div…). */
+  /** Etiqueta semantica (span, p, div…). */
   as?: ElementType
   className?: string
 }
 
 /**
- * Etiqueta tipo "interfaz de sistema": mayúsculas, tono label del sistema
- * y tracking amplio configurable. Reutilizable como patrón de microcopy en
+ * Etiqueta tipo "interfaz de sistema": mayusculas, tono label del sistema
+ * y tracking amplio configurable. Reutilizable como patron de microcopy en
  * todo el sitio (topbars, footers, metadata).
  */
 export function SystemLabel({ children, as: Tag = 'span', className = '' }: SystemLabelProps) {

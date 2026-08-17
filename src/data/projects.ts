@@ -1,4 +1,4 @@
-// PLACEHOLDER — Contenido provisional. Sustituir por información real.
+// PLACEHOLDER — Contenido provisional. Sustituir por informacion real.
 // Regla: no inventar stack, descripciones ni URLs presentadas como reales.
 
 export interface ProjectImage {
@@ -7,7 +7,7 @@ export interface ProjectImage {
 }
 
 export interface ProjectScreenshot {
-  /** null = captura pendiente: se muestra el placeholder en la galería. */
+  /** null = captura pendiente: se muestra el placeholder en la galeria. */
   src: string | null
   alt: string
   /** Texto opcional que describe la captura. */
@@ -17,11 +17,11 @@ export interface ProjectScreenshot {
 export interface Project {
   slug: string
   name: string
-  /** Descripción de una o dos frases para la card. PLACEHOLDER. */
+  /** Descripcion de una o dos frases para la card. PLACEHOLDER. */
   summary: string
-  /** Descripción completa para la página de detalle. PLACEHOLDER. */
+  /** Descripcion completa para la pagina de detalle. PLACEHOLDER. */
   description: string
-  /** Stack técnico real de ESTE proyecto. null = pendiente de confirmar. */
+  /** Stack tecnico real de ESTE proyecto. null = pendiente de confirmar. */
   stack: string[] | null
   links: {
     demo: string | null
@@ -29,7 +29,7 @@ export interface Project {
   }
   /** Imagen principal (hero/preview). null = placeholder visual. */
   images: ProjectImage[] | null
-  /** Capturas de la galería de detalle. Cada una con caption opcional. */
+  /** Capturas de la galeria de detalle. Cada una con caption opcional. */
   screenshots: ProjectScreenshot[] | null
 }
 
@@ -38,9 +38,9 @@ export const projects: Project[] = [
     slug: 'dungeon-archive',
     name: 'Dungeon Archive',
     summary:
-      '[PLACEHOLDER] Descripción breve del proyecto — pendiente de definir.',
+      '[PLACEHOLDER] Descripcion breve del proyecto — pendiente de definir.',
     description:
-      '[PLACEHOLDER] Descripción completa para la página del proyecto — pendiente de definir.',
+      '[PLACEHOLDER] Descripcion completa para la pagina del proyecto — pendiente de definir.',
     stack: ['React', 'Node.js', 'PostgreSQL', 'Prisma'],
     links: { demo: null, github: null },
     images: null,
@@ -66,9 +66,9 @@ export const projects: Project[] = [
     slug: 'cosmere-archive',
     name: 'Cosmere Archive',
     summary:
-      '[PLACEHOLDER] Descripción breve del proyecto — pendiente de definir.',
+      '[PLACEHOLDER] Descripcion breve del proyecto — pendiente de definir.',
     description:
-      '[PLACEHOLDER] Descripción completa para la página del proyecto — pendiente de definir.',
+      '[PLACEHOLDER] Descripcion completa para la pagina del proyecto — pendiente de definir.',
     stack: ['React', 'TypeScript', 'Tailwind CSS', 'Vite'],
     links: { demo: null, github: null },
     images: null,
@@ -80,8 +80,8 @@ export const projects: Project[] = [
       },
       {
         src: null,
-        alt: 'Captura pendiente del catálogo de Cosmere Archive',
-        caption: 'Catálogo de obras',
+        alt: 'Captura pendiente del catalogo de Cosmere Archive',
+        caption: 'Catalogo de obras',
       },
       {
         src: null,
@@ -94,9 +94,9 @@ export const projects: Project[] = [
     slug: 'recomendador-campeones',
     name: 'Recomendador de Campeones',
     summary:
-      '[PLACEHOLDER] Descripción breve del proyecto — pendiente de definir.',
+      '[PLACEHOLDER] Descripcion breve del proyecto — pendiente de definir.',
     description:
-      '[PLACEHOLDER] Descripción completa para la página del proyecto — pendiente de definir.',
+      '[PLACEHOLDER] Descripcion completa para la pagina del proyecto — pendiente de definir.',
     stack: ['Python', 'scikit-learn', 'FastAPI', 'React'],
     links: { demo: null, github: null },
     images: null,
@@ -122,9 +122,9 @@ export const projects: Project[] = [
     slug: 'gnu-health',
     name: 'GNU Health',
     summary:
-      'Participación en un proyecto solidario para la ONG GNU Health, desarrollando una aplicación Android.',
+      'Participacion en un proyecto solidario para la ONG GNU Health, desarrollando una aplicacion Android.',
     description:
-      'Participación en un proyecto solidario para la ONG GNU Health, desarrollando una aplicación Android.',
+      'Participacion en un proyecto solidario para la ONG GNU Health, desarrollando una aplicacion Android.',
     stack: ['Android'],
     links: { demo: null, github: null },
     images: null,

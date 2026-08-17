@@ -1,6 +1,6 @@
-// Árbol de Habilidades — ruta académica real, de Telecomunicaciones a Bootcamp
+// arbol de Habilidades — ruta academica real, de Telecomunicaciones a Bootcamp
 // de IA. Centro, periodo y titulaciones proceden del CV. El nodo "locked" es
-// decorativo (etapa futura, camino en construcción).
+// decorativo (etapa futura, camino en construccion).
 
 export type SkillNodeKind = 'unlocked' | 'locked'
 
@@ -8,18 +8,18 @@ export type SkillIconKind = 'cap' | 'antenna' | 'robot' | 'code' | 'chip' | 'que
 
 export interface SkillNode {
   id: string
-  /** Centro del nodo en % del contenedor del árbol. */
+  /** Centro del nodo en % del contenedor del arbol. */
   x: number
   y: number
   /** Etiqueta corta bajo el nodo. */
   label: string
-  /** Título completo de la titulación (panel de detalle). */
+  /** Titulo completo de la titulacion (panel de detalle). */
   title: string
   icon: SkillIconKind
   kind: SkillNodeKind
   /** Texto del sello de estado del panel. */
   status: string
-  /** Nivel de la titulación (Grado medio, Grado superior…). */
+  /** Nivel de la titulacion (Grado medio, Grado superior…). */
   level?: string
   /** Nota destacada del expediente (TFG, horas…). */
   detail?: string
@@ -31,7 +31,7 @@ export interface SkillNode {
 export interface SkillEdge {
   from: string
   to: string
-  /** solid = conexión real completada; future = trazo punteado decorativo. */
+  /** solid = conexion real completada; future = trazo punteado decorativo. */
   kind: 'solid' | 'future'
 }
 
@@ -55,7 +55,7 @@ export const SKILL_TREE: { nodes: SkillNode[]; edges: SkillEdge[] } = {
       x: 28,
       y: 50,
       label: 'robotica',
-      title: 'Automatización y robotica Industrial',
+      title: 'Automatizacion y robotica Industrial',
       icon: 'robot',
       kind: 'unlocked',
       status: 'Completado',
@@ -75,7 +75,7 @@ export const SKILL_TREE: { nodes: SkillNode[]; edges: SkillEdge[] } = {
       status: 'Completado',
       level: 'Grado superior',
       detail: 'mencion honorifica en el TFG',
-      institution: 'IES Julián Marías',
+      institution: 'IES Julian Marias',
       period: 'Septiembre 2022 — Junio 2024',
     },
     {
@@ -97,10 +97,10 @@ export const SKILL_TREE: { nodes: SkillNode[]; edges: SkillEdge[] } = {
       x: 50,
       y: 18,
       label: '?',
-      title: 'Próxima etapa',
+      title: 'Proxima etapa',
       icon: 'question',
       kind: 'locked',
-      status: 'En construcción',
+      status: 'En construccion',
     },
   ],
   edges: [

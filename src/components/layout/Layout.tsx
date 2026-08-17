@@ -15,7 +15,7 @@ const CONTEXT: Record<string, string> = {
   '/about': 'PERFIL',
   '/projects': 'INVENTARIO',
   '/experience': 'PROGRESO',
-  '/education': 'FORMACIÓN',
+  '/education': 'FORMACIoN',
   '/404': 'ERROR 404',
 }
 
@@ -26,9 +26,9 @@ const contextFor = (path: string) => {
 
 /**
  * Marco de las pantallas: TopBar unificada en todas las pantallas internas
- * salvo el menú principal (trae su propia topbar) y Experiencia (conserva
+ * salvo el menu principal (trae su propia topbar) y Experiencia (conserva
  * su diseño rojo de chat y su HUD). El footer global (◆ GITHUB ◆ LINKEDIN)
- * se monta en TODAS las pantallas, incluido el menú principal. El cargador,
+ * se monta en TODAS las pantallas, incluido el menu principal. El cargador,
  * el grano y el cursor viven por encima de todo.
  */
 export function Layout({ children }: LayoutProps) {

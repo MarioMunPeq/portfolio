@@ -1,5 +1,5 @@
 /**
- * Trama de puntos halftone tenue con máscara radial (fondo del menú).
+ * Trama de puntos halftone tenue con mascara radial (fondo del menu).
  * Decorativa (aria-hidden).
  */
 export function HalftoneOverlay() {

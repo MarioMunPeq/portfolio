@@ -7,7 +7,7 @@ interface ScrollProviderProps {
 }
 
 /**
- * Scroll suave cinematográfico (Lenis). Con `prefers-reduced-motion`
+ * Scroll suave cinematografico (Lenis). Con `prefers-reduced-motion`
  * se omite por completo y el navegador usa el scroll nativo.
  */
 export function ScrollProvider({ children }: ScrollProviderProps) {

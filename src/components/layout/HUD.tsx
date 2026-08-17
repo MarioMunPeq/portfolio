@@ -3,9 +3,9 @@ import { profile } from '../../data/profile'
 
 /**
  * HUD persistente del sistema: franja superior fija con la identidad de
- * marca, la ubicación y el año. Vive por encima del contenido pero bajo
+ * marca, la ubicacion y el año. Vive por encima del contenido pero bajo
  * el cargador, el barrido y el cursor. Es decorativa de la identidad de
- * juego, no reemplaza la nav. No se monta en el menú principal: esa
+ * juego, no reemplaza la nav. No se monta en el menu principal: esa
  * pantalla trae su propia topbar (hazard stripe + labels de sistema).
  */
 export function HUD() {

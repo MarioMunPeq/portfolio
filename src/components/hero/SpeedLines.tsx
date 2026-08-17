@@ -1,7 +1,7 @@
 import { useReducedMotion } from 'motion/react'
 
 /**
- * Speed-lines diagonales animadas — solo del menú principal. Con
+ * Speed-lines diagonales animadas — solo del menu principal. Con
  * `prefers-reduced-motion` no se monta.
  */
 export function SpeedLines() {

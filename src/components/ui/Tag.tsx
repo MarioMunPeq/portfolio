@@ -7,8 +7,8 @@ interface TagProps {
   /** Relleno del sello: rojo, oscuro o claro. El amarillo queda reservado a la estrella. */
   tone?: 'red' | 'dark' | 'light'
   size?: 'sm' | 'md' | 'lg'
-  /** Fuente del texto del sello: P5 Menu (por defecto), P5 Hatty (página de
-      Habilidades) o 'sans' (información legible en Space Grotesk). */
+  /** Fuente del texto del sello: P5 Menu (por defecto), P5 Hatty (pagina de
+      Habilidades) o 'sans' (informacion legible en Space Grotesk). */
   font?: 'p5-menu' | 'hatty' | 'sans'
   className?: string
 }
@@ -32,7 +32,7 @@ const fontClass = {
 } as const
 
 /**
- * Sello/tag angular recortado (viñeta de cómic) con sombra de offset dura.
+ * Sello/tag angular recortado (viñeta de comic) con sombra de offset dura.
  * Solo rojo/negro/blanco: el amarillo se reserva para la estrella de Social
  * Stats. La sombra se aplica con drop-shadow en el contenedor (sigue el clip
  * recortado) en offsets enteros de 3px para que no se vea borrosa ni doblada.

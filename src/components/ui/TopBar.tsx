@@ -9,7 +9,7 @@ interface TopBarProps {
 /**
  * Barra superior de sistema de las pantallas internas: franja diagonal
  * rojo/negro (hazard) + tres slots fijos [◀ MARCA] [contexto] [SISTEMA V.2026].
- * Sustituye a la HUD genérica: fija, decorativa de la identidad de juego.
+ * Sustituye a la HUD generica: fija, decorativa de la identidad de juego.
  */
 export function TopBar({ context }: TopBarProps) {
   return (

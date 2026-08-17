@@ -10,8 +10,8 @@ const CY = 146
  * Estrella facetada estilo Persona 5 Social Stats.
  *
  * Silueta exterior: EXACTAMENTE 5 puntas (10 puntos alternando punta/valle).
- * Interior: 8 facetas grandes (triángulos + cuadriláteros) con colores sólidos.
- * Sin degradados, sin transparencia, sin blur. Sin líneas internas negras.
+ * Interior: 8 facetas grandes (triangulos + cuadrilateros) con colores solidos.
+ * Sin degradados, sin transparencia, sin blur. Sin lineas internas negras.
  *
  * Estructura de capas:
  *   1. Silueta negra con trazo grueso (outline exterior)
@@ -46,7 +46,7 @@ export function SocialStar({ className = '' }: { className?: string }) {
 
       {/* ── 3. Facetas amarillas (planos iluminados, luz superior-izquierda) ── */}
 
-      {/* Gran cuadrilátera: cara izquierda del brazo superior + brazo superior-izquierdo */}
+      {/* Gran cuadrilatera: cara izquierda del brazo superior + brazo superior-izquierdo */}
       <polygon
         points={`150,20 119,108 28,111 ${CX},${CY}`}
         fill={YELLOW}
@@ -72,7 +72,7 @@ export function SocialStar({ className = '' }: { className?: string }) {
         fill={DARK_ORANGE}
       />
 
-      {/* Gran cuadrilátera inferior: sombra profunda en brazos inferiores */}
+      {/* Gran cuadrilatera inferior: sombra profunda en brazos inferiores */}
       <polygon
         points={`224,252 ${CX},${CY} 74,255 150,198`}
         fill={DARK_ORANGE}

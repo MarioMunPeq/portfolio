@@ -10,7 +10,7 @@ interface SweepProps {
 
 /**
  * Barrido diagonal rojo/negro — elemento firma del proyecto.
- * Dos paneles sesgados que atraviesan la pantalla según `progress`.
+ * Dos paneles sesgados que atraviesan la pantalla segun `progress`.
  */
 export function Sweep({ progress, fadeOutAt, className = '' }: SweepProps) {
   const xRed = useTransform(progress, [0, 1], ['-160vw', '0vw'])

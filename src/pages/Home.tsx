@@ -21,14 +21,14 @@ const nameLine3 = nameParts.slice(2).join(' ')
 const OUTLINE_BLACK = `-2px -2px 0 var(--color-bg-hero), 2px -2px 0 var(--color-bg-hero), -2px 2px 0 var(--color-bg-hero), 2px 2px 0 var(--color-bg-hero)`
 const OUTLINE_RED = `-2px -2px 0 var(--color-accent), 2px -2px 0 var(--color-accent), -2px 2px 0 var(--color-accent), 2px 2px 0 var(--color-accent)`
 
-/** Hora de inicio de sesión (fija durante la carga de la pantalla). */
+/** Hora de inicio de sesion (fija durante la carga de la pantalla). */
 const SESSION_TIME = new Date().toTimeString().slice(0, 8)
 
 /**
- * Pantalla principal = MENÚ PRINCIPAL del sistema. Reconstrucción fiel de la
+ * Pantalla principal = MENu PRINCIPAL del sistema. Reconstruccion fiel de la
  * referencia persona-hero.html como componentes React: overlays de textura
  * (halftone, ink blot, speed-lines, floaters, scanlines), palabra fantasma,
- * hazard stripe, topbar de sistema, bloque de título en 3 líneas, navegación
+ * hazard stripe, topbar de sistema, bloque de titulo en 3 lineas, navegacion
  * de comandos △ □ ○ ✕ con glitch-slice al hover y footer con el disparador
  * "ENTRAR AL SISTEMA". Esta pantalla no monta el HUD global: trae su propia
  * topbar. La pantalla entera es fija y no hace scroll.
@@ -37,7 +37,7 @@ export function Home() {
   return (
     <Screen className="bg-bg-hero text-paper">
       <section className="relative h-dvh w-full overflow-hidden">
-        {/* Overlays de fondo del sistema (solo menú principal) */}
+        {/* Overlays de fondo del sistema (solo menu principal) */}
         <HalftoneOverlay />
         <InkBlot />
         <SpeedLines />
@@ -50,14 +50,14 @@ export function Home() {
         <div className="hero-topbar absolute inset-x-0 top-[14px] z-40 flex items-center justify-between gap-4 px-6 py-3.5 md:px-10">
           <Wordmark static />
           <span className="hidden truncate text-center text-label font-medium uppercase tracking-[0.15em] text-paper/70 sm:block">
-            SESIÓN {SESSION_TIME}
+            SESIoN {SESSION_TIME}
           </span>
           <SystemLabel className="text-paper/60 tracking-[0.15em]">
             {profile.branding.system.split(' ')[0]} {profile.branding.version}
           </SystemLabel>
         </div>
 
-        {/* Bloque de título */}
+        {/* Bloque de titulo */}
         <div className="hero-title-block absolute left-5 top-[22%] z-10 max-w-[calc(100%-2.5rem)] lg:left-[60px] lg:top-[38%] lg:max-w-none">
           <p className="hero-eyebrow mb-3.5 flex items-center gap-2 font-sans text-[13px] font-bold uppercase tracking-[0.2em] text-accent">
             <DiamondMarker size={7} />
@@ -104,9 +104,9 @@ export function Home() {
           </p>
         </div>
 
-        {/* Navegación de comandos */}
+        {/* Navegacion de comandos */}
         <nav
-          aria-label="Menú principal del portfolio"
+          aria-label="Menu principal del portfolio"
           className="hero-command-nav absolute bottom-[14%] left-1/2 z-20 w-[min(78vw,26rem)] -translate-x-1/2 lg:bottom-auto lg:left-auto lg:right-[1.5%] lg:top-1/2 lg:w-[min(44vw,640px)] lg:pr-20 xl:w-[min(46vw,800px)] lg:-translate-y-1/2 lg:translate-x-0"
         >
           <ol className="flex flex-col gap-2">

@@ -10,7 +10,7 @@ import type { SkillIconKind } from '../../data/skill-tree'
 
 type IconDef = typeof faRobot
 
-/** Mapeo de cada campo del árbol a su icono sólido de Font Awesome. */
+/** Mapeo de cada campo del arbol a su icono solido de Font Awesome. */
 const ICONS: Record<SkillIconKind, IconDef> = {
   cap: faGraduationCap,
   antenna: faTowerBroadcast,
@@ -21,10 +21,10 @@ const ICONS: Record<SkillIconKind, IconDef> = {
 }
 
 /**
- * Icono de campo de cada nodo del árbol: set sólido de Font Awesome, con
- * fills gruesos que dan el peso gráfico del resto de la UI Persona 5.
- * Hereda el color con currentColor y mantiene la proporción del glifo.
- * 'question' (etapa futura) usa el mismo peso sólido, ya no el círculo
+ * Icono de campo de cada nodo del arbol: set solido de Font Awesome, con
+ * fills gruesos que dan el peso grafico del resto de la UI Persona 5.
+ * Hereda el color con currentColor y mantiene la proporcion del glifo.
+ * 'question' (etapa futura) usa el mismo peso solido, ya no el circulo
  * de trazo fino anterior.
  */
 export function NodeIcon({ kind, className = '' }: { kind: SkillIconKind; className?: string }) {
