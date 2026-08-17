@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { useLocation } from 'react-router-dom'
 import { HUD } from './HUD'
@@ -34,6 +35,7 @@ const contextFor = (path: string) => {
 export function Layout({ children }: LayoutProps) {
   const { pathname } = useLocation()
   const showTopBar = pathname !== '/' && pathname !== '/experience'
+  const [loadscreenDone, setLoadscreenDone] = useState(false)
 
   return (
     <div className="min-h-dvh bg-bg-hero text-paper">
@@ -43,7 +45,7 @@ export function Layout({ children }: LayoutProps) {
       >
         Saltar al contenido
       </a>
-      <LoadScreen />
+      <LoadScreen onExitReady={() => setLoadscreenDone(true)} />
       {pathname === '/experience' ? <HUD /> : null}
       {showTopBar && <TopBar context={contextFor(pathname)} />}
       <BottomBar />

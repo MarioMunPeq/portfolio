@@ -41,7 +41,14 @@ const IMPACT_AT = 0.55
 
 let loadScreenShown = false
 
-export function LoadScreen() {
+interface LoadScreenProps {
+  /** Called when the exit sequence begins (progress reached 100% and the
+   *  overlay starts peeling away). Allows the parent to coordinate the
+   *  next transition phase. */
+  onExitReady?: () => void
+}
+
+export function LoadScreen({ onExitReady }: LoadScreenProps) {
   const reduced = useReducedMotion()
   const [hidden, setHidden] = useState(loadScreenShown)
   const [visible, setVisible] = useState(false)
@@ -101,11 +108,12 @@ export function LoadScreen() {
   const startExit = useCallback(() => {
     if (exitStarted.current) return
     exitStarted.current = true
+    onExitReady?.()
     animate(impactScale, [1, 1.022, 1], { duration: 0.26, ease: 'easeOut' })
     setExitScan(true)
     window.setTimeout(() => setExiting(true), 170)
     window.setTimeout(hide, 980)
-  }, [hide, impactScale])
+  }, [hide, impactScale, onExitReady])
 
   // Barra y porcentaje: escritura directa en el DOM (sin re-renders de
   // React por fotograma).
