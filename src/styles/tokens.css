@@ -745,6 +745,130 @@ html.lenis body {
 }
 
 /* ============================================================
+   Skill Menu — entradas de menú estilo Persona 5
+   ============================================================ */
+
+/* Panel base: superficie oscura con borde fino, recorte angular.
+   El hover desplaza el panel a la derecha y abre la barra roja. */
+.skill-entry {
+  position: relative;
+  padding: 1.25rem 1.5rem 1.125rem;
+  background-color: var(--color-bg-content-alt);
+  border: 1px solid rgba(245, 245, 240, 0.07);
+  transition:
+    transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 0.22s;
+  overflow: hidden;
+}
+
+.skill-entry:hover {
+  transform: translateX(6px);
+  border-color: rgba(245, 245, 240, 0.14);
+}
+
+/* Barra de acento rojo — desliza desde arriba al hacer hover */
+.skill-entry__bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background-color: var(--color-accent);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.skill-entry:hover .skill-entry__bar {
+  transform: scaleY(1);
+}
+
+/* Título de categoría — fuente P5 Menu, cambia a rojo en hover */
+.skill-entry__title {
+  font-family: var(--font-expose);
+  font-size: 1.05rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-paper);
+  transition: color 0.2s;
+}
+
+.skill-entry:hover .skill-entry__title {
+  color: var(--color-accent);
+}
+
+/* Etiqueta de sistema — tiny, tenue, se tintó en rojo al hover */
+.skill-entry__sys {
+  font-family: var(--font-sans);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(245, 245, 240, 0.25);
+  transition: color 0.2s;
+}
+
+.skill-entry:hover .skill-entry__sys {
+  color: rgba(230, 0, 18, 0.5);
+}
+
+/* Contador de items */
+.skill-entry__count {
+  font-family: var(--font-sans);
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(245, 245, 240, 0.2);
+  transition: color 0.2s;
+}
+
+.skill-entry:hover .skill-entry__count {
+  color: rgba(230, 0, 18, 0.5);
+}
+
+/* Indicador diamante — aparece al hacer hover */
+.skill-entry__diamond {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  background-color: var(--color-accent);
+  transform: rotate(45deg) scale(0);
+  opacity: 0;
+  transition:
+    opacity 0.2s,
+    transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.skill-entry:hover .skill-entry__diamond {
+  opacity: 1;
+  transform: rotate(45deg) scale(1);
+}
+
+/* Grid de items tech */
+.skill-entry__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.25rem;
+  margin-top: 0.875rem;
+}
+
+/* Item individual — se ilumina y desplaza en hover */
+.skill-entry__item {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  letter-spacing: 0.03em;
+  color: rgba(245, 245, 240, 0.65);
+  transition:
+    color 0.18s,
+    padding-left 0.22s;
+  padding-left: 0;
+}
+
+.skill-entry:hover .skill-entry__item {
+  color: var(--color-paper);
+  padding-left: 0.375rem;
+}
+
+/* ============================================================
    Sistema de tokens — Tailwind CSS 4 (CSS-first)
    Ver PROJECT_PHILOSOPHY.md §Design system
    ============================================================ */

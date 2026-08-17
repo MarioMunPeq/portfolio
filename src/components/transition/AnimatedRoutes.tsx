@@ -1,14 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
-import {
-  animate,
-  motion,
-  useMotionValue,
-  useTransform,
-  useReducedMotion,
-} from 'motion/react'
+import { useReducedMotion } from 'motion/react'
 import { TransitionProvider } from './TransitionContext'
-import { StarWipe } from './StarWipe'
 import { Home } from '../../pages/Home'
 import { About } from '../../pages/About'
 import { Projects } from '../../pages/Projects'
@@ -18,48 +11,43 @@ import { ProjectDetail } from '../../pages/ProjectDetail'
 import { NotFound } from '../../pages/NotFound'
 
 /* ------------------------------------------------------------------ */
-/*  Star geometry — same 5-point polygon used by StarBadge             */
+/*  Star geometry — Persona 5 five-point star (viewBox 0 0 100 100)    */
 /* ------------------------------------------------------------------ */
 
-const STAR_POINTS: [number, number][] = [
-  [50, 5],
-  [61, 38],
-  [96, 38],
-  [68, 59],
-  [79, 92],
-  [50, 71],
-  [21, 92],
-  [32, 59],
-  [4, 38],
-  [39, 38],
-]
+const STAR_POINTS_STR = '50,5 61,38 96,38 68,59 79,92 50,71 21,92 32,59 4,38 39,38'
 
 /* ------------------------------------------------------------------ */
-/*  Animation constants                                                */
+/*  Animation                                                          */
 /* ------------------------------------------------------------------ */
 
-const EASE: [number, number, number, number] = [0.76, 0, 0.24, 1]
-const DURATION = 0.85 // seconds — long enough for smooth motion, fast enough to feel premium
+const DURATION = 800 // ms
 
 /**
- * Calculate the minimum factor so every point of the star polygon
- * (including the two inner valleys at x=39% and x=61%) exits the
- * viewport.  The worst case is the valley closest to the centre:
- *   50 + (39−50)·f < 0   →   f > 50/11 ≈ 4.55
- * We add a safety margin and also account for non-square viewports
- * by scaling the vertical axis separately when needed.
+ * Custom easing: brief quadratic ease-in (~12 %), then cubic ease-out.
+ * "Slight acceleration at the beginning, graceful deceleration at the end."
+ */
+function ease(t: number): number {
+  if (t < 0.12) {
+    const n = t / 0.12
+    return 0.12 * n * n
+  }
+  const n = (t - 0.12) / 0.88
+  return 0.12 + 0.88 * (1 - (1 - n) * (1 - n) * (1 - n))
+}
+
+/**
+ * Minimum scale factor so every star point exits the viewport.
+ * Worst case — valley at x = 39 %:
+ *   50 − 11 · f < 0  →  f > 50/11 ≈ 4.55
  */
 function calcMaxFactor(): number {
   if (typeof window === 'undefined') return 5
   const vw = window.innerWidth
   const vh = window.innerHeight
-  // Horizontal: need valley at x=39% to go below 0% and valley at x=61% above 100%
-  const hFactor = 50 / 11 // ≈ 4.55
-  // Vertical: need valley at y=71% to go above 100% → f > 50/21 ≈ 2.38
-  const vFactor = 50 / 21
-  // Aspect-ratio adjustment: tall viewports need more horizontal reach
-  const aspect = Math.max(vw, vh) / Math.min(vw, vh)
-  return Math.max(hFactor, vFactor) * (aspect > 1.6 ? 1.15 : 1) + 0.45
+  const h = 50 / 11 // ≈ 4.55
+  const v = 50 / 21 // ≈ 2.38
+  const a = Math.max(vw, vh) / Math.min(vw, vh)
+  return Math.max(h, v) * (a > 1.6 ? 1.15 : 1) + 0.45
 }
 
 /* ------------------------------------------------------------------ */
@@ -79,28 +67,45 @@ const ROUTE_ELEMENTS = (
   </>
 )
 
+/* ------------------------------------------------------------------ */
+/*  Component                                                          */
+/* ------------------------------------------------------------------ */
+
 /**
- * Rutas como pantallas independientes.
+ * Star-mask iris transition.
  *
- * Arquitectura de la transición:
- *   z-90  OLD PAGE — snapshot congelado (sin animaciones Screen)
- *   z-95  NEW PAGE — recortada por clip-path de estrella expandiéndose
- *   z-100 STAR EDGE — contorno SVG rojo sutil sobre la máscara
+ * Layer stack:
+ *   z-0    OLD PAGE    — frozen snapshot, visible everywhere (background)
+ *   z-[1]  NEW PAGE    — normal document flow, visibility hidden during transition
+ *   z-[95] NEW PAGE    — duplicate in transition layer, SVG mask applied
+ *   z-[100] STAR EDGE  — subtle red SVG outline at mask boundary
  *
- * La página nueva se monta INMEDIATAMENTE y se renderiza por completo.
- * El clip-path de estrella actúa como máscara: lo que está DENTRO de la
- * estrella muestra la página nueva; lo que está FUERA muestra la antigua.
- * La estrella crece desde el centro hasta cubrir todo el viewport.
+ * How it works:
+ *   1. Old page stays visible as background (snapshot class)
+ *   2. New page is rendered twice: once in normal flow (hidden during transition)
+ *      and once in the transition layer with SVG mask
+ *   3. SVG <mask> with black rect (hidden) + white star polygon (visible)
+ *   4. Star polygon scales from 0 to cover viewport via <g transform>
+ *   5. After star covers viewport: remove old page + transition layer,
+ *      set normal-flow new page to visible — zero jump, zero remount
  */
 export function AnimatedRoutes() {
   const location = useLocation()
   const reduced = useReducedMotion()
-  const progress = useMotionValue(0)
   const prevPath = useRef(location.pathname)
   const [oldPath, setOldPath] = useState<string | null>(null)
   const maxFactor = useRef(calcMaxFactor())
 
-  // Recalculate on resize so ultrawide/wide viewports are covered
+  /* DOM refs — direct manipulation during animation (no React re-renders) */
+  const maskGroupRef = useRef<SVGGElement>(null)
+  const outlineRef = useRef<SVGSVGElement>(null)
+  const starGroupRef = useRef<SVGGElement>(null)
+  const echoGroupRef = useRef<SVGGElement>(null)
+  const normalFlowRef = useRef<HTMLDivElement>(null)
+  const rafRef = useRef(0)
+  const t0Ref = useRef(0)
+
+  /* ---- resize ---- */
   useEffect(() => {
     const onResize = () => {
       maxFactor.current = calcMaxFactor()
@@ -109,24 +114,7 @@ export function AnimatedRoutes() {
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
-  // Animated clip-path: star polygon expands from centre.
-  const clipPath = useTransform(
-    useTransform(progress, [0, 1], [0, 1]),
-    (t: number) => {
-      const f = t * maxFactor.current
-      return `polygon(${STAR_POINTS.map(([x, y]) => `${(50 + (x - 50) * f).toFixed(2)}% ${(50 + (y - 50) * f).toFixed(2)}%`).join(', ')})`
-    },
-  )
-
-  /* ----- route-change handler ------------------------------------ */
-  const transitionAnim = useRef<ReturnType<typeof animate> | null>(null)
-
-  /**
-   * Detect route changes SYNCHRONOUSLY via useLayoutEffect.
-   * This runs after DOM commit but BEFORE the browser paints, so the
-   * snapshot overlay + clip-path mask are in place on the very first
-   * visible frame — no flash of the naked destination page.
-   */
+  /* ---- route-change detection (synchronous, before paint) ---- */
   useLayoutEffect(() => {
     if (prevPath.current === location.pathname) return
     const old = prevPath.current
@@ -134,56 +122,93 @@ export function AnimatedRoutes() {
 
     if (reduced) {
       setOldPath(null)
-      progress.set(0)
       return
     }
 
-    // Cancel any running transition (rapid navigation)
-    if (transitionAnim.current) {
-      transitionAnim.current.stop()
-      transitionAnim.current = null
+    // Cancel running transition (rapid navigation)
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current)
+      rafRef.current = 0
     }
 
-    progress.set(0)
     setOldPath(old)
-  }, [location.pathname, reduced, progress])
+    t0Ref.current = performance.now()
+  }, [location.pathname, reduced])
 
-  /**
-   * Start the expand animation once oldPath is set.
-   * Using useEffect here is fine — the DOM is already correct (snapshot +
-   * mask in place) from the useLayoutEffect above.  The animation just
-   * needs to begin on the next frame.
-   */
+  /* ---- star-mask animation ---- */
   useEffect(() => {
     if (oldPath === null) return
 
-    transitionAnim.current = animate(progress, 1, {
-      duration: DURATION,
-      ease: EASE,
-      onComplete: () => {
+    const maxF = maxFactor.current
+
+    const tick = (now: number) => {
+      const t = Math.min((now - t0Ref.current) / DURATION, 1)
+      const f = ease(t) * maxF
+
+      // 1. SVG mask star polygon — scale via <g transform> (GPU-friendly)
+      //    Transform: translate(0.5 0.5) scale(f) translate(-0.5 -0.5)
+      //    This scales the star from its center in objectBoundingBox coords
+      if (maskGroupRef.current) {
+        maskGroupRef.current.setAttribute(
+          'transform',
+          `translate(0.5 0.5) scale(${f}) translate(-0.5 -0.5)`,
+        )
+      }
+
+      // 2. Star outline — GPU-friendly <g> transform (non-scaling-stroke)
+      if (starGroupRef.current) {
+        starGroupRef.current.setAttribute(
+          'transform',
+          `translate(50 50) scale(${f}) translate(-50 -50)`,
+        )
+      }
+
+      // 3. Echo outline — trails ~8 % behind, 96 % size
+      if (echoGroupRef.current) {
+        const ef = ease(Math.min(t * 1.08, 1)) * maxF * 0.96
+        echoGroupRef.current.setAttribute(
+          'transform',
+          `translate(50 50) scale(${ef}) translate(-50 -50)`,
+        )
+      }
+
+      // 4. Outline opacity — fade in at start, fade out at end
+      if (outlineRef.current) {
+        const o = t < 0.04 ? t / 0.04 : t > 0.88 ? (1 - t) / 0.12 : 1
+        outlineRef.current.style.opacity = String(
+          Math.max(0, Math.min(1, o)) * 0.9,
+        )
+      }
+
+      if (t < 1) {
+        rafRef.current = requestAnimationFrame(tick)
+      } else {
+        rafRef.current = 0
         setOldPath(null)
-        progress.set(0)
-        transitionAnim.current = null
-      },
-    })
-
-    return () => {
-      transitionAnim.current?.stop()
-      transitionAnim.current = null
-    }
-  }, [oldPath, progress])
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (transitionAnim.current) {
-        transitionAnim.current.stop()
-        transitionAnim.current = null
       }
     }
-  }, [])
 
-  /* ----- render -------------------------------------------------- */
+    rafRef.current = requestAnimationFrame(tick)
+
+    return () => {
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current)
+        rafRef.current = 0
+      }
+    }
+  }, [oldPath])
+
+  /* ---- cleanup on unmount ---- */
+  useEffect(
+    () => () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+    },
+    [],
+  )
+
+  /* ---- render ---- */
+
+  const isActive = oldPath !== null
 
   const newPage = (
     <Routes location={location} key={location.pathname}>
@@ -191,17 +216,66 @@ export function AnimatedRoutes() {
     </Routes>
   )
 
-  if (reduced) {
-    return <>{newPage}</>
-  }
-
-  const isActive = oldPath !== null
+  if (reduced) return <>{newPage}</>
 
   return (
     <TransitionProvider value={isActive}>
-      {/* ---- OLD PAGE: full-viewport snapshot underneath, frozen. ---- */}
-      {oldPath && (
-        <div className="snapshot fixed inset-0 z-[90]" aria-hidden="true">
+      {/* SVG DEFINITIONS — mask and outline */}
+      <svg
+        ref={outlineRef}
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 z-[100]"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+        style={{ opacity: 0, width: 0, height: 0, position: 'fixed' }}
+      >
+        <defs>
+          {/* Star mask: black = hidden, white = visible */}
+          <mask
+            id="star-mask"
+            maskContentUnits="objectBoundingBox"
+          >
+            {/* Black rectangle — entire area hidden */}
+            <rect x="0" y="0" width="1" height="1" fill="black" />
+            {/* White star polygon — visible through mask */}
+            <g ref={maskGroupRef} transform="translate(0.5 0.5) scale(0) translate(-0.5 -0.5)">
+              <polygon
+                points={STAR_POINTS_STR}
+                fill="white"
+                transform="scale(0.01)"
+              />
+            </g>
+          </mask>
+        </defs>
+        {/* Echo — softer glow, trails behind */}
+        <g ref={echoGroupRef}>
+          <polygon
+            points={STAR_POINTS_STR}
+            fill="none"
+            stroke="#E60012"
+            strokeWidth="2.5"
+            vectorEffect="non-scaling-stroke"
+            strokeOpacity={0.2}
+          />
+        </g>
+        {/* Primary edge — thin, sharp */}
+        <g ref={starGroupRef}>
+          <polygon
+            points={STAR_POINTS_STR}
+            fill="none"
+            stroke="#E60012"
+            strokeWidth="1.2"
+            vectorEffect="non-scaling-stroke"
+          />
+        </g>
+      </svg>
+
+      {/* OLD PAGE — frozen snapshot, visible everywhere (background) */}
+      {isActive && (
+        <div
+          className="snapshot fixed inset-0 z-0"
+          aria-hidden="true"
+        >
           <Routes
             location={{ ...location, pathname: oldPath }}
             key={oldPath}
@@ -211,16 +285,26 @@ export function AnimatedRoutes() {
         </div>
       )}
 
-      {/* ---- NEW PAGE: clipped to expanding star mask. ---- */}
-      <motion.div
-        className={isActive ? 'fixed inset-0 z-[95]' : ''}
-        style={isActive ? { clipPath } : undefined}
+      {/* NEW PAGE — normal document flow, hidden during transition */}
+      <div
+        ref={normalFlowRef}
+        style={isActive ? { visibility: 'hidden' } : undefined}
       >
         {newPage}
-      </motion.div>
+      </div>
 
-      {/* ---- STAR EDGE: thin red SVG outline following the mask. ---- */}
-      {isActive && <StarWipe progress={progress} maxFactor={maxFactor.current} />}
+      {/* NEW PAGE — transition layer with SVG mask applied */}
+      {isActive && (
+        <div
+          className="fixed inset-0 z-[95]"
+          aria-hidden="true"
+          style={{ mask: 'url(#star-mask)', WebkitMask: 'url(#star-mask)' }}
+        >
+          <Routes location={location} key={location.pathname}>
+            {ROUTE_ELEMENTS}
+          </Routes>
+        </div>
+      )}
     </TransitionProvider>
   )
 }
