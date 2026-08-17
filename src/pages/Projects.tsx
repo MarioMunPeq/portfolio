@@ -20,6 +20,22 @@ function ProjectsGraphicLayer() {
       {/* Estrellas de contorno sutiles de fondo */}
       <span className="absolute inset-0 bg-stars opacity-70" />
 
+      {/* Starbackground: textura atmosférica compartida con la página de perfil.
+          Posicionada hacia la izquierda/centro con rotación diagonal sutil.
+          Máscara angular para crear un recorte tipo panel gráfico de P5.
+          Opacidad ligeramente menor que en perfil para variedad visual. */}
+      <span
+        className="absolute -left-16 top-[10%] h-[120%] w-[65%] opacity-[0.12]"
+        style={{
+          backgroundImage: 'url(/portfolio/images/background/starbackground.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          transform: 'rotate(-3deg)',
+          maskImage: 'linear-gradient(135deg, transparent 0%, black 30%, black 70%, transparent 100%)',
+          WebkitMaskImage: 'linear-gradient(135deg, transparent 0%, black 30%, black 70%, transparent 100%)',
+        }}
+      />
+
       <span
         className="absolute right-[-3rem] top-[3%] -rotate-6 select-none font-display uppercase leading-none text-outline-faint opacity-25"
         style={{ fontSize: 'clamp(6rem, 13vw, 12rem)' }}

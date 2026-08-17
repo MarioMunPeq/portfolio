@@ -409,6 +409,22 @@ export function About() {
         {/* Fondo: estrellas de contorno sutiles (mismo patrón que el inventario) */}
         <span aria-hidden="true" className="pointer-events-none absolute inset-0 bg-stars opacity-70" />
 
+        {/* Starbackground: textura atmosférica sutil detrás de la composición.
+            Sesgada a la derecha (zona de estadísticas), con máscara que
+            desvanece hacia la izquierda para no competir con la tarjeta
+            de perfil. Opacidad baja para mantener la legibilidad. */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-20 top-0 h-full w-[70%] opacity-[0.14]"
+          style={{
+            backgroundImage: 'url(/portfolio/images/background/starbackground.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            maskImage: 'linear-gradient(to right, transparent 0%, black 35%, black 100%)',
+            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 35%, black 100%)',
+          }}
+        />
+
         {/* Palabra fantasma de marca */}
         <span
           aria-hidden="true"
