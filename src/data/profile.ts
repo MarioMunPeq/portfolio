@@ -101,7 +101,7 @@ export const profile: Profile = {
     coordinates: '41.6523° N, 4.7245° O',
   },
   branding: {
-    system: 'Sistema personal',
+    system: 'Menú principal',
     cvViviente: 'CV Viviente',
     loading: 'Cargando',
     version: 'v.2026',

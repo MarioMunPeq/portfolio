@@ -35,13 +35,15 @@ const STATS = [
 
 // Detalle animado junto al dato "Permiso de conducir": motion graphic corto al
 // estilo de una tarjeta de menú de Persona 5. El coche entra con un "snap" y
-// ejecuta una coreografía en bucle: IDLE → anticipación → ACELERACIÓN (estela
-// roja, marcas de velocidad, partículas) → SALTO → AIRE → IMPACTO (fragmentos,
-// líneas, squash de la carretera y de la sombra) → segundo tirón → vuelta al
-// idle. Al hover reacciona con un destello de estela ("rev"). Las ruedas
-// llevan muescas y giran solo durante las fases de movimiento. Con
-// reduced-motion las capas de efectos no se dibujan y el coche queda estático
-// y perfectamente visible.
+// ejecuta una coreografía en bucle de 4.0 s: IDLE (reposo largo 36%) →
+// anticipación (compresión + retroceso) → ACELERACIÓN explosiva (estela roja
+// diagonal, marcas de velocidad, partículas) → SALTO (arco airborne) →
+// CONGELACIÓN AÉREA (pausa visual breve) → IMPACTO duro (squash + fragmentos
+// + líneas + sombra aplastada) → RECOUPERACIÓN con rebote → retorno al idle.
+// Al hover reacciona con un destello de estela ("rev"). Las ruedas llevan
+// muescas y giran solo durante las fases de movimiento. Con reduced-motion
+// las capas de efectos no se dibujan y el coche queda estático y perfectamente
+// visible.
 function DrivingCar({ className = '' }: { className?: string }) {
   const reduceMotion = useReducedMotion()
 
