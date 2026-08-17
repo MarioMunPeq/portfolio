@@ -49,7 +49,6 @@ export function CommandNavItem({
   const handleNav = async () => {
     if (navigating.current) return
     navigating.current = true
-
     transitionBus.markExternallyStarted()
     await transitionBus.playUntilCovered()
     navigate(path)

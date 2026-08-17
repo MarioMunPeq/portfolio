@@ -1,7 +1,9 @@
-export const TRANSITION_SPEED = 2
+export const TRANSITION_SPEED = 4
 
-/** Time in ms after which the video has visually covered the screen. */
-const COVER_MS = 400
+/** Time in ms after which the video has visually covered the screen.
+ *  At 2x speed this is ~500ms of actual video content — enough for the
+ *  train wipe to fill the viewport before the destination renders. */
+const COVER_MS = 1000
 
 /**
  * Global flag checked by TransitionRoutes to avoid double-triggering
@@ -55,11 +57,6 @@ export const transitionBus = {
     video.play().catch(cleanup)
   },
 
-  /**
-   * Start the transition video and resolve when the screen is visually
-   * covered. Used by CommandNavItem so navigation can happen right after
-   * coverage instead of waiting for the full video to end.
-   */
   playUntilCovered(): Promise<void> {
     return new Promise((resolve) => {
       const video = document.getElementById('transition-video') as HTMLVideoElement | null
@@ -72,29 +69,75 @@ export const transitionBus = {
       video.hidden = false
       video.playbackRate = TRANSITION_SPEED
 
-      const timer = window.setTimeout(() => {
-        cleanup()
-        resolve()
-      }, COVER_MS)
+      let resolved = false
+      let retryCount = 0
+      const MAX_RETRIES = 3
+      const RETRY_DELAY_MS = 300
 
       const cleanup = () => {
-        window.clearTimeout(timer)
-        video.removeEventListener('ended', onEnded)
-        video.removeEventListener('error', onEnded)
+        window.clearTimeout(fallbackTimer)
+        window.clearTimeout(retryTimer)
+        video.removeEventListener('playing', onPlaying)
+        video.removeEventListener('error', onError)
       }
 
-      const onEnded = () => {
-        cleanup()
-        resolve()
+      const startCoverTimer = () => {
+        window.setTimeout(() => {
+          if (resolved) return
+          resolved = true
+          cleanup()
+          resolve()
+        }, COVER_MS)
       }
 
-      video.addEventListener('ended', onEnded, { once: true })
-      video.addEventListener('error', onEnded, { once: true })
-
-      video.play().catch(() => {
+      const fallbackTimer = window.setTimeout(() => {
+        if (resolved) return
+        resolved = true
         cleanup()
         resolve()
-      })
+      }, COVER_MS + 2600)
+
+      let retryTimer = 0
+
+      const onPlaying = () => {
+        if (resolved) return
+        cleanup()
+        startCoverTimer()
+      }
+
+      const onError = () => {
+        if (resolved) return
+        attemptRecovery()
+      }
+
+      const attemptPlay = () => {
+        if (resolved) return
+        video.play().catch(() => {
+          if (resolved) return
+          attemptRecovery()
+        })
+      }
+
+      const attemptRecovery = () => {
+        if (resolved) return
+        if (retryCount >= MAX_RETRIES) return
+        retryCount++
+        video.load()
+        retryTimer = window.setTimeout(() => {
+          if (!resolved) attemptPlay()
+        }, RETRY_DELAY_MS)
+      }
+
+      video.addEventListener('playing', onPlaying, { once: true })
+      video.addEventListener('error', onError)
+
+      if (!video.paused && video.readyState >= 3) {
+        cleanup()
+        startCoverTimer()
+        return
+      }
+
+      attemptPlay()
     })
   },
 }

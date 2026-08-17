@@ -36,17 +36,25 @@ export function TransitionRoutes({ children }: TransitionRoutesProps) {
       return
     }
 
-    /* If CommandNavItem already started the transition externally,
-       just mount the destination — the video is already playing. */
     if (transitionBus.consumeExternallyStarted()) {
       transitioning.current = true
       flushSync(() => {
         setDisplayed(location)
       })
       window.scrollTo(0, 0)
-      transitionBus.play(() => {
+
+      const video = document.getElementById('transition-video') as HTMLVideoElement | null
+      if (video) {
+        const done = () => {
+          transitioning.current = false
+          video.removeEventListener('ended', done)
+          video.removeEventListener('error', done)
+        }
+        video.addEventListener('ended', done, { once: true })
+        video.addEventListener('error', done, { once: true })
+      } else {
         transitioning.current = false
-      })
+      }
       return
     }
 

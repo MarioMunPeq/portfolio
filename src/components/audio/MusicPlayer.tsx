@@ -300,41 +300,24 @@ export function MusicPlayer() {
   }, [ensureAudioGraph])
 
   /* ================================================================ */
-  /*  Auto-play Phantom ONCE on first boot (no route dependency)        */
+  /*  Auto-play Phantom ONCE after boot, on first user interaction.     */
+  /*  Chrome blocks non-muted audio autoplay without user activation,  */
+  /*  so we wait for the first pointer/keydown after boot.              */
   /*  Module-level guard survives StrictMode and route changes.         */
   /* ================================================================ */
 
   useEffect(() => {
     if (sessionDispatched || !booted) return
     sessionDispatched = true
-    loadAndPlay(1, true)
-  }, [booted, loadAndPlay])
 
-  /* ================================================================ */
-  /*  Retry playback on first user interaction if autoplay was blocked  */
-  /* ================================================================ */
-
-  useEffect(() => {
-    if (!autoplayBlocked) return
-    const retry = async () => {
-      const a = audioRef.current
-      if (!a) return
-      await ensureAudioGraph()
-      try {
-        await a.play()
-        setIsPlaying(true)
-        isPlayingRef.current = true
-        setAutoplayBlocked(false)
-      } catch { /* still blocked — will retry on next interaction */ }
-    }
-    const onInteract = () => { retry() }
-    document.addEventListener('pointerdown', onInteract)
-    document.addEventListener('keydown', onInteract)
-    return () => {
+    const onInteract = async () => {
       document.removeEventListener('pointerdown', onInteract)
       document.removeEventListener('keydown', onInteract)
+      await loadAndPlay(1, true)
     }
-  }, [autoplayBlocked, ensureAudioGraph])
+    document.addEventListener('pointerdown', onInteract)
+    document.addEventListener('keydown', onInteract)
+  }, [booted, loadAndPlay])
 
   /* ================================================================ */
   /*  Controls                                                         */
