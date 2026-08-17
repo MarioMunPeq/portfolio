@@ -1,4 +1,6 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route } from 'react-router-dom'
+import { TransitionRoutes } from './components/transition/TransitionRoutes'
+import { VideoTransition } from './components/transition/VideoTransition'
 import { Layout } from './components/layout/Layout'
 import { ScrollProvider } from './components/layout/ScrollProvider'
 import { Home } from './pages/Home'
@@ -21,7 +23,7 @@ function App() {
     <BrowserRouter basename={APP_BASE}>
       <ScrollProvider>
         <Layout>
-          <Routes>
+          <TransitionRoutes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/projects" element={<Projects />} />
@@ -30,8 +32,9 @@ function App() {
             <Route path="/proyectos/:slug" element={<ProjectDetail />} />
             <Route path="/404" element={<NotFound />} />
             <Route path="*" element={<NotFound />} />
-          </Routes>
+          </TransitionRoutes>
         </Layout>
+        <VideoTransition />
       </ScrollProvider>
     </BrowserRouter>
   )
