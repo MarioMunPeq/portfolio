@@ -15,25 +15,42 @@ interface CommandNavItemProps {
   label: string
   sub: string
   path: string
+  animDelay?: number
+  rotation?: number
+  offsetX?: number
 }
 
 /**
- * item de la navegacion de comandos del menu principal: tarjeta angular
- * sesgada con icono de boton de mando (△ □ ○ ✕ ※), label y subtitulo.
- * El `li` declara las variables --off/--rot (ver .hero-command-item en
- * tokens.css); la tarjeta hereda el offset/rotacion por item y se inclina
- * a la izquierda con un glitch-slice al hacer hover. Navegable por teclado
- * (Link) y dispara el cursor decorativo.
+ * Item de navegación del menú principal — placa angular con icono de
+ * mando (△ □ ○ ✕), label y subtítulo. Cada item recibe rotación y
+ * offset individuales para composición caótica tipo Persona 5.
  */
-export function CommandNavItem({ icon, label, sub, path }: CommandNavItemProps) {
+export function CommandNavItem({
+  icon,
+  label,
+  sub,
+  path,
+  animDelay = 0,
+  rotation = 0,
+  offsetX = 0,
+}: CommandNavItemProps) {
   const { glyph, colorClass } = ICONS[icon]
 
   return (
-    <li className="hero-command-item">
+    <li
+      className="hero-command-item"
+      style={
+        {
+          '--off': `${offsetX}px`,
+          '--rot': `${rotation}deg`,
+        } as React.CSSProperties
+      }
+    >
       <Link
         to={path}
         data-cursor="open"
-        className="hero-cmd group"
+        className="hero-cmd metro-menu-btn group"
+        style={{ animationDelay: `${animDelay}s` }}
       >
         <span aria-hidden="true" className="hero-cmd-track" />
         <span

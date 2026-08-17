@@ -1,117 +1,94 @@
 import { Screen } from '../components/transition/Screen'
 import { SystemLabel } from '../components/shared/SystemLabel'
 import { Wordmark } from '../components/ui/Wordmark'
-import { DiamondMarker } from '../components/shared/DiamondMarker'
-import { HazardStripe } from '../components/hero/HazardStripe'
-import { GhostBgWord } from '../components/hero/GhostBgWord'
-import { InkBlot } from '../components/hero/InkBlot'
-import { HalftoneOverlay } from '../components/hero/HalftoneOverlay'
-import { SpeedLines } from '../components/hero/SpeedLines'
-import { Floaters } from '../components/hero/Floaters'
-import { ScanlineOverlay } from '../components/hero/ScanlineOverlay'
 import { CommandNavItem } from '../components/hero/CommandNavItem'
 import { HERO_COMMANDS } from '../components/hero/hero-commands'
-import { profile } from '../data/profile'
 
-const nameParts = profile.name.trim().split(/\s+/)
-const nameLine1 = nameParts[0] ?? ''
-const nameLine2 = nameParts[1] ?? ''
-const nameLine3 = nameParts.slice(2).join(' ')
-
-const OUTLINE_BLACK = `-2px -2px 0 var(--color-bg-hero), 2px -2px 0 var(--color-bg-hero), -2px 2px 0 var(--color-bg-hero), 2px 2px 0 var(--color-bg-hero)`
-const OUTLINE_RED = `-2px -2px 0 var(--color-accent), 2px -2px 0 var(--color-accent), -2px 2px 0 var(--color-accent), 2px 2px 0 var(--color-accent)`
-
-/** Hora de inicio de sesion (fija durante la carga de la pantalla). */
 const SESSION_TIME = new Date().toTimeString().slice(0, 8)
 
+const MENU_CHAOS = [
+  { rotation: -2, offsetX: 10 },
+  { rotation: 1.5, offsetX: -5 },
+  { rotation: -1, offsetX: 16 },
+  { rotation: 2, offsetX: 2 },
+]
+
 /**
- * Pantalla principal = MENu PRINCIPAL del sistema. Reconstruccion fiel de la
- * referencia persona-hero.html como componentes React: overlays de textura
- * (halftone, ink blot, speed-lines, floaters, scanlines), palabra fantasma,
- * hazard stripe, topbar de sistema, bloque de titulo en 3 lineas, navegacion
- * de comandos △ □ ○ ✕ con glitch-slice al hover y footer con el disparador
- * "ENTRAR AL SISTEMA". Esta pantalla no monta el HUD global: trae su propia
- * topbar. La pantalla entera es fija y no hace scroll.
+ * Menu principal estilo Persona 5 — fondo de metro con video,
+ * sin presentacion personal, navegacion angular a la izquierda
+ * con entrada escalonada.
  */
 export function Home() {
   return (
-    <Screen className="bg-bg-hero text-paper">
+    <Screen className="bg-ink text-paper">
       <section className="relative h-dvh w-full overflow-hidden">
-        {/* Overlays de fondo del sistema (solo menu principal) */}
-        <HalftoneOverlay />
-        <InkBlot />
-        <SpeedLines />
-        <Floaters />
-        <ScanlineOverlay />
-        <GhostBgWord>{profile.hero.ghost}</GhostBgWord>
+        {/* Video de metro como fondo */}
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
+          aria-hidden="true"
+        >
+          <source
+            src={`${import.meta.env.BASE_URL}videos/metro-background.mp4`}
+            type="video/mp4"
+          />
+        </video>
+
+        {/* Capa de oscuridad sutil para legibilidad de la UI */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-[1]"
+          style={{
+            background:
+              'linear-gradient(90deg, rgba(10,10,10,0.75) 0%, rgba(10,10,10,0.45) 40%, rgba(10,10,10,0.15) 70%, transparent 100%)',
+          }}
+        />
+
+        {/* Viñeta para profundidad */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-[1]"
+          style={{
+            background:
+              'radial-gradient(ellipse at 60% 50%, transparent 30%, rgba(10,10,10,0.5) 100%)',
+          }}
+        />
+
+        {/* Scanlines sutiles */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-[2] bg-scanlines [mix-blend-mode:overlay]"
+        />
 
         {/* Marco superior */}
-        <HazardStripe />
-        <div className="hero-topbar absolute inset-x-0 top-[14px] z-40 flex items-center justify-between gap-4 px-6 py-3.5 md:px-10">
+        <div className="absolute inset-x-0 top-0 z-40 flex items-center justify-between gap-4 px-6 py-3.5 md:px-10">
           <Wordmark static />
           <span className="hidden truncate text-center text-label font-medium uppercase tracking-[0.15em] text-paper/70 sm:block">
             SESIoN {SESSION_TIME}
           </span>
           <SystemLabel className="text-paper/60 tracking-[0.15em]">
-            {profile.branding.system.split(' ')[0]} {profile.branding.version}
+            SISTEMA V.2026
           </SystemLabel>
         </div>
 
-        {/* Bloque de titulo */}
-        <div className="hero-title-block absolute left-5 top-[22%] z-10 max-w-[calc(100%-2.5rem)] lg:left-[60px] lg:top-[38%] lg:max-w-none">
-          <p className="hero-eyebrow mb-3.5 flex items-center gap-2 font-sans text-[13px] font-bold uppercase tracking-[0.2em] text-accent">
-            <DiamondMarker size={7} />
-            {profile.hero.eyebrow}
-          </p>
-
-          <h1
-            className="hero-h1 font-display uppercase leading-[1.08] tracking-[0.005em]"
-            style={{ fontSize: 'clamp(2.75rem, 5vw, 6rem)' }}
-          >
-            <span className="block">
-              <span
-                className="inline-block"
-                style={{
-                  transform: 'rotate(-1.5deg)',
-                  textShadow: `${OUTLINE_BLACK}, 5px 5px 0 var(--color-accent-deep)`,
-                }}
-              >
-                {nameLine1}
-              </span>
-            </span>
-            <span
-              className="block"
-              style={{
-                marginTop: 6,
-                transform: 'rotate(1deg) translateX(14px)',
-                textShadow: `${OUTLINE_RED}, 5px 5px 0 var(--color-bg-hero)`,
-              }}
-            >
-              {nameLine2}
-            </span>
-            <span className="block" style={{ marginTop: 10 }}>
-              <span
-                className="inline-block bg-accent px-[18px] pb-[6px] pt-[2px] text-ink [clip-path:polygon(0_0,100%_0,96%_100%,4%_100%)] [box-shadow:6px_6px_0_var(--color-paper)]"
-                style={{ transform: 'skew(-6deg) rotate(-1deg)' }}
-              >
-                {nameLine3}
-              </span>
-            </span>
-          </h1>
-
-          <p className="hero-tagline mt-7 max-w-[380px] text-[13px] leading-relaxed tracking-[0.05em] text-paper/75">
-            {profile.tagline}
-          </p>
-        </div>
-
-        {/* Navegacion de comandos */}
+        {/* Navegacion de comandos — columna izquierda compacta */}
         <nav
           aria-label="Menu principal del portfolio"
-          className="hero-command-nav absolute bottom-[14%] left-1/2 z-20 w-[min(78vw,26rem)] -translate-x-1/2 lg:bottom-auto lg:left-auto lg:right-[1.5%] lg:top-1/2 lg:w-[min(44vw,640px)] lg:pr-20 xl:w-[min(46vw,800px)] lg:-translate-y-1/2 lg:translate-x-0"
+          className="absolute left-[4%] top-1/2 z-20 -translate-y-1/2 sm:left-[5%] lg:left-[6%]"
         >
-          <ol className="flex flex-col gap-2">
-            {HERO_COMMANDS.map((command) => (
-              <CommandNavItem key={command.id} {...command} />
+          <ol className="flex w-[min(82vw,380px)] flex-col gap-3">
+            {HERO_COMMANDS.map((command, i) => (
+              <CommandNavItem
+                key={command.id}
+                {...command}
+                animDelay={i * 0.1}
+                rotation={MENU_CHAOS[i].rotation}
+                offsetX={MENU_CHAOS[i].offsetX}
+              />
             ))}
           </ol>
         </nav>

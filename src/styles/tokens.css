@@ -247,42 +247,29 @@
 }
 
 /* Tarjeta de comando: placa angular sesgada con offset/rotacion por item.
-   El `li` (hero-command-item) declara las variables --off/--rot, que la
-   tarjeta (hero-cmd) consume en su transform. */
-@media (min-width: 1024px) {
-  .hero-command-item:nth-child(1) {
-    --off: 40px;
-    --rot: -2.5deg;
-  }
-  .hero-command-item:nth-child(2) {
-    --off: 0px;
-    --rot: 2deg;
-  }
-  .hero-command-item:nth-child(3) {
-    --off: 55px;
-    --rot: -2deg;
-  }
-  .hero-command-item:nth-child(4) {
-    --off: 15px;
-    --rot: 2.5deg;
-  }
-  .hero-command-item:nth-child(5) {
-    --off: 30px;
-    --rot: -2.25deg;
-  }
+   Las variables --off/--rot se inyectan via inline style en el <li>;
+   la tarjeta (.hero-cmd) solo aplica el skew y la animacion de entrada. */
+.hero-command-item {
+  transform: translateX(var(--off, 0px)) rotate(var(--rot, 0deg));
+  transition: transform 0.15s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Hover del li: exagera rotacion + desplaza cuando el hijo se hoverea */
+.hero-command-item:has(.metro-menu-btn:hover) {
+  transform: translateX(calc(var(--off, 0px) - 6px)) rotate(calc(var(--rot, 0deg) * 1.4));
 }
 
 .hero-cmd {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   width: 100%;
-  padding: 22px 64px 22px 40px;
+  padding: 26px 44px 26px 22px;
   background-color: var(--color-paper);
-  clip-path: polygon(0 12%, 6% 0, 94% 0, 100% 50%, 94% 100%, 6% 100%, 0 88%);
-  transform: skewX(-11deg) translateX(var(--off, 0px)) rotate(var(--rot, 0deg));
-  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  clip-path: polygon(0 18%, 5% 0, 93% 0, 100% 50%, 93% 100%, 5% 100%, 0 82%);
+  transform: skewX(-11deg);
+  transition: transform 0.15s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Marco angular sin `border`: la capa exterior (hero-cmd) pinta el borde
@@ -293,8 +280,8 @@
   position: absolute;
   inset: 2px;
   background-color: var(--color-bg-hero);
-  clip-path: polygon(0 12%, 6% 0, 94% 0, 100% 50%, 94% 100%, 6% 100%, 0 88%);
-  transition: background-color 0.2s;
+  clip-path: polygon(0 18%, 5% 0, 93% 0, 100% 50%, 93% 100%, 5% 100%, 0 82%);
+  transition: background-color 0.12s;
 }
 
 /* El contenido debe quedar por encima del track (ambos comparten caja). */
@@ -305,12 +292,13 @@
 
 .hero-cmd:hover,
 .hero-cmd:focus-visible {
-  transform: skewX(-11deg) translateX(-18px) rotate(0deg) scale(1.03);
+  transform: skewX(-11deg) translateX(-10px) scale(1.04);
 }
 
 .hero-cmd:hover .hero-cmd-track,
 .hero-cmd:focus-visible .hero-cmd-track {
   background-color: var(--color-accent);
+  transition-duration: 0.1s;
 }
 
 /* El icono de boton (△ □ ○ ✕) conserva su color de identidad en hover:
@@ -319,6 +307,47 @@
 .hero-cmd:hover .hero-btn-icon,
 .hero-cmd:focus-visible .hero-btn-icon {
   border-color: currentColor;
+}
+
+/* ============================================================
+   Metro menu — entrada escalonada desde la izquierda
+   ============================================================ */
+
+@keyframes metro-menu-enter {
+  from {
+    opacity: 0;
+    transform: skewX(-11deg) translateX(-30px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: skewX(-11deg) translateX(0) scale(1);
+  }
+}
+
+.metro-menu-btn {
+  animation: metro-menu-enter 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Hover: snap angular con acento rojo */
+.metro-menu-btn:hover,
+.metro-menu-btn:focus-visible {
+  transform: skewX(-11deg) translateX(-10px) scale(1.04);
+}
+
+.metro-menu-btn:hover .hero-cmd-track,
+.metro-menu-btn:focus-visible .hero-cmd-track {
+  background-color: var(--color-accent);
+}
+
+.metro-menu-btn:hover .hero-btn-icon,
+.metro-menu-btn:focus-visible .hero-btn-icon {
+  border-color: currentColor;
+}
+
+/* Click: snap contundente */
+.metro-menu-btn:active {
+  transform: skewX(-11deg) translateX(-2px) scale(0.98) !important;
+  transition-duration: 0.05s;
 }
 
 /* Sello de estrella por categoria (pantalla de carga): pasa de estrella
@@ -1586,6 +1615,316 @@ html.lenis body {
   stroke-dasharray: 1;
   animation: skill-line-draw 0.6s cubic-bezier(0.76, 0, 0.24, 1) var(--skill-line-d, 0s) both;
 }
+
+/* ================================================================
+   MUSIC PLAYER (BGM)
+   ================================================================ */
+
+/* --- Positioning wrapper (fixed bottom-left) --- */
+.bgm-player {
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  z-index: 55;
+  font-family: var(--font-p5menu);
+  animation: bgm-snap-in 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+  user-select: none;
+}
+
+@keyframes bgm-snap-in {
+  from { opacity: 0; transform: translateY(12px) skewX(-3deg); }
+  to   { opacity: 1; transform: translateY(0) skewX(0); }
+}
+
+/* --- Red accent line (top of bar) --- */
+.bgm-accent-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: var(--color-accent);
+  transform-origin: left;
+  z-index: 2;
+}
+
+/* --- Collapsed bar (always visible) --- */
+.bgm-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 52px;
+  padding: 0 18px;
+  background: rgba(10, 2, 14, 0.92);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: none;
+  clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%, 0 8px);
+  cursor: pointer;
+  font-family: var(--font-p5menu);
+  color: var(--color-paper);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  transition: background 0.15s;
+}
+.bgm-bar:hover {
+  background: rgba(10, 2, 14, 0.97);
+}
+
+.bgm-label {
+  font-family: var(--font-p5menu);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.bgm-track-num {
+  font-family: var(--font-p5menu);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  opacity: 0.5;
+  cursor: pointer;
+  transition: opacity 0.12s;
+}
+.bgm-track-num:hover {
+  opacity: 1;
+}
+
+.bgm-title {
+  font-family: var(--font-p5menu);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bgm-mini-play {
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.12s;
+  margin-left: auto;
+}
+.bgm-mini-play:hover {
+  opacity: 1;
+}
+
+/* --- Visualizer (4 bars) --- */
+.bgm-viz {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 18px;
+  margin-left: 6px;
+}
+/* Bars driven by Web Audio API AnalyserNode via RAF — heights set inline */
+.bgm-viz-bar {
+  width: 4px;
+  min-height: 3px;
+  height: 3px;
+  background: var(--color-accent);
+  border-radius: 1px;
+}
+
+/* --- Expanded panel --- */
+.bgm-expanded {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 18px 14px;
+  width: 300px;
+  background: rgba(10, 2, 14, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 3px solid var(--color-accent);
+  clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%, 0 8px);
+  animation: bgm-panel-enter 0.18s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes bgm-panel-enter {
+  from { opacity: 0; transform: translateY(6px) scaleY(0.96); }
+  to   { opacity: 1; transform: translateY(0) scaleY(1); }
+}
+
+.bgm-expanded-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* --- Controls row --- */
+.bgm-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bgm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--color-paper);
+  font-size: 13px;
+  cursor: pointer;
+  clip-path: polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px);
+  transition: background 0.1s, border-color 0.1s;
+}
+.bgm-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--color-accent);
+}
+.bgm-btn:active {
+  transform: scale(0.95);
+}
+
+.bgm-btn--play {
+  width: 40px;
+  height: 40px;
+  font-size: 15px;
+}
+
+.bgm-btn--sm {
+  width: 24px;
+  height: 24px;
+  font-size: 11px;
+}
+
+.bgm-controls .bgm-title {
+  margin-left: auto;
+  font-size: 12px;
+}
+
+/* --- Progress bar --- */
+.bgm-progress {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  cursor: pointer;
+}
+.bgm-progress-track {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.12);
+}
+.bgm-progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--color-accent);
+  transition: width 0.1s linear;
+}
+
+.bgm-time {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  opacity: 0.5;
+}
+
+/* --- Volume --- */
+.bgm-vol-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bgm-vol-track {
+  position: relative;
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+}
+.bgm-vol-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--color-paper);
+  transition: width 0.08s linear;
+}
+
+.bgm-vol-pct {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  opacity: 0.5;
+  min-width: 30px;
+  text-align: right;
+}
+
+/* --- Track selector dropdown --- */
+.bgm-selector {
+  position: absolute;
+  bottom: 56px;
+  left: 0;
+  width: 300px;
+  background: rgba(10, 2, 14, 0.97);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%, 0 8px);
+  animation: bgm-selector-enter 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+  z-index: 10;
+}
+
+@keyframes bgm-selector-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.bgm-selector-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  color: var(--color-paper);
+  font-family: var(--font-p5menu);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+}
+.bgm-selector-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+.bgm-selector-item--active {
+  background: rgba(200, 16, 46, 0.12);
+}
+.bgm-selector-item--active .bgm-selector-title {
+  color: var(--color-accent);
+}
+
+.bgm-selector-num {
+  font-size: 10px;
+  opacity: 0.4;
+  min-width: 18px;
+}
+
+.bgm-selector-title {
+  flex: 1;
+}
+
+.bgm-selector-now {
+  font-size: 10px;
+  color: var(--color-accent);
+}
+
+/* ================================================================
+   END MUSIC PLAYER
+   ================================================================ */
 
 /* --- Reduced motion: eliminar movimiento no esencial (spec §9) --- */
 @media (prefers-reduced-motion: reduce) {

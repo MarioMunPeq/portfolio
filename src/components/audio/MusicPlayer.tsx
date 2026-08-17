@@ -1,0 +1,535 @@
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { TRACKS, DEFAULT_VOLUME } from '../../data/music'
+
+/* ------------------------------------------------------------------ */
+/*  Helpers                                                            */
+/* ------------------------------------------------------------------ */
+
+function formatTime(s: number): string {
+  if (!isFinite(s) || s < 0 || s !== s) return '0:00'
+  const m = Math.floor(s / 60)
+  const sec = Math.floor(s % 60)
+  return `${m}:${sec.toString().padStart(2, '0')}`
+}
+
+function trackUrl(file: string): string {
+  return `${import.meta.env.BASE_URL}audio/${encodeURIComponent(file)}`
+}
+
+/* ------------------------------------------------------------------ */
+/*  Track Selector                                                     */
+/* ------------------------------------------------------------------ */
+
+interface SelectorProps {
+  current: number
+  onSelect: (i: number) => void
+  onClose: () => void
+}
+
+function TrackSelector({ current, onSelect, onClose }: SelectorProps) {
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const onMouse = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) onClose()
+    }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    document.addEventListener('mousedown', onMouse)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('mousedown', onMouse)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [onClose])
+
+  return (
+    <div ref={ref} className="bgm-selector" role="listbox" aria-label="Select BGM">
+      {TRACKS.map((t, i) => (
+        <button
+          key={t.file}
+          role="option"
+          aria-selected={i === current}
+          className={`bgm-selector-item${i === current ? ' bgm-selector-item--active' : ''}`}
+          onClick={() => { onSelect(i); onClose() }}
+        >
+          <span className="bgm-selector-num">{String(i + 1).padStart(2, '0')}</span>
+          <span className="bgm-selector-title">{t.title}</span>
+          {i === current && <span className="bgm-selector-now">▶</span>}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  Visualizer — 4 bars driven by Web Audio API AnalyserNode           */
+/* ------------------------------------------------------------------ */
+
+function Visualizer({ analyser }: { analyser: AnalyserNode | null }) {
+  const barsRef = useRef<HTMLSpanElement[]>([])
+  const rafRef = useRef(0)
+  const reducedMotion = useRef(
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  ).current
+
+  useEffect(() => {
+    if (!analyser || reducedMotion) return
+    const bufLen = analyser.frequencyBinCount
+    const data = new Uint8Array(bufLen)
+
+    const tick = () => {
+      analyser.getByteFrequencyData(data)
+      const bands = [
+        Math.floor(bufLen * 0.05),
+        Math.floor(bufLen * 0.15),
+        Math.floor(bufLen * 0.30),
+        Math.floor(bufLen * 0.50),
+      ]
+      for (let i = 0; i < 4; i++) {
+        const el = barsRef.current[i]
+        if (!el) continue
+        const start = Math.max(0, bands[i] - 2)
+        const end = Math.min(bufLen - 1, bands[i] + 2)
+        let sum = 0
+        for (let j = start; j <= end; j++) sum += data[j]
+        const avg = sum / (end - start + 1)
+        const h = 3 + (avg / 255) * 15
+        el.style.height = `${h}px`
+      }
+      rafRef.current = requestAnimationFrame(tick)
+    }
+    rafRef.current = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(rafRef.current)
+  }, [analyser, reducedMotion])
+
+  useEffect(() => {
+    if (analyser && !reducedMotion) return
+    for (let i = 0; i < 4; i++) {
+      const el = barsRef.current[i]
+      if (el) el.style.height = '3px'
+    }
+  }, [analyser, reducedMotion])
+
+  return (
+    <div className="bgm-viz" aria-hidden="true">
+      {[0, 1, 2, 3].map((i) => (
+        <span
+          key={i}
+          className="bgm-viz-bar"
+          ref={(el) => { barsRef.current[i] = el! }}
+        />
+      ))}
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  MusicPlayer                                                        */
+/* ------------------------------------------------------------------ */
+
+export function MusicPlayer() {
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+
+  /* Web Audio API — created once, analyser stored in state for re-render */
+  const ctxRef = useRef<AudioContext | null>(null)
+  const sourceRef = useRef<MediaElementAudioSourceNode | null>(null)
+  const [analyser, setAnalyser] = useState<AnalyserNode | null>(null)
+
+  /* Imperative UI refs */
+  const progressFillRef = useRef<HTMLDivElement>(null)
+  const timeLabelRef = useRef<HTMLSpanElement>(null)
+  const volFillRef = useRef<HTMLDivElement>(null)
+
+  /* Reactive state */
+  const [trackIndex, setTrackIndex] = useState(0)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [volume, setVolume] = useState(DEFAULT_VOLUME)
+  const [muted, setMuted] = useState(false)
+  const [expanded, setExpanded] = useState(false)
+  const [duration, setDuration] = useState(0)
+  const [selectorOpen, setSelectorOpen] = useState(false)
+
+  /* Ref mirrors (avoid stale closures) */
+  const isPlayingRef = useRef(false)
+  const volumeRef = useRef(DEFAULT_VOLUME)
+  const mutedRef = useRef(false)
+  const trackIndexRef = useRef(0)
+
+  /* ================================================================ */
+  /*  AudioContext + Web Audio graph (created once on mount)           */
+  /* ================================================================ */
+
+  useEffect(() => {
+    const a = audioRef.current
+    if (!a) return
+
+    /* Create the AudioContext (starts suspended until user gesture) */
+    try {
+      const ctx = new AudioContext()
+      const src = ctx.createMediaElementSource(a)
+      const analyserNode = ctx.createAnalyser()
+      analyserNode.fftSize = 128
+      analyserNode.smoothingTimeConstant = 0.6
+      src.connect(analyserNode)
+      analyserNode.connect(ctx.destination)
+      ctxRef.current = ctx
+      sourceRef.current = src
+      setAnalyser(analyserNode)
+    } catch {
+      /* Web Audio not supported or already connected */
+    }
+
+    /* Set initial source */
+    a.volume = DEFAULT_VOLUME
+    a.preload = 'metadata'
+    a.src = trackUrl(TRACKS[0].file)
+
+    return () => {
+      a.pause()
+      try { sourceRef.current?.disconnect() } catch { /* ignore */ }
+      try { setAnalyser(null) } catch { /* ignore */ }
+      try { ctxRef.current?.close() } catch { /* ignore */ }
+      sourceRef.current = null
+      ctxRef.current = null
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  /* ================================================================ */
+  /*  Resume AudioContext on user gesture                              */
+  /* ================================================================ */
+
+  const resumeContext = useCallback(async () => {
+    const ctx = ctxRef.current
+    if (ctx && ctx.state === 'suspended') {
+      try { await ctx.resume() } catch { /* ignore */ }
+    }
+  }, [])
+
+  /* ================================================================ */
+  /*  Audio event handlers                                             */
+  /* ================================================================ */
+
+  useEffect(() => {
+    const a = audioRef.current
+    if (!a) return
+
+    const onMeta = () => setDuration(a.duration)
+    const onTime = () => {
+      if (progressFillRef.current && isFinite(a.duration) && a.duration > 0) {
+        progressFillRef.current.style.width =
+          `${(a.currentTime / a.duration) * 100}%`
+      }
+      if (timeLabelRef.current) {
+        timeLabelRef.current.textContent = formatTime(a.currentTime)
+      }
+    }
+    const onEnd = () => {
+      const next = (trackIndexRef.current + 1) % TRACKS.length
+      loadAndPlay(next, true)
+    }
+    const onErr = (e: Event) => {
+      console.warn('[BGM] Audio error:', (e.target as HTMLAudioElement)?.error)
+    }
+
+    a.addEventListener('loadedmetadata', onMeta)
+    a.addEventListener('timeupdate', onTime)
+    a.addEventListener('ended', onEnd)
+    a.addEventListener('error', onErr)
+
+    return () => {
+      a.removeEventListener('loadedmetadata', onMeta)
+      a.removeEventListener('timeupdate', onTime)
+      a.removeEventListener('ended', onEnd)
+      a.removeEventListener('error', onErr)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  /* ================================================================ */
+  /*  Core: load a track and optionally auto-play                      */
+  /* ================================================================ */
+
+  const loadAndPlay = useCallback((index: number, shouldPlay: boolean) => {
+    const a = audioRef.current
+    if (!a) return
+    const prevVol = volumeRef.current
+    const wasMuted = mutedRef.current
+
+    a.pause()
+    a.src = trackUrl(TRACKS[index].file)
+    a.load()
+
+    trackIndexRef.current = index
+    setTrackIndex(index)
+    setDuration(0)
+    if (progressFillRef.current) progressFillRef.current.style.width = '0%'
+    if (timeLabelRef.current) timeLabelRef.current.textContent = '0:00'
+
+    const onReady = async () => {
+      a.removeEventListener('canplay', onReady)
+      a.volume = wasMuted ? 0 : prevVol
+      if (shouldPlay) {
+        try {
+          await a.play()
+          setIsPlaying(true)
+          isPlayingRef.current = true
+        } catch {
+          setIsPlaying(false)
+          isPlayingRef.current = false
+        }
+      }
+    }
+    a.addEventListener('canplay', onReady)
+  }, [])
+
+  /* ================================================================ */
+  /*  Controls                                                         */
+  /* ================================================================ */
+
+  const togglePlay = useCallback(async () => {
+    await resumeContext()
+    const a = audioRef.current
+    if (!a) return
+
+    if (isPlayingRef.current) {
+      a.pause()
+      setIsPlaying(false)
+      isPlayingRef.current = false
+    } else {
+      try {
+        await a.play()
+        setIsPlaying(true)
+        isPlayingRef.current = true
+      } catch (err) {
+        console.warn('[BGM] Play blocked:', err)
+      }
+    }
+  }, [resumeContext])
+
+  const nextTrack = useCallback(() => {
+    loadAndPlay((trackIndexRef.current + 1) % TRACKS.length, isPlayingRef.current)
+  }, [loadAndPlay])
+
+  const prevTrack = useCallback(() => {
+    loadAndPlay(
+      (trackIndexRef.current - 1 + TRACKS.length) % TRACKS.length,
+      isPlayingRef.current,
+    )
+  }, [loadAndPlay])
+
+  const selectTrack = useCallback((i: number) => {
+    loadAndPlay(i, true)
+  }, [loadAndPlay])
+
+  const toggleMute = useCallback(() => {
+    const a = audioRef.current
+    if (!a) return
+    if (mutedRef.current) {
+      a.muted = false
+      mutedRef.current = false
+      setMuted(false)
+    } else {
+      a.muted = true
+      mutedRef.current = true
+      setMuted(true)
+    }
+  }, [])
+
+  const seek = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const a = audioRef.current
+    if (!a || !isFinite(a.duration) || a.duration <= 0) return
+    const rect = e.currentTarget.getBoundingClientRect()
+    const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
+    a.currentTime = pct * a.duration
+    /* Immediate visual feedback */
+    if (progressFillRef.current) {
+      progressFillRef.current.style.width = `${pct * 100}%`
+    }
+    if (timeLabelRef.current) {
+      timeLabelRef.current.textContent = formatTime(pct * a.duration)
+    }
+  }, [])
+
+  const changeVolume = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
+    volumeRef.current = pct
+    setVolume(pct)
+    const a = audioRef.current
+    if (a && !mutedRef.current) a.volume = pct
+  }, [])
+
+  /* ================================================================ */
+  /*  Keyboard shortcuts                                               */
+  /* ================================================================ */
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement).tagName
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
+      if (e.key === ' ' || e.code === 'Space') {
+        e.preventDefault()
+        togglePlay()
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault()
+        nextTrack()
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault()
+        prevTrack()
+      }
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [togglePlay, nextTrack, prevTrack])
+
+  /* ================================================================ */
+  /*  Volume fill bar imperative update                                */
+  /* ================================================================ */
+
+  useEffect(() => {
+    if (volFillRef.current) {
+      volFillRef.current.style.width = `${(muted ? 0 : volume) * 100}%`
+    }
+  }, [volume, muted])
+
+  /* ================================================================ */
+  /*  Render                                                           */
+  /* ================================================================ */
+
+  const t = TRACKS[trackIndex]
+
+  return (
+    <>
+      <audio ref={audioRef} preload="metadata" />
+
+      <div className="bgm-player" aria-label="BGM Player">
+        <div className="bgm-accent-line" aria-hidden="true" />
+
+        {expanded && (
+          <div className="bgm-expanded">
+            <div className="bgm-expanded-head">
+              <span className="bgm-label">BGM SYSTEM</span>
+              <span
+                className="bgm-track-num"
+                role="button"
+                tabIndex={0}
+                onClick={() => setSelectorOpen((v) => !v)}
+                onKeyDown={(e) => { if (e.key === 'Enter') setSelectorOpen((v) => !v) }}
+              >
+                {String(trackIndex + 1).padStart(2, '0')} / {String(TRACKS.length).padStart(2, '0')}
+              </span>
+            </div>
+
+            <div className="bgm-controls">
+              <button className="bgm-btn" onClick={prevTrack} aria-label="Previous track">
+                <span className="bgm-btn-icon">◀</span>
+              </button>
+              <button className="bgm-btn bgm-btn--play" onClick={togglePlay} aria-label={isPlaying ? 'Pause' : 'Play'}>
+                <span className="bgm-btn-icon">{isPlaying ? '❚❚' : '▶'}</span>
+              </button>
+              <button className="bgm-btn" onClick={nextTrack} aria-label="Next track">
+                <span className="bgm-btn-icon">▶</span>
+              </button>
+              <span className="bgm-title">{t.title}</span>
+            </div>
+
+            <div
+              className="bgm-progress"
+              onMouseDown={seek}
+              role="slider"
+              aria-label="Track progress"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              tabIndex={0}
+              onKeyDown={(e) => {
+                const a = audioRef.current
+                if (!a || !isFinite(a.duration)) return
+                if (e.key === 'ArrowRight') a.currentTime = Math.min(a.duration, a.currentTime + 5)
+                if (e.key === 'ArrowLeft') a.currentTime = Math.max(0, a.currentTime - 5)
+              }}
+            >
+              <div className="bgm-progress-track" />
+              <div ref={progressFillRef} className="bgm-progress-fill" />
+            </div>
+            <div className="bgm-time">
+              <span ref={timeLabelRef}>0:00</span>
+              <span>{formatTime(duration)}</span>
+            </div>
+
+            <div className="bgm-vol-row">
+              <button className="bgm-btn bgm-btn--sm" onClick={toggleMute} aria-label={muted ? 'Unmute' : 'Mute'}>
+                {muted ? '🔇' : '🔊'}
+              </button>
+              <div
+                className="bgm-vol-track"
+                onMouseDown={changeVolume}
+                role="slider"
+                aria-label="Volume"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={muted ? 0 : Math.round(volume * 100)}
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  const step = 0.05
+                  if (e.key === 'ArrowRight') {
+                    volumeRef.current = Math.min(1, volumeRef.current + step)
+                    setVolume(volumeRef.current)
+                    const a = audioRef.current
+                    if (a && !mutedRef.current) a.volume = volumeRef.current
+                  }
+                  if (e.key === 'ArrowLeft') {
+                    volumeRef.current = Math.max(0, volumeRef.current - step)
+                    setVolume(volumeRef.current)
+                    const a = audioRef.current
+                    if (a && !mutedRef.current) a.volume = volumeRef.current
+                  }
+                }}
+              >
+                <div ref={volFillRef} className="bgm-vol-fill" />
+              </div>
+              <span className="bgm-vol-pct">{muted ? '0' : Math.round(volume * 100)}%</span>
+            </div>
+
+            <Visualizer analyser={analyser} />
+          </div>
+        )}
+
+        <button
+          className="bgm-bar"
+          onClick={() => setExpanded((v) => !v)}
+          aria-expanded={expanded}
+          aria-label={`BGM: ${t.title}`}
+        >
+          <span className="bgm-label">BGM</span>
+          <span
+            className="bgm-track-num"
+            onClick={(e) => { e.stopPropagation(); setSelectorOpen((v) => !v) }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); setSelectorOpen((v) => !v) } }}
+          >
+            {String(trackIndex + 1).padStart(2, '0')}/{String(TRACKS.length).padStart(2, '0')}
+          </span>
+          <span className="bgm-title">{t.title}</span>
+          <span
+            className="bgm-mini-play"
+            onClick={(e) => { e.stopPropagation(); togglePlay() }}
+            role="button"
+            tabIndex={0}
+            aria-label={isPlaying ? 'Pause' : 'Play'}
+            onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); togglePlay() } }}
+          >
+            {isPlaying ? '❚❚' : '▶'}
+          </span>
+          <Visualizer analyser={analyser} />
+        </button>
+
+        {selectorOpen && (
+          <TrackSelector current={trackIndex} onSelect={selectTrack} onClose={() => setSelectorOpen(false)} />
+        )}
+      </div>
+    </>
+  )
+}
