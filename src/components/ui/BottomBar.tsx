@@ -12,7 +12,7 @@ const linkClass =
 export function BottomBar() {
   return (
     <div className="fixed inset-x-0 bottom-0 z-50 border-t border-paper/10 bg-bg-hero text-paper">
-      <div className="flex items-center px-3 py-2 md:px-5">
+      <div className="flex items-center px-3 py-2.5 md:px-5">
         <MusicPlayer />
         <div className="ml-auto flex shrink-0 items-center gap-x-4">
           {profile.links.github && (

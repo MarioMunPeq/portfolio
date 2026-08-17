@@ -444,8 +444,6 @@ export function MusicPlayer() {
       <audio ref={audioRef} preload="metadata" />
 
       <div className="bgm-player" aria-label="BGM Player">
-        <div className="bgm-accent-line" aria-hidden="true" />
-
         {/* Collapsed bar — inline content inside bottom bar */}
         <div
           className="bgm-bar-inline"
