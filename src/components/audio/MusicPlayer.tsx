@@ -133,7 +133,8 @@ function Visualizer({ analyser }: { analyser: AnalyserNode | null }) {
 export function MusicPlayer() {
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
-  /* Web Audio API — created once, analyser stored in state for re-render */
+  /* Web Audio API — created lazily on first user gesture to avoid
+     React StrictMode double-mount destroying createMediaElementSource */
   const ctxRef = useRef<AudioContext | null>(null)
   const sourceRef = useRef<MediaElementAudioSourceNode | null>(null)
   const [analyser, setAnalyser] = useState<AnalyserNode | null>(null)
@@ -144,7 +145,7 @@ export function MusicPlayer() {
   const volFillRef = useRef<HTMLDivElement>(null)
 
   /* Reactive state */
-  const [trackIndex, setTrackIndex] = useState(0)
+  const [trackIndex, setTrackIndex] = useState(1)
   const [isPlaying, setIsPlaying] = useState(false)
   const [volume, setVolume] = useState(DEFAULT_VOLUME)
   const [muted, setMuted] = useState(false)
@@ -156,17 +157,23 @@ export function MusicPlayer() {
   const isPlayingRef = useRef(false)
   const volumeRef = useRef(DEFAULT_VOLUME)
   const mutedRef = useRef(false)
-  const trackIndexRef = useRef(0)
+  const trackIndexRef = useRef(1)
 
   /* ================================================================ */
-  /*  AudioContext + Web Audio graph (created once on mount)           */
+  /*  AudioContext + Web Audio graph (created lazily on first gesture)  */
   /* ================================================================ */
 
-  useEffect(() => {
+  const ensureAudioGraph = useCallback(async () => {
+    if (ctxRef.current) {
+      if (ctxRef.current.state === 'suspended') {
+        try { await ctxRef.current.resume() } catch { /* ignore */ }
+      }
+      return
+    }
+
     const a = audioRef.current
     if (!a) return
 
-    /* Create the AudioContext (starts suspended until user gesture) */
     try {
       const ctx = new AudioContext()
       const src = ctx.createMediaElementSource(a)
@@ -178,33 +185,11 @@ export function MusicPlayer() {
       ctxRef.current = ctx
       sourceRef.current = src
       setAnalyser(analyserNode)
-    } catch {
-      /* Web Audio not supported or already connected */
-    }
-
-    /* Set initial source */
-    a.volume = DEFAULT_VOLUME
-    a.preload = 'metadata'
-    a.src = trackUrl(TRACKS[0].file)
-
-    return () => {
-      a.pause()
-      try { sourceRef.current?.disconnect() } catch { /* ignore */ }
-      try { setAnalyser(null) } catch { /* ignore */ }
-      try { ctxRef.current?.close() } catch { /* ignore */ }
-      sourceRef.current = null
-      ctxRef.current = null
-    }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
-  /* ================================================================ */
-  /*  Resume AudioContext on user gesture                              */
-  /* ================================================================ */
-
-  const resumeContext = useCallback(async () => {
-    const ctx = ctxRef.current
-    if (ctx && ctx.state === 'suspended') {
-      try { await ctx.resume() } catch { /* ignore */ }
+      if (ctx.state === 'suspended') {
+        try { await ctx.resume() } catch { /* ignore */ }
+      }
+    } catch (err) {
+      console.warn('[BGM] Web Audio init failed:', err)
     }
   }, [])
 
@@ -271,25 +256,38 @@ export function MusicPlayer() {
       a.removeEventListener('canplay', onReady)
       a.volume = wasMuted ? 0 : prevVol
       if (shouldPlay) {
-        try {
-          await a.play()
-          setIsPlaying(true)
-          isPlayingRef.current = true
-        } catch {
-          setIsPlaying(false)
-          isPlayingRef.current = false
+        await ensureAudioGraph()
+        const ctxOk = !ctxRef.current || ctxRef.current.state === 'running'
+        if (ctxOk) {
+          try {
+            await a.play()
+            setIsPlaying(true)
+            isPlayingRef.current = true
+          } catch (err) {
+            console.warn('[BGM] Auto-play blocked:', err)
+            setIsPlaying(false)
+            isPlayingRef.current = false
+          }
         }
       }
     }
     a.addEventListener('canplay', onReady)
-  }, [])
+  }, [ensureAudioGraph])
+
+  /* ================================================================ */
+  /*  Auto-play Phantom on mount                                       */
+  /* ================================================================ */
+
+  useEffect(() => {
+    loadAndPlay(1, true)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   /* ================================================================ */
   /*  Controls                                                         */
   /* ================================================================ */
 
   const togglePlay = useCallback(async () => {
-    await resumeContext()
+    await ensureAudioGraph()
     const a = audioRef.current
     if (!a) return
 
@@ -306,7 +304,7 @@ export function MusicPlayer() {
         console.warn('[BGM] Play blocked:', err)
       }
     }
-  }, [resumeContext])
+  }, [ensureAudioGraph])
 
   const nextTrack = useCallback(() => {
     loadAndPlay((trackIndexRef.current + 1) % TRACKS.length, isPlayingRef.current)
