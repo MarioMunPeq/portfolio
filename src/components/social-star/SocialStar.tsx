@@ -3,19 +3,22 @@ const YELLOW = '#FFD21A'
 const ORANGE = '#F5A900'
 const DARK_ORANGE = '#D98200'
 
+const CX = 148
+const CY = 146
+
 /**
  * Estrella facetada estilo Persona 5 Social Stats.
  *
  * Silueta exterior: EXACTAMENTE 5 puntas (10 puntos alternando punta/valle).
  * Interior: 8 facetas grandes (triángulos + cuadriláteros) con colores sólidos.
- * Sin degradados, sin transparencia, sin blur.
+ * Sin degradados, sin transparencia, sin blur. Sin líneas internas negras.
  *
  * Estructura de capas:
  *   1. Silueta negra con trazo grueso (outline exterior)
  *   2. Estrella naranja base
  *   3. Facetas amarillas (planos iluminados)
  *   4. Facetas naranja oscuro (planos en sombra)
- *   5. Ridge lines selectivas (contraste luz/sombra)
+ *   5. Facetas naranja (tonos medios)
  */
 export function SocialStar({ className = '' }: { className?: string }) {
   return (
@@ -45,13 +48,13 @@ export function SocialStar({ className = '' }: { className?: string }) {
 
       {/* Gran cuadrilátera: cara izquierda del brazo superior + brazo superior-izquierdo */}
       <polygon
-        points="150,20 119,108 28,111 148,146"
+        points={`150,20 119,108 28,111 ${CX},${CY}`}
         fill={YELLOW}
       />
 
       {/* Brazo superior-derecho, cara superior iluminada */}
       <polygon
-        points="274,110 179,110 148,146"
+        points={`274,110 179,110 ${CX},${CY}`}
         fill={YELLOW}
       />
 
@@ -59,19 +62,19 @@ export function SocialStar({ className = '' }: { className?: string }) {
 
       {/* Brazo superior, cara derecha en sombra */}
       <polygon
-        points="150,20 148,146 179,110"
+        points={`150,20 ${CX},${CY} 179,110`}
         fill={DARK_ORANGE}
       />
 
       {/* Brazo superior-derecho, cara inferior en sombra */}
       <polygon
-        points="274,110 148,146 200,166"
+        points={`274,110 ${CX},${CY} 200,166`}
         fill={DARK_ORANGE}
       />
 
       {/* Gran cuadrilátera inferior: sombra profunda en brazos inferiores */}
       <polygon
-        points="224,252 148,146 74,255 150,198"
+        points={`224,252 ${CX},${CY} 74,255 150,198`}
         fill={DARK_ORANGE}
       />
 
@@ -79,25 +82,21 @@ export function SocialStar({ className = '' }: { className?: string }) {
 
       {/* Brazo inferior-derecho, cara superior */}
       <polygon
-        points="224,252 200,166 148,146"
+        points={`224,252 200,166 ${CX},${CY}`}
         fill={ORANGE}
       />
 
       {/* Brazo inferior-izquierdo, cara superior */}
       <polygon
-        points="74,255 148,146 102,166"
+        points={`74,255 ${CX},${CY} 102,166`}
         fill={ORANGE}
       />
 
       {/* Brazo superior-izquierdo, cara inferior */}
       <polygon
-        points="28,111 102,166 148,146"
+        points={`28,111 102,166 ${CX},${CY}`}
         fill={ORANGE}
       />
-
-      {/* ── 6. Ridge lines selectivas (bordes de mayor contraste) ── */}
-      <line x1="150" y1="20" x2="148" y2="146" stroke={CHARCOAL} strokeWidth="3" />
-      <line x1="274" y1="110" x2="148" y2="146" stroke={CHARCOAL} strokeWidth="3" />
     </svg>
   )
 }

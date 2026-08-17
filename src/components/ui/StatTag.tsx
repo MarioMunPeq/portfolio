@@ -25,7 +25,7 @@ export function StatTag({ label, rank, descriptor, className = '' }: StatTagProp
           <span className="inline-flex min-w-[1.3rem] items-center justify-center rounded-[2px] bg-white px-1 py-px text-[0.65rem] font-extrabold leading-none text-ink">
             {rank}
           </span>
-          <span className="font-sans text-body font-bold uppercase leading-none tracking-[0.06em] text-ink">
+          <span className="font-p5-menu text-body font-bold uppercase leading-none tracking-[0.06em] text-ink">
             {label}
           </span>
         </div>

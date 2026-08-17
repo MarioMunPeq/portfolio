@@ -30,7 +30,7 @@ const OUTLINE_RED = `-2px -2px 0 var(--color-accent), 2px -2px 0 var(--color-acc
 const STATS = [
   { label: 'PROGRAMACIÓN', value: 4, descriptor: 'DESARROLLO' },
   { label: 'CREATIVIDAD', value: 3, descriptor: 'DISEÑO' },
-  { label: 'CARISMA', value: 2, descriptor: 'SOCIAL' },
+  { label: 'CARISMA', value: 3, descriptor: 'SOCIAL' },
   { label: 'CURIOSIDAD', value: 5, descriptor: 'INVESTIGACIÓN' },
   { label: 'RESOLUCIÓN', value: 4, descriptor: 'LÓGICA' },
 ] as const

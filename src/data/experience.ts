@@ -27,7 +27,7 @@ export const experience: ExperienceEntry[] = [
     role: 'Técnico — Prácticas Grado Superior ARI',
     period: 'Mar 2022 — Jun 2022',
     summary:
-      'Participación activa en reuniones, relacionada con automatización y robótica industrial.',
+      'Participación activa en reuniones, relacionada con automatización y robotica industrial.',
     highlights: [],
     meta: 'Prácticas',
     tech: ['SEE Electrical', 'Robots', 'AGV'],
