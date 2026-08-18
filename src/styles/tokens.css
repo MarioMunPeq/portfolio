@@ -1005,7 +1005,7 @@ html.lenis body {
 
   @keyframes car-cross {
     from {
-      transform: translateX(-150px);
+      transform: translateX(-280px);
     }
     to {
       transform: translateX(100vw);
@@ -1059,6 +1059,16 @@ html.lenis body {
     }
     to {
       background-position: -28px 0;
+    }
+  }
+
+  /* Estela: deriva horizontal sutil de las lineas de velocidad */
+  @keyframes car-trail-drift {
+    from {
+      transform: skewX(-18deg) translateX(0);
+    }
+    to {
+      transform: skewX(-18deg) translateX(6px);
     }
   }
 }

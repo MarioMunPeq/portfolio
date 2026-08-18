@@ -53,7 +53,7 @@ function DrivingCar({ className = '' }: { className?: string }) {
   return (
     <span
       aria-hidden="true"
-      className={`relative block h-24 w-full overflow-hidden ${className}`}
+      className={`relative block h-32 w-full overflow-hidden ${className}`}
     >
       {/* Carretera: linea roja fija */}
       <span className="absolute bottom-3 left-0 h-[2px] w-full bg-accent/40" />
@@ -88,65 +88,71 @@ function DrivingCar({ className = '' }: { className?: string }) {
               reduceMotion ? '' : 'animate-car-tilt'
             }`}
           >
-            {/* Estela de velocidad: 3 lineas rojas/negras */}
+            {/* Estela de velocidad: 4 lineas graficas escalonadas */}
             <span
-              className={`relative mr-[-2px] flex flex-col justify-center gap-[3px] ${fx}`}
+              className={`relative mr-4 flex flex-col items-end justify-center gap-[5px] ${fx}`}
             >
+              {/* Linea 1: larga, opaca */}
               <span
-                className="block h-[2px] w-10 bg-accent/70"
-                style={{ transform: 'skewX(-20deg)' }}
+                className="block h-[2px] w-28 bg-accent/60"
+                style={{
+                  transform: 'skewX(-18deg)',
+                  animation: reduceMotion
+                    ? 'none'
+                    : 'car-trail-drift 2.8s ease-in-out infinite alternate',
+                }}
               />
+              {/* Linea 2: media, semi-opaca */}
               <span
-                className="block h-[1.5px] w-6 bg-accent/50"
-                style={{ transform: 'skewX(-24deg)' }}
+                className="block h-[1.5px] w-20 bg-paper/30"
+                style={{
+                  transform: 'skewX(-22deg)',
+                  animation: reduceMotion
+                    ? 'none'
+                    : 'car-trail-drift 3.2s ease-in-out 0.4s infinite alternate-reverse',
+                }}
               />
+              {/* Linea 3: corta, tenue */}
               <span
-                className="block h-[1px] w-4 bg-paper/40"
-                style={{ transform: 'skewX(-28deg)' }}
+                className="block h-[1.5px] w-14 bg-accent/35"
+                style={{
+                  transform: 'skewX(-16deg)',
+                  animation: reduceMotion
+                    ? 'none'
+                    : 'car-trail-drift 2.5s ease-in-out 0.8s infinite alternate',
+                }}
+              />
+              {/* Linea 4: muy corta, fantasma */}
+              <span
+                className="block h-[1px] w-8 bg-paper/20"
+                style={{
+                  transform: 'skewX(-24deg)',
+                  animation: reduceMotion
+                    ? 'none'
+                    : 'car-trail-drift 3.6s ease-in-out 0.2s infinite alternate-reverse',
+                }}
               />
             </span>
 
-            {/* Coche SVG: silueta potrace integrada, scaleX(-1) para que encare a la derecha */}
+            {/* Coche SVG: ilustracion vectorial simple */}
             <svg
-              viewBox="0 80 400 410"
+              viewBox="0 0 200 70"
               preserveAspectRatio="xMidYMid meet"
-              className="block h-20 w-auto"
-              style={{ transform: 'scaleX(-1)' }}
+              className="block h-28 w-auto"
             >
-              <g transform="translate(0,640) scale(0.1,-0.1)" fill="none" stroke="none">
-                {/* Carroceria: silueta potrace (outline de ambos coches, recortada por viewBox a solo Car 1) */}
-                <path
-                  d="M3565 5336 c-106 -30 -101 -26 -108 -111 -4 -42 -9 -80 -12 -85 -6 -10 -246 -105 -590 -234 -448 -167 -1052 -415 -1173 -483 -78 -43 -193 -91 -250 -104 -23 -5 -98 -14 -165 -19 -67 -6 -167 -19 -222 -30 -154 -31 -340 -49 -563 -57 l-203 -6 -43 -66 c-59 -91 -60 -95 -26 -130 37 -37 38 -65 3 -150 -25 -62 -27 -78 -31 -256 l-4 -190 -38 -32 c-91 -78 -133 -209 -134 -418 0 -194 11 -396 26 -482 13 -71 14 -74 72 -122 69 -58 130 -129 158 -184 64 -126 534 -211 1384 -250 l92 -4 -6 119 c-6 142 8 256 49 383 112 352 394 622 756 722 90 26 112 28 278 28 165 0 188 -2 278 -27 201 -56 361 -152 504 -302 140 -145 222 -293 274 -492 21 -79 24 -109 23 -279 -1 -127 -6 -214 -16 -263 l-15 -73 3006 7 c1653 4 3007 8 3009 9 1 1 -8 37 -20 81 -19 67 -22 105 -22 259 -1 166 1 187 27 279 117 421 467 736 885 797 119 17 325 7 432 -21 239 -63 453 -205 601 -399 70 -92 154 -267 185 -386 24 -88 27 -119 27 -260 1 -116 -4 -181 -16 -234 -10 -41 -16 -75 -15 -76 2 -1 62 2 133 6 266 16 458 45 525 79 48 24 97 81 127 146 l24 52 -16 157 c-15 152 -15 163 4 284 63 388 50 680 -35 802 -134 193 -526 336 -1429 519 -737 149 -1322 209 -2033 210 -228 0 -226 0 -347 85 -187 131 -1045 607 -1471 815 -383 187 -788 281 -1439 332 -208 17 -1106 16 -1400 0 -121 -7 -314 -19 -430 -27 -302 -22 -286 -22 -341 10 -140 81 -187 94 -269 71z m1885 -333 c6 -37 38 -238 71 -446 32 -209 66 -422 75 -474 9 -52 15 -96 13 -97 -11 -9 -1699 29 -1951 44 -206 13 -417 36 -485 54 -98 26 -198 119 -249 231 -35 75 -36 172 -5 255 17 45 30 61 68 86 83 54 135 80 253 127 341 136 858 230 1460 267 269 16 270 16 511 18 l227 2 12 -67z m630 47 c264 -18 777 -110 1029 -186 186 -56 445 -188 756 -387 211 -134 274 -181 250 -185 -75 -12 -133 -50 -162 -106 -19 -35 -21 -136 -4 -179 l11 -27 -907 2 -906 3 -59 160 c-110 302 -298 878 -298 916 0 6 95 2 290 -11z"
-                  fill="#F2F2F0"
-                />
-                {/* Detalles interiores: ventanas, paneles, lineas de caracter */}
-                <g fill="#111111">
-                  <path d="M2633 3125 c-223 -40 -410 -141 -568 -306 -132 -138 -213 -283 -262 -467 -22 -83 -26 -119 -26 -247 -1 -169 10 -236 65 -382 87 -230 271 -436 493 -551 85 -44 178 -78 271 -98 107 -23 312 -23 419 1 392 84 699 375 802 761 23 86 26 120 27 254 1 158 -5 199 -46 330 -98 310 -355 567 -668 669 -150 50 -354 64 -507 36z m350 -301 c249 -56 457 -247 543 -499 25 -72 28 -95 28 -220 1 -153 -15 -228 -74 -345 -94 -186 -283 -337 -485 -386 -96 -24 -268 -24 -360 0 -320 84 -544 355 -562 681 -20 359 209 673 558 765 94 24 253 26 352 4z" />
-                  <path d="M2600 2697 c-36 -13 -85 -36 -109 -51 l-44 -28 116 -115 c81 -82 120 -114 131 -110 14 6 16 29 16 167 0 186 6 178 -110 137z" />
-                  <path d="M2920 2561 c0 -139 2 -162 16 -168 11 -4 50 28 130 108 l115 114 -28 22 c-34 28 -138 70 -193 79 l-40 7 0 -162z" />
-                  <path d="M2282 2448 c-28 -36 -92 -191 -92 -225 0 -10 34 -13 165 -13 151 0 165 1 165 18 0 15 -206 232 -221 232 -4 0 -11 -6 -17 -12z" />
-                  <path d="M3222 2351 c-62 -59 -112 -115 -112 -124 0 -15 17 -17 165 -17 131 0 165 3 165 13 0 40 -69 205 -95 227 -7 6 -48 -27 -123 -99z" />
-                  <path d="M2781 2332 c-12 -22 11 -62 34 -62 8 0 21 10 29 22 20 28 4 58 -29 58 -13 0 -29 -8 -34 -18z" />
-                  <path d="M2749 2161 c-32 -33 -37 -67 -14 -110 29 -57 104 -64 151 -14 53 57 9 153 -71 153 -27 0 -44 -8 -66 -29z" />
-                  <path d="M2570 2125 c-26 -32 13 -81 48 -59 24 16 27 45 6 61 -23 17 -39 16 -54 -2z" />
-                  <path d="M3006 2124 c-20 -19 -20 -38 -2 -54 23 -19 61 -8 64 18 7 44 -32 67 -62 36z" />
-                  <path d="M2190 1975 c0 -29 41 -140 72 -194 l31 -53 117 117 c71 71 116 123 113 131 -4 11 -40 14 -169 14 -141 0 -164 -2 -164 -15z" />
-                  <path d="M3110 1972 c0 -9 51 -68 114 -131 l114 -114 31 54 c30 51 71 165 71 195 0 11 -31 14 -165 14 -151 0 -165 -1 -165 -18z" />
-                  <path d="M2780 1901 c-7 -15 -5 -24 8 -41 32 -40 85 -4 62 41 -14 25 -56 25 -70 0z" />
-                </g>
-                {/* Ruedas */}
-                <g
-                  className={reduceMotion ? '' : 'animate-car-wheel'}
-                  style={{ transformBox: 'fill-box', transformOrigin: 'center' }}
-                  fill="#111111"
-                >
-                  <path d="M2562 1697 c-61 -62 -112 -115 -112 -119 0 -18 208 -108 249 -108 7 0 11 54 11 164 0 140 -2 165 -16 170 -9 3 -16 6 -17 6 -1 0 -53 -51 -115 -113z" />
-                  <path d="M2933 1803 c-15 -6 -19 -333 -4 -333 46 0 251 88 251 108 0 9 -223 232 -230 231 -3 0 -11 -3 -17 -6z" />
-                </g>
-                {/* Acentos rojos: centros de ruedas */}
-                <circle cx="2580" cy="1640" r="60" fill="#FF1A1A" />
-                <circle cx="3055" cy="1640" r="60" fill="#FF1A1A" />
-              </g>
+              {/* Carroceria */}
+              <path
+                d="M18,50 L12,40 C12,36 16,32 22,30 L55,15 C58,13 62,12 66,12 L134,12 C138,12 142,13 145,15 L178,30 C184,32 188,36 188,40 L192,50 Z"
+                fill="#F2F2F0"
+              />
+              {/* Ventana trasera */}
+              <path d="M60,15 L94,15 L94,30 L54,30 Z" fill="#111111" />
+              {/* Ventana delantera */}
+              <path d="M100,15 L140,15 L148,30 L100,30 Z" fill="#111111" />
+              {/* Rueda trasera */}
+              <circle cx="58" cy="52" r="12" fill="#111111" />
+              {/* Rueda delantera */}
+              <circle cx="152" cy="52" r="12" fill="#111111" />
             </svg>
           </span>
         </span>
@@ -158,13 +164,13 @@ function DrivingCar({ className = '' }: { className?: string }) {
 // Posiciones fijas de las etiquetas en las esquinas, fuera del area de la
 // estrella, y sus inclinaciones suaves (casi horizontales).
 const LABEL_POSITIONS = [
-  { left: 50, top: 2 },
-  { left: 90, top: 30 },
-  { left: 90, top: 88 },
-  { left: 10, top: 88 },
-  { left: 10, top: 30 },
+  { left: 48, top: 0 },
+  { left: 94, top: 28 },
+  { left: 92, top: 90 },
+  { left: 6, top: 90 },
+  { left: 8, top: 28 },
 ]
-const LABEL_ROTATIONS = [0, -2, 2, -2, 1]
+const LABEL_ROTATIONS = [-1, -3, 3, -2, 1]
 
 /** Hueco del retrato recortado en angulo. Sin avatar → placeholder. */
 function PortraitSlot() {
@@ -217,8 +223,8 @@ function PortraitSlot() {
 
 function StatStar() {
   return (
-    <div className="relative mx-auto w-full max-w-[42rem] px-4 pt-8 pb-4">
-      <div className="relative aspect-square">
+    <div className="relative w-full pt-4 pb-4">
+      <div className="relative aspect-square w-full max-w-[58rem] ml-auto">
         <SocialStar className="absolute inset-0 h-full w-full [transform:rotate(2deg)]" />
 
         {STATS.map(({ label, value, descriptor }, i) => {
@@ -247,7 +253,7 @@ export function About() {
 
   return (
     <Screen className="min-h-dvh bg-bg-hero text-paper">
-      <section className="relative overflow-hidden px-6 pb-28 pt-16 md:px-12 md:pt-20">
+      <section className="relative overflow-hidden px-6 pb-28 pt-16 md:px-12 lg:px-16 md:pt-20">
         {/* Fondo: estrellas de contorno sutiles (mismo patron que el inventario) */}
         <span aria-hidden="true" className="pointer-events-none absolute inset-0 bg-stars opacity-70" />
 
@@ -257,13 +263,13 @@ export function About() {
             de perfil. Opacidad baja para mantener la legibilidad. */}
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute -right-20 top-0 h-full w-[70%] opacity-[0.14]"
+          className="pointer-events-none absolute -right-20 top-0 h-full w-[75%] opacity-[0.14]"
           style={{
             backgroundImage: 'url(/portfolio/images/background/starbackground.png)',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            maskImage: 'linear-gradient(to right, transparent 0%, black 35%, black 100%)',
-            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 35%, black 100%)',
+            maskImage: 'linear-gradient(to right, transparent 0%, black 30%, black 100%)',
+            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 30%, black 100%)',
           }}
         />
 
@@ -276,16 +282,16 @@ export function About() {
           PERFIL
         </span>
 
-        <div className="relative mx-auto max-w-6xl">
+        <div className="relative mx-auto max-w-[110rem] px-4 lg:px-8">
           {/* Titulo de perfil (mismo tratamiento que INVENTARIO) */}
           <Reveal>
             <SectionTitle title="PERFIL" persona />
           </Reveal>
 
-          <div className="mt-10 grid items-start gap-16 lg:grid-cols-[minmax(0,0.94fr)_minmax(0,1.06fr)] lg:gap-10 xl:gap-16">
+          <div className="mt-10 grid items-start gap-16 lg:grid-cols-[0.38fr_0.62fr] lg:gap-8 xl:gap-12">
             {/* ===== Columna izquierda: identidad ===== */}
             <Reveal>
-              <div className="relative">
+              <div className="relative -ml-2 lg:-ml-6">
                 <Annotation
                   tone="paper"
                   className="absolute -left-2 top-4 z-30 -rotate-3"
@@ -293,7 +299,7 @@ export function About() {
                   {branding.system}
                 </Annotation>
 
-                <div className="relative z-10 mx-auto w-[min(21rem,92%)] -rotate-2">
+                <div className="relative z-10 mx-auto w-[min(22rem,95%)] -rotate-2">
                   <PortraitSlot />
                   <span
                     aria-hidden="true"
@@ -369,12 +375,12 @@ export function About() {
 
           {/* ===== Contenido: Bio ===== */}
           <Reveal delay={0.16}>
-            <div className="mt-14 lg:mt-16">
+            <div className="mt-14 lg:mt-16 lg:max-w-[55%]">
               <h2 className="flex items-center gap-2 text-label font-medium uppercase tracking-[0.22em] text-accent">
                 <DiamondMarker size={6} />
                 Bio
               </h2>
-              <p className="mt-4 max-w-2xl text-body leading-relaxed text-paper/75">
+              <p className="mt-4 text-body leading-relaxed text-paper/75">
                 {about.bio}
               </p>
             </div>
@@ -386,18 +392,18 @@ export function About() {
             languages={about.languages}
             interests={about.interests}
           />
-
-          {/* ===== Permiso de conducir ===== */}
-          <Reveal delay={0.2}>
-            <div className="mt-12 flex flex-col">
-              <p className="flex items-center gap-2 text-caption uppercase tracking-[0.2em] text-paper/50">
-                <DiamondMarker size={5} />
-                {about.license}
-              </p>
-              <DrivingCar className="mt-2 ml-[13px]" />
-            </div>
-          </Reveal>
         </div>
+
+        {/* ===== Permiso de conducir — full width, cruza el layout ===== */}
+        <Reveal delay={0.2}>
+          <div className="relative mt-16">
+            <p className="flex items-center gap-2 pl-6 text-caption uppercase tracking-[0.2em] text-paper/50 md:pl-12">
+              <DiamondMarker size={5} />
+              {about.license}
+            </p>
+            <DrivingCar className="mt-3" />
+          </div>
+        </Reveal>
       </section>
     </Screen>
   )
