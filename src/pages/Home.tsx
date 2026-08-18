@@ -85,7 +85,6 @@ export function Home() {
               <CommandNavItem
                 key={command.id}
                 {...command}
-                animDelay={i * 0.1}
                 rotation={MENU_CHAOS[i].rotation}
                 offsetX={MENU_CHAOS[i].offsetX}
                 widthPx={MENU_CHAOS[i].widthPx}

@@ -309,25 +309,6 @@
   border-color: currentColor;
 }
 
-/* ============================================================
-   Metro menu — entrada escalonada desde la izquierda
-   ============================================================ */
-
-@keyframes metro-menu-enter {
-  from {
-    opacity: 0;
-    transform: skewX(-11deg) translateX(-30px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: skewX(-11deg) translateX(0) scale(1);
-  }
-}
-
-.metro-menu-btn {
-  animation: metro-menu-enter 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
 /* Hover: snap angular con acento rojo */
 .metro-menu-btn:hover,
 .metro-menu-btn:focus-visible {
@@ -1614,6 +1595,68 @@ html.lenis body {
 .skill-line-draw {
   stroke-dasharray: 1;
   animation: skill-line-draw 0.6s cubic-bezier(0.76, 0, 0.24, 1) var(--skill-line-d, 0s) both;
+}
+
+/* ============================================================
+   MaskTransition — Persona 5 mask slash
+   ============================================================ */
+
+/* Mask activation: quick scale+rotation punch (0.15s) */
+@keyframes mask-snap {
+  0% {
+    transform: translate(-50%, -50%) rotate(0) scale(1);
+  }
+  35% {
+    transform: translate(-50%, -50%) rotate(3.5deg) scale(1.12);
+  }
+  55% {
+    transform: translate(-50%, -50%) rotate(-1.5deg) scale(0.95);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(0) scale(1);
+  }
+}
+
+.mask-snap {
+  animation: mask-snap 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Top-left half: exits toward upper-left (faster, more rotation) */
+@keyframes mask-split-tl {
+  from {
+    transform: translate(0, 0) rotate(0);
+  }
+  to {
+    transform: translate(-110%, -110%) rotate(-12deg);
+  }
+}
+
+.mask-split-tl {
+  animation: mask-split-tl 0.2s cubic-bezier(0.7, 0, 0.3, 1) both;
+}
+
+/* Bottom-right half: exits toward lower-right (slightly slower, less rotation) */
+@keyframes mask-split-br {
+  from {
+    transform: translate(0, 0) rotate(0);
+  }
+  to {
+    transform: translate(100%, 90%) rotate(8deg);
+  }
+}
+
+.mask-split-br {
+  animation: mask-split-br 0.22s cubic-bezier(0.7, 0, 0.3, 1) 0.02s both;
+}
+
+/* Brief radial flash behind mask during snap */
+@keyframes mask-snap-flash {
+  0% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 /* ================================================================

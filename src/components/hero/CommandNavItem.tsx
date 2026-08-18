@@ -17,7 +17,6 @@ interface CommandNavItemProps {
   label: string
   sub: string
   path: string
-  animDelay?: number
   rotation?: number
   offsetX?: number
   widthPx?: number
@@ -37,7 +36,6 @@ export function CommandNavItem({
   label,
   sub,
   path,
-  animDelay = 0,
   rotation = 0,
   offsetX = 0,
   widthPx = 380,
@@ -70,7 +68,6 @@ export function CommandNavItem({
         onClick={handleNav}
         data-cursor="open"
         className="hero-cmd metro-menu-btn group w-full border-none text-left"
-        style={{ animationDelay: `${animDelay}s` }}
       >
         <span aria-hidden="true" className="hero-cmd-track" />
         <span

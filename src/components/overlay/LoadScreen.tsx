@@ -88,7 +88,7 @@ export function LoadScreen({ onExitReady }: LoadScreenProps) {
   const rootClip = useTransform(exitProgress, (p) =>
     `polygon(0% 0%, 100% 0%, 100% ${100 - p * 45}%, 0% ${100 - p * 100}%)`,
   )
-  const rootY = useTransform(exitProgress, [0, 1], [0, -44])
+  const rootY = useTransform(exitProgress, [0, 1], [0, 0])
 
   const impactFired = useRef(false)
   const exitStarted = useRef(false)

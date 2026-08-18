@@ -6,6 +6,7 @@ import { TopBar } from '../ui/TopBar'
 import { BottomBar } from '../ui/BottomBar'
 import { Cursor } from './Cursor'
 import { LoadScreen } from '../overlay/LoadScreen'
+import { MaskTransition } from '../overlay/MaskTransition'
 import { Grain } from '../primitives/Grain'
 
 interface LayoutProps {
@@ -46,6 +47,7 @@ export function Layout({ children }: LayoutProps) {
         Saltar al contenido
       </a>
       <LoadScreen onExitReady={() => setLoadscreenDone(true)} />
+      <MaskTransition ready={loadscreenDone} />
       {pathname === '/experience' ? <HUD /> : null}
       {showTopBar && <TopBar context={contextFor(pathname)} />}
       <BottomBar />
