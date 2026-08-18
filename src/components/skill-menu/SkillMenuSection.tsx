@@ -1,4 +1,25 @@
-import { DiamondMarker } from '../shared/DiamondMarker'
+import {
+  faCode,
+  faDatabase,
+  faMobileAndroid,
+  faServer,
+  faCogs,
+  faChartArea,
+  faBrain,
+  faTable,
+  faFire,
+  faFile,
+  faCloudArrowUp,
+} from '@fortawesome/free-solid-svg-icons'
+import {
+  faJava,
+  faPython,
+  faHtml5,
+  faGitAlt,
+  faAndroid,
+  faUnity,
+  faFigma,
+} from '@fortawesome/free-brands-svg-icons'
 import { Reveal } from '../primitives/Reveal'
 import type { ProfileSkills, SpokenLanguage } from '../../data/profile'
 
@@ -9,140 +30,109 @@ interface Props {
 }
 
 interface Category {
-  title: string
-  sys: string
-  items?: string[]
-  languages?: SpokenLanguage[]
-  span: string
-  rotate: string
-  clip: string
+  suit: string
+  label: string
+  items: string[]
 }
 
-export function SkillMenuSection({ skills, languages, interests }: Props) {
+const ICONS: Record<string, typeof faJava> = {
+  'Java': faJava,
+  'Python': faPython,
+  'Kotlin': faMobileAndroid,
+  'C#': faCode,
+  'SQL': faDatabase,
+  'HTML/CSS': faHtml5,
+  'Git/GitHub': faGitAlt,
+  'Liferay': faServer,
+  'Odoo': faCogs,
+  'Power Platform': faChartArea,
+  'Android Studio': faAndroid,
+  'Unity/Godot': faUnity,
+  'Scikit-learn': faBrain,
+  'Pandas': faTable,
+  'PyTorch': faFire,
+  'Office': faFile,
+  'Figma': faFigma,
+  'Firebase': faCloudArrowUp,
+}
+
+function TechIcon({ name }: { name: string }) {
+  const icon = ICONS[name]
+  if (!icon) return null
+  const path = icon.icon[4]
+  return (
+    <svg
+      viewBox={`0 0 ${icon.icon[0]} ${icon.icon[1]}`}
+      aria-hidden="true"
+      className="sdeck__card-icon"
+      fill="currentColor"
+    >
+      {Array.isArray(path) ? path.map((d) => <path key={d} d={d} />) : <path d={path} />}
+    </svg>
+  )
+}
+
+export function SkillMenuSection({ skills }: Props) {
   const CATEGORIES: Category[] = [
-    {
-      title: 'ARSENAL',
-      sys: 'SYS.01',
-      items: skills.programming,
-      span: 'lg:col-span-7',
-      rotate: '-0.5',
-      clip: 'clip-cut-br',
-    },
-    {
-      title: 'SISTEMAS',
-      sys: 'SYS.02',
-      items: skills.technologies,
-      span: 'lg:col-span-5',
-      rotate: '0.3',
-      clip: 'clip-cut-bl',
-    },
-    {
-      title: 'COGNICIoN',
-      sys: 'SYS.03',
-      items: skills.aiData,
-      span: 'lg:col-span-5',
-      rotate: '-0.8',
-      clip: 'clip-notch',
-    },
-    {
-      title: 'HERRAMIENTAS',
-      sys: 'SYS.04',
-      items: skills.other,
-      span: 'lg:col-span-3',
-      rotate: '0.2',
-      clip: '',
-    },
-    {
-      title: 'COMUNICACIoN',
-      sys: 'SYS.05',
-      languages,
-      span: 'lg:col-span-4',
-      rotate: '0',
-      clip: 'clip-cut-br',
-    },
-    {
-      title: 'MUNDO EXTERIOR',
-      sys: 'SYS.06',
-      items: interests,
-      span: 'lg:col-span-8',
-      rotate: '-0.3',
-      clip: 'clip-notch',
-    },
+    { suit: '♦', label: 'PROGRAMMING', items: skills.programming },
+    { suit: '♣', label: 'TECHNOLOGIES', items: skills.technologies },
+    { suit: '♥', label: 'AI & DATA', items: skills.aiData },
+    { suit: '♠', label: 'OTHERS', items: skills.other },
   ]
 
   return (
     <Reveal delay={0.16}>
-      <div className="mt-14 lg:mt-16">
-        <div className="mb-8 flex items-center gap-3">
-          <DiamondMarker size={7} />
-          <h2
-            className="font-p5-menu uppercase tracking-[0.15em] text-paper"
-            style={{ fontSize: 'clamp(1.5rem, 3vw, 2.25rem)' }}
-          >
-            HABILIDADES
-          </h2>
+      <div className="sdeck">
+        <div className="sdeck__header">
+          <div className="sdeck__header-rule" />
+          <div className="sdeck__header-row">
+            <span className="sdeck__header-meta">SKILL DECK</span>
+            <h2 className="sdeck__header-title">HABILIDADES</h2>
+            <span className="sdeck__header-meta">4 SUITS · 18 CARDS</span>
+          </div>
+          <div className="sdeck__header-rule" />
         </div>
 
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-          {CATEGORIES.map((cat) => {
-            const count = cat.items?.length ?? cat.languages?.length ?? 0
-            return (
-              <div
-                key={cat.title}
-                className={`${cat.span} ${cat.clip}`}
-                style={{ transform: `rotate(${cat.rotate}deg)` }}
-              >
-                <div className="skill-entry group">
-                  <div className="skill-entry__bar" />
-
-                  <div className="flex items-baseline justify-between">
-                    <div className="flex items-center gap-2.5">
-                      <span className="skill-entry__diamond" />
-                      <h3 className="skill-entry__title">{cat.title}</h3>
+        {CATEGORIES.map((cat, ci) => (
+          <div key={cat.label} className="sdeck__cat">
+            <div className="sdeck__cat-head">
+              <span className="sdeck__cat-suit">{cat.suit}</span>
+              <span className="sdeck__cat-label">{cat.label}</span>
+              <span className="sdeck__cat-count">{cat.items.length}</span>
+            </div>
+            <div className="sdeck__grid">
+              {cat.items.map((item) => (
+                <div key={item} className="sdeck__card">
+                  <div className="sdeck__card-inner">
+                    <div className="sdeck__corner sdeck__corner--tl">
+                      <span className="sdeck__corner-rank">A</span>
+                      <span className="sdeck__corner-suit">{cat.suit}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="skill-entry__count">{count} ITEMS</span>
-                      <span className="skill-entry__sys">{cat.sys}</span>
+
+                    <div className="sdeck__center">
+                      <div className="sdeck__icon-wrap">
+                        <TechIcon name={item} />
+                      </div>
+                      <span className="sdeck__label">{item}</span>
+                    </div>
+
+                    <div className="sdeck__corner sdeck__corner--br">
+                      <span className="sdeck__corner-rank">A</span>
+                      <span className="sdeck__corner-suit">{cat.suit}</span>
                     </div>
                   </div>
-
-                  {cat.items && (
-                    <div className="skill-entry__items">
-                      {cat.items.map((item) => (
-                        <span key={item} className="skill-entry__item">
-                          {item}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
-                  {cat.languages && (
-                    <div className="mt-3 space-y-2">
-                      {cat.languages.map((lang) => (
-                        <div
-                          key={lang.name}
-                          className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5"
-                        >
-                          <span className="font-sans text-sm text-paper/80 transition-colors group-hover:text-paper">
-                            {lang.name}
-                          </span>
-                          <span className="text-xs uppercase tracking-[0.12em] text-paper/40">
-                            — {lang.level}
-                          </span>
-                          {lang.note ? (
-                            <span className="w-full pl-4 text-xs text-paper/30 md:w-auto md:pl-0">
-                              {lang.note}
-                            </span>
-                          ) : null}
-                        </div>
-                      ))}
-                    </div>
-                  )}
                 </div>
+              ))}
+            </div>
+            {ci < CATEGORIES.length - 1 && (
+              <div className="sdeck__cat-divider">
+                <span className="sdeck__cat-divider-line" />
+                <span className="sdeck__cat-divider-diamond">◆</span>
+                <span className="sdeck__cat-divider-line" />
               </div>
-            )
-          })}
-        </div>
+            )}
+          </div>
+        ))}
       </div>
     </Reveal>
   )

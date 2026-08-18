@@ -224,7 +224,7 @@ function PortraitSlot() {
 function StatStar() {
   return (
     <div className="relative w-full pt-4 pb-4">
-      <div className="relative aspect-square w-full max-w-[58rem] ml-auto">
+      <div className="relative aspect-square w-full max-w-[34rem] ml-auto">
         <SocialStar className="absolute inset-0 h-full w-full [transform:rotate(2deg)]" />
 
         {STATS.map(({ label, value, descriptor }, i) => {

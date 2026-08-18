@@ -40,6 +40,14 @@
   unicode-range: U+0000-007F;
 }
 
+/* Libre Baskerville: serif editorial para el periodico de habilidades.
+   Variable font con peso ajustable. */
+@font-face {
+  font-family: "Libre Baskerville";
+  src: url("/portfolio/fonts/LibreBaskerville-VariableFont_wght.ttf") format("truetype");
+  font-display: swap;
+}
+
 /* Utilidad: texto hueco con trazo en color acento (solo tipografia grande) */
 @utility text-outline {
   color: transparent;
@@ -916,6 +924,273 @@ html.lenis body {
 }
 
 /* ============================================================
+   SKILL CARD DECK — Persona 5 inspired compact card deck
+   ============================================================ */
+
+.sdeck {
+  padding: clamp(1.5rem, 4vw, 3rem) 0;
+}
+
+/* ── Header ── */
+.sdeck__header {
+  margin-bottom: clamp(1rem, 2.5vw, 2rem);
+}
+
+.sdeck__header-rule {
+  height: 2px;
+  background: var(--color-paper);
+}
+
+.sdeck__header-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0;
+}
+
+.sdeck__header-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin: 0;
+  color: var(--color-paper);
+}
+
+.sdeck__header-meta {
+  font-family: var(--font-sans);
+  font-size: clamp(0.5rem, 0.8vw, 0.6rem);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-paper);
+  opacity: 0.4;
+  white-space: nowrap;
+}
+
+/* ── Category ── */
+.sdeck__cat {
+  margin-bottom: clamp(1rem, 2vw, 1.8rem);
+}
+
+.sdeck__cat:last-child {
+  margin-bottom: 0;
+}
+
+.sdeck__cat-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.sdeck__cat-suit {
+  font-size: clamp(1rem, 1.5vw, 1.3rem);
+  color: var(--color-accent);
+  line-height: 1;
+}
+
+.sdeck__cat-label {
+  font-family: var(--font-display);
+  font-size: clamp(0.7rem, 1.1vw, 0.9rem);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-paper);
+}
+
+.sdeck__cat-count {
+  font-family: var(--font-sans);
+  font-size: 0.5rem;
+  letter-spacing: 0.15em;
+  color: var(--color-paper);
+  opacity: 0.3;
+  margin-left: auto;
+}
+
+/* ── Card grid ── */
+.sdeck__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 8px;
+  justify-items: center;
+}
+
+@media (min-width: 640px) {
+  .sdeck__grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .sdeck__grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+/* ── Card ── */
+.sdeck__card {
+  --red: #c0392b;
+  aspect-ratio: 5 / 7;
+  width: 100%;
+  max-width: 140px;
+  background: linear-gradient(155deg, #1e1e1e 0%, #161616 55%, #101010 100%);
+  border-radius: 14px;
+  padding: 8px;
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.55),
+    0 2px 4px rgba(0, 0, 0, 0.4);
+  transform: rotate(-2deg);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: default;
+  position: relative;
+}
+
+.sdeck__card:hover {
+  transform: rotate(0deg) scale(1.04);
+  box-shadow:
+    0 18px 35px rgba(0, 0, 0, 0.6),
+    0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.sdeck__card-inner {
+  height: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 8px;
+  outline: 1px solid var(--red);
+  outline-offset: -5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.25s ease;
+}
+
+.sdeck__card:hover .sdeck__card-inner {
+  border-color: var(--red);
+}
+
+/* Diagonal texture overlay */
+.sdeck__card-inner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.015) 0 2px, transparent 2px 6px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── Corner (top-left / bottom-right) ── */
+.sdeck__corner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+  color: #f2f2f2;
+  z-index: 2;
+  transition: color 0.25s ease;
+}
+
+.sdeck__corner--tl {
+  align-self: flex-start;
+  padding: 8px 0 0 10px;
+}
+
+.sdeck__corner--br {
+  align-self: flex-end;
+  padding: 0 16px 14px 0;
+  transform: rotate(180deg);
+}
+
+.sdeck__corner-rank {
+  font-size: 15px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  transition: color 0.25s ease;
+}
+
+.sdeck__card:hover .sdeck__corner-rank {
+  color: var(--red);
+}
+
+.sdeck__corner-suit {
+  font-size: 13px;
+  color: var(--red);
+  margin-top: 2px;
+  transition: color 0.25s ease;
+}
+
+/* ── Center ── */
+.sdeck__center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  z-index: 2;
+}
+
+/* ── Icon ── */
+.sdeck__icon-wrap {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sdeck__card-icon {
+  width: 100%;
+  height: 100%;
+  fill: #f2f2f2;
+  transition: fill 0.25s ease;
+}
+
+.sdeck__card:hover .sdeck__card-icon {
+  fill: var(--red);
+}
+
+/* ── Label ── */
+.sdeck__label {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #f2f2f2;
+  font-weight: bold;
+  transition: color 0.25s ease;
+  text-align: center;
+  max-width: 100%;
+  word-break: break-word;
+}
+
+.sdeck__card:hover .sdeck__label {
+  color: var(--red);
+}
+
+/* ── Category divider ── */
+.sdeck__cat-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: clamp(0.8rem, 1.5vw, 1.2rem) 0;
+}
+
+.sdeck__cat-divider-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(245, 245, 240, 0.12), transparent);
+}
+
+.sdeck__cat-divider-diamond {
+  font-size: 0.35rem;
+  color: var(--color-accent);
+  opacity: 0.5;
+}
+
+/* ============================================================
    Sistema de tokens — Tailwind CSS 4 (CSS-first)
    Ver PROJECT_PHILOSOPHY.md §Design system
    ============================================================ */
@@ -945,6 +1220,7 @@ html.lenis body {
   /* --- Tipografias --- */
   --font-display: "Anton", "Arial Narrow", sans-serif;
   --font-sans: "Space Grotesk", system-ui, sans-serif;
+  --font-serif: "Libre Baskerville", "Georgia", serif;
   --font-hand: "Caveat", cursive;
   /* P5 Menu: SOLO para las etiquetas principales del menu principal
      (perfil, inventario, estadisticas, habilidades). Falta de acentos:
