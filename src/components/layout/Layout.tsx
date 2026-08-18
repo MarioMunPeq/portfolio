@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { useLocation } from 'react-router-dom'
 import { HUD } from './HUD'
@@ -6,7 +5,6 @@ import { TopBar } from '../ui/TopBar'
 import { BottomBar } from '../ui/BottomBar'
 import { Cursor } from './Cursor'
 import { LoadScreen } from '../overlay/LoadScreen'
-import { MaskTransition } from '../overlay/MaskTransition'
 import { Grain } from '../primitives/Grain'
 
 interface LayoutProps {
@@ -36,7 +34,6 @@ const contextFor = (path: string) => {
 export function Layout({ children }: LayoutProps) {
   const { pathname } = useLocation()
   const showTopBar = pathname !== '/' && pathname !== '/experience'
-  const [loadscreenDone, setLoadscreenDone] = useState(false)
 
   return (
     <div className="min-h-dvh bg-bg-hero text-paper">
@@ -46,8 +43,7 @@ export function Layout({ children }: LayoutProps) {
       >
         Saltar al contenido
       </a>
-      <LoadScreen onExitReady={() => setLoadscreenDone(true)} />
-      <MaskTransition ready={loadscreenDone} />
+      <LoadScreen />
       {pathname === '/experience' ? <HUD /> : null}
       {showTopBar && <TopBar context={contextFor(pathname)} />}
       <BottomBar />
