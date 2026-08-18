@@ -48,167 +48,132 @@ const STATS = [
 // visible.
 function DrivingCar({ className = '' }: { className?: string }) {
   const reduceMotion = useReducedMotion()
-
-  // Las capas de efectos solo tienen sentido si hay movimiento: con
-  // reduced-motion se ocultan y el coche queda estatico y visible.
   const fx = reduceMotion ? 'hidden' : 'block'
 
   return (
     <span
       aria-hidden="true"
-      className={`group relative block h-8 w-28 md:w-32 ${className}`}
+      className={`relative block h-16 w-full overflow-hidden ${className}`}
     >
-      {/* Carretera: se estira con la aceleracion y recibe el golpe del
-          aterrizaje */}
+      {/* Carretera: linea roja fija */}
+      <span className="absolute bottom-3 left-0 h-[2px] w-full bg-accent/40" />
+
+      {/* Marcas de carretera: guiones que se mueven en direccion opuesta */}
       <span
-        className={`absolute bottom-0 left-0 h-[2px] w-full origin-left bg-accent/50 ${
-          reduceMotion ? '' : 'animate-car-road'
-        }`}
+        className={`absolute bottom-1 left-0 h-[6px] w-full ${fx}`}
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(90deg, var(--color-paper) 0, var(--color-paper) 12px, transparent 12px, transparent 28px)',
+          backgroundSize: '28px 6px',
+          opacity: 0.15,
+          animation: reduceMotion ? 'none' : 'var(--animate-car-road-markings)',
+        }}
       />
 
-      {/* Estelas de velocidad: cortes graficos afilados que quedan atras
-          (el coche acelera hacia la derecha) */}
+      {/* Grupo del coche — cruza la pantalla de izquierda a derecha */}
       <span
-        className={`absolute bottom-[2px] left-[calc(50%_-_40px)] h-[14px] w-[34px] origin-right bg-accent/80 opacity-0 ${fx} ${
-          reduceMotion ? '' : 'animate-car-trail-a group-hover:animate-car-hover-flash'
+        className={`absolute bottom-3 left-0 ${
+          reduceMotion ? '' : 'animate-car-cross'
         }`}
-        style={{ transform: 'skewX(-20deg)' }}
-      />
-      <span
-        className={`absolute bottom-[6px] left-[calc(50%_-_30px)] h-[10px] w-[22px] origin-right bg-accent/60 opacity-0 ${fx} ${
-          reduceMotion ? '' : 'animate-car-trail-b group-hover:animate-car-hover-flash'
-        }`}
-        style={{ transform: 'skewX(-24deg)' }}
-      />
-      <span
-        className={`absolute bottom-[12px] left-[calc(50%_-_32px)] h-[2px] w-[18px] origin-right bg-paper/60 opacity-0 ${fx} ${
-          reduceMotion ? '' : 'animate-car-trail-line'
-        }`}
-        style={{ transform: 'skewX(-28deg)' }}
-      />
+      >
+        {/* Suspension: micro-rebote vertical */}
+        <span
+          className={`block ${
+            reduceMotion ? '' : 'animate-car-bounce'
+          }`}
+        >
+          {/* Tilt + estela + SVG */}
+          <span
+            className={`flex items-end ${
+              reduceMotion ? '' : 'animate-car-tilt'
+            }`}
+          >
+            {/* Estela de velocidad: 3 lineas rojas/negras */}
+            <span
+              className={`relative mr-[-2px] flex flex-col justify-center gap-[3px] ${fx}`}
+            >
+              <span
+                className="block h-[2px] w-8 bg-accent/70"
+                style={{ transform: 'skewX(-20deg)' }}
+              />
+              <span
+                className="block h-[1.5px] w-5 bg-accent/50"
+                style={{ transform: 'skewX(-24deg)' }}
+              />
+              <span
+                className="block h-[1px] w-3 bg-paper/40"
+                style={{ transform: 'skewX(-28deg)' }}
+              />
+            </span>
 
-      {/* Marcas de velocidad: rasguños finos que pasan hacia atras */}
-      <span
-        className={`absolute bottom-[9px] left-[calc(50%_-_26px)] h-[1px] w-[7px] bg-paper/70 opacity-0 ${fx} ${
-          reduceMotion ? '' : 'animate-car-speed'
-        }`}
-        style={{ transform: 'skewX(-28deg)' }}
-      />
-      <span
-        className={`absolute bottom-[16px] left-[calc(50%_-_42px)] h-[1px] w-[5px] bg-accent/70 opacity-0 ${fx} ${
-          reduceMotion ? '' : 'animate-car-speed'
-        }`}
-        style={{ transform: 'skewX(-28deg)' }}
-      />
-
-      {/* Rigger: centra el coche sobre la pista */}
-      <span className="absolute bottom-0 left-1/2 -ml-7">
-        {/* Entrada: "snap" y asiento de la suspension (one-shot) */}
-        <span className={`block ${reduceMotion ? '' : 'animate-car-enter'}`}>
-          {/* Coreografia: idle → aceleracion → salto → aterrizaje → idle */}
-          <span className={`block ${reduceMotion ? '' : 'animate-car-run'}`}>
-            <svg viewBox="0 0 24 12" className="block h-7 w-14">
+            {/* Coche SVG: silueta angular estilo P5 */}
+            <svg viewBox="0 0 100 40" className="block h-12 w-auto">
+              {/* Carroceria: silueta angular de compacto deportivo */}
               <path
-                d="M1.5 7.6 Q1.5 6 3.2 5.9 L4.1 5.5 Q5 3.9 6.7 3.5 Q7.5 3.3 8.4 3.2 L13.5 3.2 Q16.4 3.2 18.3 4.6 L20 5.5 Q21 5.7 21.7 6.2 Q22.5 6.6 22.5 7.7 L22.5 8.2 Q22.5 8.6 22.1 8.6 L1.9 8.6 Q1.5 8.6 1.5 8.2 Z"
+                d="M6 27 L9 27 L11 25 L14 26 L16 25 L18 21 L25 16 L27 14 L38 14 L41 13
+                   L60 13 L64 14 L70 14 L75 17 L78 14 L82 14 L86 16 L88 20 L90 24 L93 26
+                   L95 27 L95 29 L78 29 L78 25 Q74 20 70 25 L32 25 Q28 20 24 25 L6 25 Z"
                 className="fill-paper"
               />
-              {/* Rueda trasera: las muescas hacen perceptible el giro */}
+              {/* Ventana trasera: angular, recortada */}
+              <path
+                d="M28 16 L33 13 L44 13 L44 16 Z"
+                style={{ fill: 'var(--color-bg-hero)', opacity: 0.85 }}
+              />
+              {/* Ventana delantera: mayor, mas inclinada */}
+              <path
+                d="M46 16 L56 13 L70 13 L72 16 Z"
+                style={{ fill: 'var(--color-bg-hero)', opacity: 0.85 }}
+              />
+              {/* Parabrisas: division A-pillar */}
+              <path
+                d="M44 16 L46 16 L46 13 L44 13 Z"
+                style={{ fill: 'var(--color-paper)' }}
+              />
+              {/* Detalle angular bajo la ventana — corte P5 */}
+              <path
+                d="M30 20 L72 20 L72 21 L30 21 Z"
+                className="fill-bg-hero opacity-15"
+              />
+              {/* Linea de caracter afilada en el costado */}
+              <path
+                d="M18 24 L88 24 L88 24.5 L18 24.5 Z"
+                className="fill-accent"
+              />
+              {/* Rueda trasera */}
               <g
-                className={reduceMotion ? '' : 'animate-car-wheel'}
-                style={{ transformBox: 'fill-box', transformOrigin: 'center' }}
+                className={
+                  reduceMotion ? '' : 'animate-car-wheel'
+                }
+                style={{
+                  transformBox: 'fill-box',
+                  transformOrigin: 'center',
+                }}
               >
-                <circle cx="5.4" cy="9" r="1.9" className="fill-accent" />
-                <circle cx="5.4" cy="8.2" r="0.45" className="fill-paper" />
-                <circle cx="5.4" cy="9.8" r="0.45" className="fill-paper" />
+                <circle cx="24" cy="31" r="6" className="fill-accent" />
+                <circle cx="24" cy="31" r="2.5" className="fill-paper" />
+                <circle cx="24" cy="28" r="1" className="fill-paper" />
+                <circle cx="24" cy="34" r="1" className="fill-paper" />
               </g>
               {/* Rueda delantera */}
               <g
-                className={reduceMotion ? '' : 'animate-car-wheel'}
-                style={{ transformBox: 'fill-box', transformOrigin: 'center' }}
+                className={
+                  reduceMotion ? '' : 'animate-car-wheel'
+                }
+                style={{
+                  transformBox: 'fill-box',
+                  transformOrigin: 'center',
+                }}
               >
-                <circle cx="18.6" cy="9" r="1.9" className="fill-accent" />
-                <circle cx="18.6" cy="8.2" r="0.45" className="fill-paper" />
-                <circle cx="18.6" cy="9.8" r="0.45" className="fill-paper" />
+                <circle cx="76" cy="31" r="6" className="fill-accent" />
+                <circle cx="76" cy="31" r="2.5" className="fill-paper" />
+                <circle cx="76" cy="28" r="1" className="fill-paper" />
+                <circle cx="76" cy="34" r="1" className="fill-paper" />
               </g>
             </svg>
           </span>
         </span>
       </span>
-
-      {/* Sombra del coche sobre la pista: encoge en el aire y se aplasta
-          al aterrizar */}
-      <span
-        className={`absolute bottom-[2px] left-1/2 -ml-6 h-[5px] w-12 rounded-full bg-accent/25 opacity-0 blur-[1px] ${
-          reduceMotion ? '' : 'animate-car-shadow'
-        }`}
-      />
-
-      {/* Particulas angulares de la aceleracion */}
-      <span
-        className={`absolute bottom-[4px] left-[calc(50%_-_16px)] h-[3px] w-[3px] bg-accent opacity-0 ${fx} ${
-          reduceMotion ? '' : 'animate-car-particle'
-        }`}
-        style={{ '--px': '-14px', '--py': '9px' } as CSSProperties}
-      />
-      <span
-        className={`absolute bottom-[10px] left-[calc(50%_-_8px)] h-[3px] w-[3px] bg-accent/80 opacity-0 ${fx} ${
-          reduceMotion ? '' : 'animate-car-particle'
-        }`}
-        style={{ '--px': '-10px', '--py': '13px' } as CSSProperties}
-      />
-      <span
-        className={`absolute bottom-[2px] left-[calc(50%_-_20px)] h-[3px] w-[3px] bg-accent/90 opacity-0 ${fx} ${
-          reduceMotion ? '' : 'animate-car-particle'
-        }`}
-        style={{ '--px': '-16px', '--py': '6px' } as CSSProperties}
-      />
-
-      {/* Fragmentos del impacto del aterrizaje */}
-      <span
-        className={`absolute bottom-[3px] left-[calc(50%_+_2px)] h-[4px] w-[4px] bg-accent opacity-0 ${fx} ${
-          reduceMotion ? '' : 'animate-car-impact'
-        }`}
-        style={{ '--ix': '-8px', '--iy': '-10px' } as CSSProperties}
-      />
-      <span
-        className={`absolute bottom-[3px] left-[calc(50%_+_2px)] h-[4px] w-[4px] bg-paper opacity-0 ${fx} ${
-          reduceMotion ? '' : 'animate-car-impact'
-        }`}
-        style={{ '--ix': '9px', '--iy': '-7px' } as CSSProperties}
-      />
-      <span
-        className={`absolute bottom-[3px] left-[calc(50%_+_2px)] h-[4px] w-[4px] bg-accent/90 opacity-0 ${fx} ${
-          reduceMotion ? '' : 'animate-car-impact'
-        }`}
-        style={{ '--ix': '-4px', '--iy': '-14px' } as CSSProperties}
-      />
-      <span
-        className={`absolute bottom-[3px] left-[calc(50%_+_18px)] h-[4px] w-[4px] bg-accent opacity-0 ${fx} ${
-          reduceMotion ? '' : 'animate-car-impact'
-        }`}
-        style={{ '--ix': '6px', '--iy': '-9px' } as CSSProperties}
-      />
-
-      {/* Lineas de impacto junto a las ruedas al aterrizar */}
-      <span
-        className={`absolute bottom-[2px] left-[calc(50%_-_4px)] h-[10px] w-[2px] bg-paper/80 opacity-0 ${fx} ${
-          reduceMotion ? '' : 'animate-car-impact-line'
-        }`}
-        style={{ transform: 'skewX(-22deg)' }}
-      />
-      <span
-        className={`absolute bottom-[2px] left-[calc(50%_+_30px)] h-[8px] w-[2px] bg-accent/80 opacity-0 ${fx} ${
-          reduceMotion ? '' : 'animate-car-impact-line'
-        }`}
-        style={{ transform: 'skewX(-22deg)' }}
-      />
-
-      {/* Marcador rojo de P5 que destella tras el aterrizaje */}
-      <span
-        className={`absolute bottom-[26px] left-[calc(50%_+_8px)] h-[6px] w-[6px] bg-accent opacity-0 ${fx} ${
-          reduceMotion ? '' : 'animate-car-marker'
-        }`}
-      />
     </span>
   )
 }

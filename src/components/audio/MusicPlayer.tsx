@@ -59,12 +59,12 @@ function TrackSelector({ current, onSelect, onClose }: SelectorProps) {
           key={t.file}
           role="option"
           aria-selected={i === current}
-          className={`bgm-selector-item${i === current ? ' bgm-selector-item--active' : ''}`}
+          className={`bgm-selector__item${i === current ? ' bgm-selector__item--active' : ''}`}
           onClick={() => { onSelect(i); onClose() }}
         >
-          <span className="bgm-selector-num">{String(i + 1).padStart(2, '0')}</span>
-          <span className="bgm-selector-title">{t.title}</span>
-          {i === current && <span className="bgm-selector-now">▶</span>}
+          <span className="bgm-selector__num">{String(i + 1).padStart(2, '0')}</span>
+          <span className="bgm-selector__title">{t.title}</span>
+          {i === current && <span className="bgm-selector__now">▶</span>}
         </button>
       ))}
     </div>
@@ -91,12 +91,14 @@ function Visualizer({ analyser }: { analyser: AnalyserNode | null }) {
     const tick = () => {
       analyser.getByteFrequencyData(data)
       const bands = [
-        Math.floor(bufLen * 0.05),
-        Math.floor(bufLen * 0.15),
+        Math.floor(bufLen * 0.04),
+        Math.floor(bufLen * 0.10),
+        Math.floor(bufLen * 0.18),
         Math.floor(bufLen * 0.30),
-        Math.floor(bufLen * 0.50),
+        Math.floor(bufLen * 0.45),
+        Math.floor(bufLen * 0.60),
       ]
-      for (let i = 0; i < 4; i++) {
+      for (let i = 0; i < 6; i++) {
         const el = barsRef.current[i]
         if (!el) continue
         const start = Math.max(0, bands[i] - 2)
@@ -115,7 +117,7 @@ function Visualizer({ analyser }: { analyser: AnalyserNode | null }) {
 
   useEffect(() => {
     if (analyser && !reducedMotion) return
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 6; i++) {
       const el = barsRef.current[i]
       if (el) el.style.height = '3px'
     }
@@ -123,10 +125,10 @@ function Visualizer({ analyser }: { analyser: AnalyserNode | null }) {
 
   return (
     <div className="bgm-viz" aria-hidden="true">
-      {[0, 1, 2, 3].map((i) => (
+      {[0, 1, 2, 3, 4, 5].map((i) => (
         <span
           key={i}
-          className="bgm-viz-bar"
+          className="bgm-viz__bar"
           ref={(el) => { barsRef.current[i] = el! }}
         />
       ))}
@@ -444,9 +446,9 @@ export function MusicPlayer() {
       <audio ref={audioRef} preload="metadata" />
 
       <div className="bgm-player" aria-label="BGM Player">
-        {/* Collapsed bar — inline content inside bottom bar */}
+        {/* ── Compact bar (always visible inside BottomBar) ── */}
         <div
-          className="bgm-bar-inline"
+          className="bgm-bar"
           onClick={() => setExpanded((v) => !v)}
           role="button"
           tabIndex={0}
@@ -454,19 +456,20 @@ export function MusicPlayer() {
           aria-label={`BGM: ${t.title}`}
           onKeyDown={(e) => { if (e.key === 'Enter') setExpanded((v) => !v) }}
         >
-          <span className="bgm-label">BGM</span>
+          <span className="bgm-bar__label">BGM</span>
+          <span className="bgm-bar__sep" />
           <span
-            className="bgm-track-num"
+            className="bgm-bar__track"
             onClick={(e) => { e.stopPropagation(); setSelectorOpen((v) => !v) }}
             role="button"
             tabIndex={0}
             onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); setSelectorOpen((v) => !v) } }}
           >
-            {String(trackIndex + 1).padStart(2, '0')}/{String(TRACKS.length).padStart(2, '0')}
+            {String(trackIndex + 1).padStart(2, '0')} / {String(TRACKS.length).padStart(2, '0')}
           </span>
-          <span className="bgm-title">{t.title}</span>
+          <span className="bgm-bar__title">{t.title}</span>
           <span
-            className="bgm-mini-play"
+            className="bgm-bar__play"
             onClick={(e) => { e.stopPropagation(); togglePlay() }}
             role="button"
             tabIndex={0}
@@ -478,13 +481,14 @@ export function MusicPlayer() {
           <Visualizer analyser={analyser} />
         </div>
 
-        {/* Expanded panel — positioned above the bottom bar */}
+        {/* ── Expanded BGM System Panel ── */}
         {expanded && (
-          <div className="bgm-expanded">
-            <div className="bgm-expanded-head">
-              <span className="bgm-label">BGM SYSTEM</span>
+          <div className="bgm-panel">
+            {/* Header: system label + track counter */}
+            <div className="bgm-panel__head">
+              <span className="bgm-panel__sys">BGM SYSTEM</span>
               <span
-                className="bgm-track-num"
+                className="bgm-panel__counter"
                 role="button"
                 tabIndex={0}
                 onClick={() => setSelectorOpen((v) => !v)}
@@ -494,48 +498,64 @@ export function MusicPlayer() {
               </span>
             </div>
 
-            <div className="bgm-controls">
-              <button className="bgm-btn" onClick={prevTrack} aria-label="Previous track">
-                <span className="bgm-btn-icon">◀</span>
-              </button>
-              <button className="bgm-btn bgm-btn--play" onClick={togglePlay} aria-label={isPlaying ? 'Pause' : 'Play'}>
-                <span className="bgm-btn-icon">{isPlaying ? '❚❚' : '▶'}</span>
-              </button>
-              <button className="bgm-btn" onClick={nextTrack} aria-label="Next track">
-                <span className="bgm-btn-icon">▶</span>
-              </button>
-              <span className="bgm-title">{t.title}</span>
+            {/* Track title */}
+            <div className="bgm-panel__track">
+              <span className="bgm-panel__title">{t.title}</span>
             </div>
 
-            <div
-              className="bgm-progress"
-              onMouseDown={seek}
-              role="slider"
-              aria-label="Track progress"
-              aria-valuemin={0}
-              aria-valuemax={100}
-              tabIndex={0}
-              onKeyDown={(e) => {
-                const a = audioRef.current
-                if (!a || !isFinite(a.duration)) return
-                if (e.key === 'ArrowRight') a.currentTime = Math.min(a.duration, a.currentTime + 5)
-                if (e.key === 'ArrowLeft') a.currentTime = Math.max(0, a.currentTime - 5)
-              }}
-            >
-              <div className="bgm-progress-track" />
-              <div ref={progressFillRef} className="bgm-progress-fill" />
-            </div>
-            <div className="bgm-time">
-              <span ref={timeLabelRef}>0:00</span>
-              <span>{formatTime(duration)}</span>
+            {/* Transport controls */}
+            <div className="bgm-panel__controls">
+              <button className="bgm-ctrl" onClick={prevTrack} aria-label="Previous track">
+                <span className="bgm-ctrl__icon">◀</span>
+                <span className="bgm-ctrl__label">PREV</span>
+              </button>
+              <button
+                className="bgm-ctrl bgm-ctrl--play"
+                onClick={togglePlay}
+                aria-label={isPlaying ? 'Pause' : 'Play'}
+              >
+                <span className="bgm-ctrl__icon">{isPlaying ? '❚❚' : '▶'}</span>
+                <span className="bgm-ctrl__label">{isPlaying ? 'PAUSE' : 'PLAY'}</span>
+              </button>
+              <button className="bgm-ctrl" onClick={nextTrack} aria-label="Next track">
+                <span className="bgm-ctrl__icon">▶</span>
+                <span className="bgm-ctrl__label">NEXT</span>
+              </button>
             </div>
 
-            <div className="bgm-vol-row">
-              <button className="bgm-btn bgm-btn--sm" onClick={toggleMute} aria-label={muted ? 'Unmute' : 'Mute'}>
+            {/* Progress bar */}
+            <div className="bgm-panel__progress-wrap">
+              <div
+                className="bgm-progress"
+                onMouseDown={seek}
+                role="slider"
+                aria-label="Track progress"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  const a = audioRef.current
+                  if (!a || !isFinite(a.duration)) return
+                  if (e.key === 'ArrowRight') a.currentTime = Math.min(a.duration, a.currentTime + 5)
+                  if (e.key === 'ArrowLeft') a.currentTime = Math.max(0, a.currentTime - 5)
+                }}
+              >
+                <div className="bgm-progress__track" />
+                <div ref={progressFillRef} className="bgm-progress__fill" />
+              </div>
+              <div className="bgm-panel__time">
+                <span ref={timeLabelRef}>0:00</span>
+                <span>{formatTime(duration)}</span>
+              </div>
+            </div>
+
+            {/* Volume */}
+            <div className="bgm-vol">
+              <button className="bgm-vol__btn" onClick={toggleMute} aria-label={muted ? 'Unmute' : 'Mute'}>
                 {muted ? '🔇' : '🔊'}
               </button>
               <div
-                className="bgm-vol-track"
+                className="bgm-vol__track"
                 onMouseDown={changeVolume}
                 role="slider"
                 aria-label="Volume"
@@ -559,15 +579,17 @@ export function MusicPlayer() {
                   }
                 }}
               >
-                <div ref={volFillRef} className="bgm-vol-fill" />
+                <div ref={volFillRef} className="bgm-vol__fill" />
               </div>
-              <span className="bgm-vol-pct">{muted ? '0' : Math.round(volume * 100)}%</span>
+              <span className="bgm-vol__pct">{muted ? '0' : Math.round(volume * 100)}%</span>
             </div>
 
+            {/* Visualizer */}
             <Visualizer analyser={analyser} />
           </div>
         )}
 
+        {/* ── Track selector dropdown ── */}
         {selectorOpen && (
           <TrackSelector current={trackIndex} onSelect={selectTrack} onClose={() => setSelectorOpen(false)} />
         )}

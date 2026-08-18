@@ -251,12 +251,12 @@
    la tarjeta (.hero-cmd) solo aplica el skew y la animacion de entrada. */
 .hero-command-item {
   transform: translateX(var(--off, 0px)) rotate(var(--rot, 0deg));
-  transition: transform 0.15s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.08s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Hover del li: exagera rotacion + desplaza cuando el hijo se hoverea */
+/* Hover del li: snap agresivo en la direccion chaos */
 .hero-command-item:has(.metro-menu-btn:hover) {
-  transform: translateX(calc(var(--off, 0px) - 6px)) rotate(calc(var(--rot, 0deg) * 1.4));
+  transform: translateX(calc(var(--off, 0px) - 8px)) rotate(calc(var(--rot, 0deg) * 1.5));
 }
 
 .hero-cmd {
@@ -269,7 +269,8 @@
   background-color: var(--color-paper);
   clip-path: polygon(0 18%, 5% 0, 93% 0, 100% 50%, 93% 100%, 5% 100%, 0 82%);
   transform: skewX(-11deg);
-  transition: transform 0.15s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.08s cubic-bezier(0.22, 1, 0.36, 1);
+  overflow: hidden;
 }
 
 /* Marco angular sin `border`: la capa exterior (hero-cmd) pinta el borde
@@ -281,7 +282,7 @@
   inset: 2px;
   background-color: var(--color-bg-hero);
   clip-path: polygon(0 18%, 5% 0, 93% 0, 100% 50%, 93% 100%, 5% 100%, 0 82%);
-  transition: background-color 0.12s;
+  transition: inset 0.08s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.08s;
 }
 
 /* El contenido debe quedar por encima del track (ambos comparten caja). */
@@ -292,43 +293,90 @@
 
 .hero-cmd:hover,
 .hero-cmd:focus-visible {
-  transform: skewX(-11deg) translateX(-10px) scale(1.04);
+  transform: skewX(-11deg) translateX(-8px) scale(1.02);
 }
 
 .hero-cmd:hover .hero-cmd-track,
 .hero-cmd:focus-visible .hero-cmd-track {
+  inset: 1px;
   background-color: var(--color-accent);
-  transition-duration: 0.1s;
 }
 
-/* El icono de boton (△ □ ○ ✕) conserva su color de identidad en hover:
-   su color lo fija text-face-* y no cambia con el fondo rojo de la tarjeta;
-   aqui se garantiza que el borde sigue al simbolo. */
+/* Icono: rotacion independiente rapida */
 .hero-cmd:hover .hero-btn-icon,
 .hero-cmd:focus-visible .hero-btn-icon {
   border-color: currentColor;
+  transform: skewX(11deg) rotate(-6deg) scale(1.1);
+  transition: transform 0.1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Label: pequeno desplazamiento horizontal independiente */
+.hero-cmd:hover > span:nth-child(3) {
+  transform: skewX(11deg) translateX(4px);
+  transition: transform 0.1s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Hover: snap angular con acento rojo */
 .metro-menu-btn:hover,
 .metro-menu-btn:focus-visible {
-  transform: skewX(-11deg) translateX(-10px) scale(1.04);
+  transform: skewX(-11deg) translateX(-8px) scale(1.02);
 }
 
 .metro-menu-btn:hover .hero-cmd-track,
 .metro-menu-btn:focus-visible .hero-cmd-track {
+  inset: 1px;
   background-color: var(--color-accent);
 }
 
 .metro-menu-btn:hover .hero-btn-icon,
 .metro-menu-btn:focus-visible .hero-btn-icon {
   border-color: currentColor;
+  transform: skewX(11deg) rotate(-6deg) scale(1.1);
+  transition: transform 0.1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.metro-menu-btn:hover > span:nth-child(3) {
+  transform: skewX(11deg) translateX(4px);
+  transition: transform 0.1s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Click: snap contundente */
 .metro-menu-btn:active {
   transform: skewX(-11deg) translateX(-2px) scale(0.98) !important;
   transition-duration: 0.05s;
+}
+
+/* ============================================================
+   Red slash — linea diagonal roja que cruza el boton en hover
+   ============================================================ */
+.hero-cmd::after {
+  content: '';
+  position: absolute;
+  top: -20%;
+  left: -20%;
+  width: 3px;
+  height: 140%;
+  background: var(--color-accent);
+  transform: rotate(25deg);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.hero-cmd:hover::after,
+.hero-cmd:focus-visible::after {
+  animation: p5-slash 0.12s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes p5-slash {
+  0% {
+    left: -20%;
+    opacity: 1;
+  }
+  100% {
+    left: 130%;
+    opacity: 1;
+  }
 }
 
 /* Sello de estrella por categoria (pantalla de carga): pasa de estrella
@@ -947,439 +995,70 @@ html.lenis body {
     }
   }
 
-  /* --- Cochecito de "Permiso de conducir": motion graphic de menu P5 ---
-     Coreografia: IDLE (reposo largo) → anticipacion → ACELERACIoN explosiva
-     (estela roja diagonal) → SALTO → CONGELACIoN AeREA → IMPACTO duro
-     (fragmentos, squash) → RECOUPERACIoN con rebote → retorno al idle.
-     Ciclo de 4.0 s con fases claramente separadas: reposo 36%, preparacion
-     3%, disparo 6%, vuelo 12%, congelacion 4%, impacto 3%, recuperacion 8%,
-     retorno 28%. Todas las piezas comparten duracion y delay; easings por
-     segmento dan el "snap" de P5. Todo respetado por reduced-motion. */
+  /* --- Cochecito de "Permiso de conducir": cruza la pantalla ---
+     El coche entra por la izquierda, cruza toda la pantalla y sale por la
+     derecha en bucle. Suspension sutil, giro de ruedas y estela de velocidad.
+     Todo en CSS puro. Reduced-motion: coche estatico y visible. */
 
-  /* Entrada: el coche se deja caer con un "snap" y la suspension se asienta. */
-  --animate-car-enter: car-enter 0.45s cubic-bezier(0.34, 1.4, 0.64, 1) 1 both;
+  /* Cruce: de offscreen izquierda a offscreen derecha */
+  --animate-car-cross: car-cross 3.5s linear infinite;
 
-  @keyframes car-enter {
-    0% {
-      opacity: 0;
-      transform: translateY(-5px) rotate(2deg);
+  @keyframes car-cross {
+    from {
+      transform: translateX(-150px);
     }
-    60% {
-      opacity: 1;
-      transform: translateY(0) rotate(-2deg);
+    to {
+      transform: translateX(100vw);
     }
-    75% {
-      transform: translateY(2px);
-    }
-    88% {
-      transform: translateY(-1px);
-    }
+  }
+
+  /* Suspension: micro-rebote vertical sincronizado con el tilt */
+  --animate-car-bounce: car-bounce 0.35s ease-in-out infinite;
+
+  @keyframes car-bounce {
+    0%,
     100% {
       transform: translateY(0);
     }
-  }
-
-  /* Coreografia principal del coche (posicion + rotacion + squash/stretch).
-     Ciclo 4.0 s: IDLE 0-36% → ANTICIPACIoN 36-39% → ACELERACIoN 39-45% →
-     SALTO 45-57% → AIRE 57-61% → IMPACTO 61-64% → RECOUPERACIoN 64-72% →
-     RETORNO 72-100%. */
-  --animate-car-run: car-run 4.0s cubic-bezier(0.22, 0.61, 0.36, 1) 0.45s infinite;
-
-  @keyframes car-run {
-    /* IDLE: reposo total — el coche respira en su sitio. */
-    0% {
-      animation-timing-function: linear;
-      transform: translate(0, 0) rotate(0deg) scale(1, 1);
-    }
-    36% {
-      transform: translate(0, 0) rotate(0deg) scale(1, 1);
-    }
-    /* ANTICIPACIoN: compresion + ligero retroceso + micro-pausa. */
-    38% {
-      animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
-      transform: translate(-2px, 1px) rotate(1deg) scale(0.94, 1.06);
-    }
-    39% {
-      animation-timing-function: cubic-bezier(0.12, 0.8, 0.2, 1);
-      transform: translate(-1px, 0.5px) rotate(0.5deg) scale(0.96, 1.04);
-    }
-    /* ACELERACIoN: disparo explosivo — squash horizontal + tilt + avance. */
-    42% {
-      animation-timing-function: cubic-bezier(0.08, 0.9, 0.15, 1);
-      transform: translate(6px, -1px) rotate(-2.5deg) scale(1.12, 0.86);
-    }
-    45% {
-      animation-timing-function: cubic-bezier(0.2, 0, 0.6, 1);
-      transform: translate(14px, -3px) rotate(-5deg) scale(1.3, 0.72);
-    }
-    /* SALTO: arco fuera del suelo — momento clave de aire. */
     50% {
-      animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-      transform: translate(18px, -10px) rotate(-8deg) scale(1.22, 0.78);
-    }
-    57% {
-      animation-timing-function: cubic-bezier(0.15, 0, 0.35, 1);
-      transform: translate(20px, -16px) rotate(-11deg) scale(1.16, 0.84);
-    }
-    /* CONGELACIoN AeREA: breve pausa visual — contraste con la violencia. */
-    61% {
-      animation-timing-function: cubic-bezier(0.3, 0, 0.7, 1);
-      transform: translate(18px, -8px) rotate(-5deg) scale(1.12, 0.88);
-    }
-    /* IMPACTO: aterrizaje duro — squash extremo en 2-3 frames. */
-    63% {
-      animation-timing-function: cubic-bezier(0.15, 0.9, 0.2, 1);
-      transform: translate(15px, 3px) rotate(3deg) scale(0.74, 1.32);
-    }
-    /* RECOUPERACIoN: rebote + overshoot + asentamiento. */
-    66% {
-      animation-timing-function: cubic-bezier(0.2, 0.9, 0.3, 1);
-      transform: translate(12px, 0) rotate(-1.5deg) scale(1.16, 0.86);
-    }
-    72% {
-      animation-timing-function: cubic-bezier(0.3, 1.4, 0.5, 1);
-      transform: translate(6px, 0) rotate(0.5deg) scale(1, 1.05);
-    }
-    /* RETORNO AL IDLE: retorno suave y silencioso. */
-    86% {
-      animation-timing-function: ease-in-out;
-      transform: translate(1px, 0) rotate(0deg) scale(1, 1);
-    }
-    100% {
-      transform: translate(0, 0) rotate(0deg) scale(1, 1);
+      transform: translateY(-2px);
     }
   }
 
-  /* Ruedas: giro rapido solo durante la fase de movimiento (multiplos de 180°
-     para un loop sin salto visual). */
-  --animate-car-wheel: car-wheel 4.0s ease-in-out 0.45s infinite;
+  /* Tilt: inclinacion sutil del cuerpo del coche */
+  --animate-car-tilt: car-tilt 0.35s ease-in-out infinite;
 
-  @keyframes car-wheel {
+  @keyframes car-tilt {
     0%,
-    44% {
+    100% {
       transform: rotate(0deg);
     }
     50% {
-      transform: rotate(420deg);
-    }
-    60% {
-      transform: rotate(1080deg);
-    }
-    68% {
-      transform: rotate(1440deg);
-    }
-    76% {
-      transform: rotate(1620deg);
-    }
-    100% {
-      transform: rotate(1800deg);
+      transform: rotate(-1.5deg);
     }
   }
 
-  /* Carretera: estira con la aceleracion y sufre un golpe en el aterrizaje. */
-  --animate-car-road: car-road 4.0s cubic-bezier(0.22, 0.61, 0.36, 1) 0.45s infinite;
+  /* Ruedas: giro continuo mientras cruza */
+  --animate-car-wheel: car-wheel 0.5s linear infinite;
 
-  @keyframes car-road {
-    0%,
-    44% {
-      transform: scaleX(1) translateY(0);
+  @keyframes car-wheel {
+    from {
+      transform: rotate(0deg);
     }
-    50% {
-      transform: scaleX(1.08) translateY(0);
-    }
-    58% {
-      transform: scaleX(0.97) translateY(0);
-    }
-    68% {
-      transform: scaleX(1) translateY(0);
-    }
-    72% {
-      transform: scaleX(1.1) translateY(1px);
-    }
-    76% {
-      transform: scaleX(0.9) translateY(-1px);
-    }
-    82% {
-      transform: scaleX(1) translateY(0);
-    }
-    100% {
-      transform: scaleX(1) translateY(0);
+    to {
+      transform: rotate(360deg);
     }
   }
 
-  /* --- Estela de velocidad: capas de cortes graficos afilados --- */
+  /* Marcas de carretera: guiones que se desplazan en sentido contrario */
+  --animate-car-road-markings: car-road-markings 2s linear infinite;
 
-  /* Capa 1: raya roja principal (poligono alargado). */
-  --animate-car-trail-a: car-trail-a 4.0s linear 0.45s infinite;
-
-  @keyframes car-trail-a {
-    0%,
-    44% {
-      opacity: 0;
-      transform: skewX(-22deg) scaleX(0);
+  @keyframes car-road-markings {
+    from {
+      background-position: 0 0;
     }
-    48% {
-      opacity: 1;
-    }
-    58% {
-      transform: skewX(-22deg) scaleX(1);
-    }
-    74% {
-      opacity: 1;
-    }
-    82% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 0;
-      transform: skewX(-22deg) scaleX(0);
-    }
-  }
-
-  /* Capa 2: raya roja oscura secundaria. */
-  --animate-car-trail-b: car-trail-b 4.0s linear 0.45s infinite;
-
-  @keyframes car-trail-b {
-    0%,
-    46% {
-      opacity: 0;
-      transform: skewX(-26deg) scaleX(0);
-    }
-    50% {
-      opacity: 0.9;
-    }
-    62% {
-      transform: skewX(-26deg) scaleX(1);
-    }
-    74% {
-      opacity: 0.7;
-    }
-    84% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 0;
-      transform: skewX(-26deg) scaleX(0);
-    }
-  }
-
-  /* Lineas finas rojas/negras que rasgan el aire. */
-  --animate-car-trail-line: car-trail-line 4.0s linear 0.45s infinite;
-
-  @keyframes car-trail-line {
-    0%,
-    44% {
-      opacity: 0;
-      transform: skewX(-30deg) scaleX(0);
-    }
-    50% {
-      opacity: 0.9;
-    }
-    62% {
-      transform: skewX(-30deg) scaleX(1);
-    }
-    74% {
-      opacity: 0.7;
-    }
-    84% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 0;
-      transform: skewX(-30deg) scaleX(0);
-    }
-  }
-
-  /* Marcas de velocidad: pequeños cortes diagonales que pasan hacia atras. */
-  --animate-car-speed: car-speed 4.0s linear 0.45s infinite;
-
-  @keyframes car-speed {
-    0%,
-    46% {
-      opacity: 0;
-      transform: translateX(0) skewX(-30deg);
-    }
-    50% {
-      opacity: 1;
-    }
-    56% {
-      transform: translateX(-20px) skewX(-30deg);
-    }
-    64% {
-      opacity: 0;
-    }
-    70% {
-      opacity: 1;
-    }
-    78% {
-      transform: translateX(-16px) skewX(-30deg);
-    }
-    84% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 0;
-      transform: translateX(0) skewX(-30deg);
-    }
-  }
-
-  /* Particulas angulares de la aceleracion (direccion por --px/--py). */
-  --animate-car-particle: car-particle 4.0s linear 0.45s infinite;
-
-  @keyframes car-particle {
-    0%,
-    48% {
-      opacity: 0;
-      transform: translate(0, 0) rotate(45deg);
-    }
-    52% {
-      opacity: 1;
-    }
-    64% {
-      opacity: 0.9;
-      transform: translate(var(--px), var(--py)) rotate(45deg);
-    }
-    78% {
-      opacity: 0;
-      transform: translate(calc(var(--px) * 1.3), calc(var(--py) * 1.3)) rotate(45deg);
-    }
-    100% {
-      opacity: 0;
-      transform: translate(0, 0) rotate(45deg);
-    }
-  }
-
-  /* Fragmentos del impacto del aterrizaje (direccion por --ix/--iy). */
-  --animate-car-impact: car-impact 4.0s cubic-bezier(0.2, 0.9, 0.3, 1) 0.45s infinite;
-
-  @keyframes car-impact {
-    0%,
-    70% {
-      opacity: 0;
-      transform: translate(0, 0) scale(1) rotate(45deg);
-    }
-    73% {
-      opacity: 1;
-      transform: scale(1.25) rotate(45deg);
-    }
-    82% {
-      opacity: 0;
-      transform: translate(var(--ix), var(--iy)) scale(0.6) rotate(45deg);
-    }
-    100% {
-      opacity: 0;
-      transform: translate(0, 0) scale(1) rotate(45deg);
-    }
-  }
-
-  /* Lineas de impacto junto a las ruedas al aterrizar. */
-  --animate-car-impact-line: car-impact-line 4.0s linear 0.45s infinite;
-
-  @keyframes car-impact-line {
-    0%,
-    71% {
-      opacity: 0;
-      transform: skewX(-24deg) scaleY(0.2);
-    }
-    74% {
-      opacity: 1;
-      transform: skewX(-24deg) scaleY(1);
-    }
-    82% {
-      opacity: 0;
-      transform: skewX(-24deg) scaleY(0.35);
-    }
-    100% {
-      opacity: 0;
-      transform: skewX(-24deg) scaleY(0.2);
-    }
-  }
-
-  /* Marcador rojo de P5 que destella tras el aterrizaje. */
-  --animate-car-marker: car-marker 4.0s cubic-bezier(0.34, 1.4, 0.64, 1) 0.45s infinite;
-
-  @keyframes car-marker {
-    0%,
-    75% {
-      opacity: 0;
-      transform: scale(0) rotate(45deg);
-    }
-    78% {
-      opacity: 1;
-      transform: scale(1.2) rotate(45deg);
-    }
-    82% {
-      opacity: 0.9;
-      transform: scale(0.85) rotate(45deg);
-    }
-    88% {
-      opacity: 0;
-      transform: scale(0.5) rotate(45deg);
-    }
-    100% {
-      opacity: 0;
-      transform: scale(0) rotate(45deg);
-    }
-  }
-
-  /* Sombra bajo el coche: acompaña el desplazamiento horizontal del salto,
-     encoge y se desvanece en el aire y se aplasta en el aterrizaje. */
-  --animate-car-shadow: car-shadow 4.0s cubic-bezier(0.22, 0.61, 0.36, 1) 0.45s infinite;
-
-  @keyframes car-shadow {
-    0%,
-    44% {
-      opacity: 0.35;
-      transform: translateX(0) scaleX(1);
-    }
-    50% {
-      opacity: 0.2;
-      transform: translateX(2px) scaleX(0.82);
-    }
-    58% {
-      opacity: 0.1;
-      transform: translateX(12px) scaleX(0.6);
-    }
-    64% {
-      opacity: 0.04;
-      transform: translateX(16px) scaleX(0.35);
-    }
-    72% {
-      opacity: 0.03;
-      transform: translateX(20px) scaleX(0.25);
-    }
-    78% {
-      opacity: 0.5;
-      transform: translateX(15px) scaleX(1.2);
-    }
-    84% {
-      opacity: 0.32;
-      transform: translateX(12px) scaleX(0.88);
-    }
-    92% {
-      opacity: 0.28;
-      transform: translateX(4px) scaleX(1);
-    }
-    100% {
-      opacity: 0.35;
-      transform: translateX(0) scaleX(1);
-    }
-  }
-
-  /* Reaccion al hover: destello corto de estela, como un "rev". One-shot. */
-  --animate-car-hover-flash: car-hover-flash 0.5s ease-out both;
-
-  @keyframes car-hover-flash {
-    0% {
-      opacity: 0;
-      transform: skewX(-22deg) scaleX(0);
-    }
-    35% {
-      opacity: 0.95;
-    }
-    100% {
-      opacity: 0;
-      transform: skewX(-22deg) scaleX(1);
+    to {
+      background-position: -28px 0;
     }
   }
 }
@@ -1660,10 +1339,10 @@ html.lenis body {
 }
 
 /* ================================================================
-   MUSIC PLAYER (BGM)
+   MUSIC PLAYER — Persona 5 BGM System
    ================================================================ */
 
-/* --- Positioning wrapper (inside bottom bar, relative for expanded panel) --- */
+/* --- Wrapper (inside BottomBar, relative for panel positioning) --- */
 .bgm-player {
   position: relative;
   display: flex;
@@ -1671,182 +1350,277 @@ html.lenis body {
   gap: 12px;
   flex: 1;
   min-width: 0;
-  font-family: var(--font-p5menu);
-  animation: bgm-snap-in 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
   user-select: none;
+  animation: bgm-snap-in 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes bgm-snap-in {
-  from { opacity: 0; transform: translateY(12px) skewX(-3deg); }
-  to   { opacity: 1; transform: translateY(0) skewX(0); }
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* --- Collapsed bar (inline content inside bottom bar) --- */
-.bgm-bar-inline {
+/* ================================================================
+   COMPACT BAR — System dock inside BottomBar
+   ================================================================ */
+
+.bgm-bar {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   cursor: pointer;
-  font-family: var(--font-p5menu);
-  color: var(--color-paper);
-  font-size: 13px;
+  font-family: var(--font-sans);
+  font-size: 11px;
   letter-spacing: 0.08em;
-  transition: opacity 0.15s;
-  padding: 2px 0;
-}
-.bgm-bar-inline:hover {
-  opacity: 0.85;
+  color: var(--color-paper);
+  padding: 4px 0;
+  transition: opacity 0.12s;
 }
 
-.bgm-label {
-  font-family: var(--font-p5menu);
-  font-size: 11px;
-  letter-spacing: 0.2em;
+.bgm-bar:hover {
+  opacity: 0.8;
+}
+
+.bgm-bar__label {
+  font-family: var(--font-expose);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  opacity: 0.6;
+  color: var(--color-accent);
 }
 
-.bgm-track-num {
-  font-family: var(--font-p5menu);
-  font-size: 11px;
-  letter-spacing: 0.15em;
-  opacity: 0.5;
+.bgm-bar__sep {
+  display: block;
+  width: 1px;
+  height: 10px;
+  background: var(--color-paper);
+  opacity: 0.12;
+}
+
+.bgm-bar__track {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--color-paper);
+  opacity: 0.4;
   cursor: pointer;
   transition: opacity 0.12s;
 }
-.bgm-track-num:hover {
+
+.bgm-bar__track:hover {
   opacity: 1;
+  color: var(--color-accent);
 }
 
-.bgm-title {
+.bgm-bar__title {
   font-family: var(--font-p5menu);
-  font-size: 13px;
+  font-size: 12px;
   letter-spacing: 0.04em;
+  color: var(--color-paper);
   white-space: nowrap;
-  max-width: 140px;
+  max-width: 120px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.bgm-mini-play {
-  font-size: 14px;
+.bgm-bar__play {
+  font-size: 11px;
   cursor: pointer;
-  opacity: 0.7;
-  transition: opacity 0.12s;
-  margin-left: auto;
+  opacity: 0.55;
+  transition: opacity 0.1s, color 0.1s;
+  padding: 2px 4px;
 }
-.bgm-mini-play:hover {
+
+.bgm-bar__play:hover {
   opacity: 1;
+  color: var(--color-accent);
 }
 
-/* --- Visualizer (4 bars) --- */
-.bgm-viz {
-  display: flex;
-  align-items: flex-end;
-  gap: 3px;
-  height: 18px;
-  margin-left: 6px;
-}
-/* Bars driven by Web Audio API AnalyserNode via RAF — heights set inline */
-.bgm-viz-bar {
-  width: 4px;
-  min-height: 3px;
-  height: 3px;
-  background: var(--color-accent);
-  border-radius: 1px;
-}
+/* ================================================================
+   EXPANDED PANEL — BGM System interface
+   ================================================================ */
 
-/* --- Expanded panel (grows upward from BottomBar's top edge) --- */
-.bgm-expanded {
+.bgm-panel {
   position: absolute;
   bottom: calc(100% + 11px);
   left: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   padding: 16px 18px 14px;
-  width: 300px;
+  width: 320px;
   max-width: calc(100vw - 2rem);
-  background: rgba(10, 2, 14, 0.95);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(8, 8, 8, 0.97);
+  border: 1px solid rgba(245, 245, 240, 0.06);
   border-bottom: none;
-  clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%, 0 8px);
-  animation: bgm-panel-enter 0.18s cubic-bezier(0.22, 1, 0.36, 1) both;
+  clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%, 0 10px);
+  animation: bgm-panel-in 0.18s cubic-bezier(0.22, 1, 0.36, 1) both;
   z-index: 10;
 }
 
-@keyframes bgm-panel-enter {
-  from { opacity: 0; transform: translateY(6px) scaleY(0.96); }
-  to   { opacity: 1; transform: translateY(0) scaleY(1); }
+/* Subtle bridge connecting panel to bottom bar */
+.bgm-panel::after {
+  content: '';
+  position: absolute;
+  bottom: -11px;
+  left: 0;
+  right: 0;
+  height: 11px;
+  background: rgba(8, 8, 8, 0.97);
 }
 
-.bgm-expanded-head {
+@keyframes bgm-panel-in {
+  from {
+    opacity: 0;
+    clip-path: polygon(10px 100%, calc(100% - 10px) 100%, 100% 100%, 100% 100%, 0 100%, 0 100%);
+  }
+  to {
+    opacity: 1;
+    clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%, 0 10px);
+  }
+}
+
+/* Panel header */
+.bgm-panel__head {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-/* --- Controls row --- */
-.bgm-controls {
+.bgm-panel__sys {
+  font-family: var(--font-expose);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--color-paper);
+  opacity: 0.35;
+}
+
+.bgm-panel__counter {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--color-paper);
+  opacity: 0.45;
+  cursor: pointer;
+  transition: opacity 0.12s, color 0.12s;
+}
+
+.bgm-panel__counter:hover {
+  opacity: 1;
+  color: var(--color-accent);
+}
+
+/* Track info */
+.bgm-panel__track {
+  padding: 2px 0;
+}
+
+.bgm-panel__title {
+  font-family: var(--font-p5menu);
+  font-size: 22px;
+  letter-spacing: 0.03em;
+  color: var(--color-paper);
+  line-height: 1.1;
+}
+
+/* ================================================================
+   TRANSPORT CONTROLS — Angular buttons
+   ================================================================ */
+
+.bgm-panel__controls {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
 }
 
-.bgm-btn {
-  display: inline-flex;
+.bgm-ctrl {
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  gap: 4px;
+  padding: 6px 10px;
+  background: rgba(245, 245, 240, 0.04);
+  border: none;
   color: var(--color-paper);
-  font-size: 13px;
   cursor: pointer;
-  clip-path: polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px);
-  transition: background 0.1s, border-color 0.1s;
-}
-.bgm-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: var(--color-accent);
-}
-.bgm-btn:active {
-  transform: scale(0.95);
+  clip-path: polygon(4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px), 0 4px);
+  transition: background 0.08s, transform 0.08s;
 }
 
-.bgm-btn--play {
-  width: 40px;
-  height: 40px;
-  font-size: 15px;
+.bgm-ctrl:hover {
+  background: rgba(245, 245, 240, 0.08);
 }
 
-.bgm-btn--sm {
-  width: 24px;
-  height: 24px;
+.bgm-ctrl:active {
+  transform: scale(0.96);
+  transition-duration: 0.04s;
+}
+
+.bgm-ctrl__icon {
   font-size: 11px;
+  line-height: 1;
 }
 
-.bgm-controls .bgm-title {
-  margin-left: auto;
-  font-size: 12px;
+.bgm-ctrl__label {
+  font-family: var(--font-sans);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.4;
 }
 
-/* --- Progress bar --- */
+/* Play button: slightly larger, red on hover */
+.bgm-ctrl--play {
+  padding: 8px 16px;
+  background: rgba(245, 245, 240, 0.06);
+}
+
+.bgm-ctrl--play .bgm-ctrl__icon {
+  font-size: 13px;
+}
+
+.bgm-ctrl--play .bgm-ctrl__label {
+  font-size: 9px;
+}
+
+.bgm-ctrl--play:hover {
+  background: var(--color-accent);
+  color: var(--color-paper);
+}
+
+.bgm-ctrl--play:hover .bgm-ctrl__label {
+  opacity: 0.85;
+}
+
+/* ================================================================
+   PROGRESS BAR
+   ================================================================ */
+
+.bgm-panel__progress-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .bgm-progress {
   position: relative;
   width: 100%;
-  height: 8px;
+  height: 6px;
   cursor: pointer;
 }
-.bgm-progress-track {
+
+.bgm-progress__track {
   position: absolute;
   inset: 0;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(245, 245, 240, 0.08);
 }
-.bgm-progress-fill {
+
+.bgm-progress__fill {
   position: absolute;
   top: 0;
   left: 0;
@@ -1855,29 +1629,54 @@ html.lenis body {
   transition: width 0.1s linear;
 }
 
-.bgm-time {
+.bgm-panel__time {
   display: flex;
   justify-content: space-between;
-  font-size: 10px;
+  font-family: var(--font-sans);
+  font-size: 9px;
+  font-weight: 600;
   letter-spacing: 0.12em;
-  opacity: 0.5;
+  opacity: 0.35;
 }
 
-/* --- Volume --- */
-.bgm-vol-row {
+/* ================================================================
+   VOLUME CONTROL — Always visible
+   ================================================================ */
+
+.bgm-vol {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.bgm-vol-track {
+.bgm-vol__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  font-size: 11px;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.1s;
+}
+
+.bgm-vol__btn:hover {
+  opacity: 1;
+}
+
+.bgm-vol__track {
   position: relative;
   flex: 1;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.12);
+  height: 4px;
+  background: rgba(245, 245, 240, 0.12);
   cursor: pointer;
 }
-.bgm-vol-fill {
+
+.bgm-vol__fill {
   position: absolute;
   top: 0;
   left: 0;
@@ -1886,72 +1685,101 @@ html.lenis body {
   transition: width 0.08s linear;
 }
 
-.bgm-vol-pct {
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  opacity: 0.5;
-  min-width: 30px;
+.bgm-vol__pct {
+  font-family: var(--font-sans);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  opacity: 0.4;
+  min-width: 28px;
   text-align: right;
 }
 
-/* --- Track selector dropdown (above bottom bar) --- */
+/* ================================================================
+   VISUALIZER — 6 red bars
+   ================================================================ */
+
+.bgm-viz {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 16px;
+  margin-left: 4px;
+}
+
+.bgm-viz__bar {
+  width: 3px;
+  min-height: 2px;
+  height: 2px;
+  background: var(--color-accent);
+}
+
+/* ================================================================
+   TRACK SELECTOR — Dropdown list
+   ================================================================ */
+
 .bgm-selector {
   position: absolute;
   bottom: calc(100% + 4px);
   left: 0;
-  width: 300px;
+  width: 320px;
   max-width: calc(100vw - 2rem);
-  background: rgba(10, 2, 14, 0.97);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(8, 8, 8, 0.98);
+  border: 1px solid rgba(245, 245, 240, 0.06);
   clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%, 0 8px);
-  animation: bgm-selector-enter 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: bgm-selector-in 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
   z-index: 20;
 }
 
-@keyframes bgm-selector-enter {
-  from { opacity: 0; transform: translateY(8px); }
+@keyframes bgm-selector-in {
+  from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.bgm-selector-item {
+.bgm-selector__item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
   padding: 10px 16px;
   background: transparent;
   border: none;
   color: var(--color-paper);
-  font-family: var(--font-p5menu);
-  font-size: 12px;
-  letter-spacing: 0.06em;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.04em;
   cursor: pointer;
   text-align: left;
-  transition: background 0.1s;
+  transition: background 0.08s;
 }
-.bgm-selector-item:hover {
-  background: rgba(255, 255, 255, 0.06);
+
+.bgm-selector__item:hover {
+  background: rgba(245, 245, 240, 0.04);
 }
-.bgm-selector-item--active {
-  background: rgba(200, 16, 46, 0.12);
+
+.bgm-selector__item--active {
+  background: rgba(230, 0, 18, 0.08);
 }
-.bgm-selector-item--active .bgm-selector-title {
+
+.bgm-selector__item--active .bgm-selector__title {
   color: var(--color-accent);
 }
 
-.bgm-selector-num {
-  font-size: 10px;
-  opacity: 0.4;
-  min-width: 18px;
+.bgm-selector__num {
+  font-size: 9px;
+  font-weight: 600;
+  opacity: 0.3;
+  min-width: 16px;
+  letter-spacing: 0.1em;
 }
 
-.bgm-selector-title {
+.bgm-selector__title {
   flex: 1;
+  letter-spacing: 0.02em;
 }
 
-.bgm-selector-now {
-  font-size: 10px;
+.bgm-selector__now {
+  font-size: 9px;
   color: var(--color-accent);
 }
 

@@ -1,4 +1,4 @@
-export const TRANSITION_SPEED = 6
+export const TRANSITION_SPEED = 3
 
 /** Time in ms after which the video has visually covered the screen.
  *  At 2x speed this is ~500ms of actual video content — enough for the
