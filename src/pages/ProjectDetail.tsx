@@ -6,86 +6,167 @@ import { PreviewBox } from '../components/ui/PreviewBox'
 import { projects } from '../data/projects'
 import type { ProjectScreenshot } from '../data/projects'
 
-const ROTATIONS = ['-1.5deg', '1deg', '-1deg', '1.5deg', '-0.5deg', '0.5deg']
+/* ── Font Awesome icons ── */
+import { faReact, faNodeJs, faPython, faAndroid, faGitAlt, faJs, faCss3 } from '@fortawesome/free-brands-svg-icons'
+import { faDatabase, faBrain, faCode, faServer, faBolt, faGears, faGem, faCubes, faTerminal, faFlask } from '@fortawesome/free-solid-svg-icons'
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 
-/**
- * Angular framed image with clip-path border treatment. When the screenshot
- * has no `src` yet, PreviewBox renders the shared "Captura pendiente" slot.
- */
-function GalleryImage({ screenshot }: { screenshot: ProjectScreenshot }) {
+/* ── Clip-paths reused from the site's visual system ── */
+const TAG_CLIP = 'polygon(0 0, calc(100% - 1rem) 0, 100% 1rem, 100% 100%, 0 100%)'
+
+const STACK_CLIP = 'polygon(0 0, 100% 0, 100% calc(100% - 1rem), calc(100% - 1rem) 100%, 0 100%)'
+
+const SUMMARY_CLIP = 'polygon(0 0, calc(100% - 1.5rem) 0, 100% 1.5rem, 100% 100%, 0 100%)'
+
+const ROTATIONS = ['-1.8deg', '1.2deg', '-0.8deg', '1.6deg', '-0.4deg', '0.7deg']
+
+const GALLERY_ROTATIONS = ['-2deg', '1.5deg', '-1deg', '2deg', '-1.5deg']
+
+/* ── Tech icon + role mapping ── */
+type TechRole = 'FRONTEND' | 'BACKEND' | 'DATABASE' | 'ORM' | 'LENGUAJE' | 'AI/ML' | 'MOVIL' | 'HERRAMIENTA'
+
+interface TechMeta {
+  icon: IconDefinition
+  role: TechRole
+}
+
+const TECH_META: Record<string, TechMeta> = {
+  React:          { icon: faReact,     role: 'FRONTEND' },
+  'Node.js':      { icon: faNodeJs,    role: 'BACKEND' },
+  PostgreSQL:     { icon: faDatabase,  role: 'DATABASE' },
+  Prisma:         { icon: faGem,       role: 'ORM' },
+  TypeScript:     { icon: faCode,      role: 'LENGUAJE' },
+  'Tailwind CSS': { icon: faCss3,      role: 'FRONTEND' },
+  Vite:           { icon: faBolt,      role: 'HERRAMIENTA' },
+  Python:         { icon: faPython,    role: 'LENGUAJE' },
+  'scikit-learn': { icon: faBrain,     role: 'AI/ML' },
+  FastAPI:        { icon: faBolt,      role: 'BACKEND' },
+  Android:        { icon: faAndroid,   role: 'MOVIL' },
+  'HTML/CSS':     { icon: faJs,        role: 'FRONTEND' },
+  'Git/GitHub':   { icon: faGitAlt,    role: 'HERRAMIENTA' },
+  Liferay:        { icon: faServer,    role: 'BACKEND' },
+  Odoo:           { icon: faGears,     role: 'BACKEND' },
+  'Power Platform': { icon: faCubes,   role: 'HERRAMIENTA' },
+  'Android Studio': { icon: faTerminal, role: 'HERRAMIENTA' },
+  Unity:          { icon: faCubes,     role: 'HERRAMIENTA' },
+  Godot:          { icon: faCubes,     role: 'HERRAMIENTA' },
+  Firebase:       { icon: faFlask,     role: 'DATABASE' },
+}
+
+function getTechMeta(tech: string): TechMeta {
+  return TECH_META[tech] ?? { icon: faCode, role: 'HERRAMIENTA' }
+}
+
+/* ── Section header — condensed/stencil style ── */
+function SectionHead({ label }: { label: string }) {
   return (
-    <PreviewBox src={screenshot.src} alt={screenshot.alt} caption={screenshot.caption} className="relative">
-      <span aria-hidden="true" className="absolute inset-0 bg-halftone-red/5" />
-    </PreviewBox>
+    <div className="flex items-center gap-3">
+      <DiamondMarker size={8} />
+      <h2 className="font-display text-base font-normal uppercase tracking-[0.2em] text-accent">
+        {label}
+      </h2>
+    </div>
   )
 }
 
-/**
- * Diagonal section divider - thin diagonal-cut line consistent with site's diagonal language.
- */
-function SectionDivider({ className = '' }: { className?: string }) {
+/* ── Gallery image with angular frame + hard shadow ── */
+function GalleryImage({
+  screenshot,
+  rotation,
+  index,
+}: {
+  screenshot: ProjectScreenshot
+  rotation: string
+  index: number
+}) {
+  const offsets = ['md:ml-[4%]', 'md:ml-[8%]', 'md:ml-[2%]', 'md:ml-[10%]', 'md:ml-[6%]']
   return (
     <div
-      aria-hidden="true"
-      className={`relative h-px w-full overflow-visible ${className}`}
-      style={{
-        background: 'linear-gradient(90deg, transparent 0%, var(--color-paper) 10%, var(--color-paper) 90%, transparent 100%)',
-        opacity: 0.08,
-      }}
+      className={`relative ${offsets[index % offsets.length]}`}
+      style={{ transform: `rotate(${rotation})`, zIndex: 10 + index }}
     >
-      <span
-        className="absolute -top-[1px] right-0 block h-[2px] w-[120px] bg-accent"
+      {/* Hard shadow behind */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-black"
         style={{
-          clipPath: 'polygon(0 0, 100% 0, calc(100% - 8px) 100%, 8px 100%)',
-          transform: 'skewX(-12deg)',
+          clipPath: STACK_CLIP,
+          transform: 'translate(8px, 8px)',
         }}
       />
+      {/* Frame */}
+      <div
+        className="relative border-2 border-paper/20 bg-bg-content-alt"
+        style={{ clipPath: STACK_CLIP }}
+      >
+        <PreviewBox src={screenshot.src} alt={screenshot.alt} caption={screenshot.caption} className="relative">
+          <span aria-hidden="true" className="absolute inset-0 bg-halftone-red/5" />
+        </PreviewBox>
+      </div>
     </div>
   )
 }
 
-/**
- * Small gold star mark used on the tech cards.
- */
-function StarIcon({ className = '' }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 100 100"
-      aria-hidden="true"
-      className={`h-3.5 w-3.5 shrink-0 ${className}`}
-    >
-      <polygon
-        fill="var(--color-gold)"
-        points="50,5 61,38 96,38 68,59 79,92 50,71 21,92 32,59 4,38 39,38"
-      />
-    </svg>
-  )
-}
-
-/**
- * Tech stack card - angular card style with alternating rotation.
- */
+/* ── Tech card — mini skill-deck card with icon + role ── */
 function StackCard({ tech, index }: { tech: string; index: number }) {
   const rotation = ROTATIONS[index % ROTATIONS.length]
+  const { icon, role } = getTechMeta(tech)
+  const [viewBoxW, viewBoxH] = [icon.icon[0], icon.icon[1]]
+  const pathData = icon.icon[4]
 
   return (
     <div
-      className={`relative flex items-center gap-3 border border-paper/30 bg-bg-content-alt px-4 py-3 clip-cut-br min-w-[160px] transition-all duration-300 hover:border-accent hover:bg-bg-hero/50 hover:scale-[1.02] hover:shadow-[0_0_0_1px_var(--color-accent)]`}
-      style={{
-        transform: `rotate(${rotation})`,
-      }}
+      className="group/card relative"
+      style={{ transform: `rotate(${rotation})` }}
     >
-      <span className="flex items-center gap-2 text-body font-medium text-paper" style={{ transform: `rotate(${-parseFloat(rotation)}deg)` }}>
-        <StarIcon />
-        {tech}
-      </span>
+      {/* Hard shadow */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-black"
+        style={{
+          clipPath: TAG_CLIP,
+          transform: 'translate(4px, 4px)',
+        }}
+      />
+      {/* Card body */}
+      <div
+        className="relative flex items-center gap-3 border border-paper/40 bg-[linear-gradient(155deg,#1e1e1e_0%,#161616_55%,#101010_100%)] px-4 py-3 transition-all duration-200 group-hover/card:border-accent group-hover/card:[&_svg]:fill-accent"
+        style={{ clipPath: TAG_CLIP }}
+      >
+        {/* Diagonal texture overlay */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(45deg,rgba(255,255,255,0.015)_0_2px,transparent_2px_6px)]"
+        />
+        {/* Red inner outline (like sdeck cards) */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-[3px] border border-accent/0 transition-colors duration-200 group-hover/card:border-accent/40"
+          style={{ clipPath: TAG_CLIP }}
+        />
+        {/* Icon */}
+        <svg
+          viewBox={`0 0 ${viewBoxW} ${viewBoxH}`}
+          aria-hidden="true"
+          className="relative h-5 w-5 shrink-0 fill-paper transition-colors duration-200"
+        >
+          <path d={pathData} />
+        </svg>
+        {/* Text */}
+        <div className="relative flex flex-col">
+          <span className="text-body font-semibold leading-tight text-paper transition-colors duration-200 group-hover/card:text-accent">
+            {tech}
+          </span>
+          <span className="font-sans text-[0.6rem] font-medium uppercase tracking-[0.18em] text-paper/35 transition-colors duration-200 group-hover/card:text-accent/60">
+            {role}
+          </span>
+        </div>
+      </div>
     </div>
   )
 }
 
-/**
- * Angular button matching ENTRAR AL SISTEMA treatment.
- */
+/* ── Angular CTA button ── */
 function AngularButton({ children, href, external = false, className = '' }: {
   children: React.ReactNode
   href: string
@@ -98,7 +179,7 @@ function AngularButton({ children, href, external = false, className = '' }: {
       data-cursor="open"
       target={external ? '_blank' : undefined}
       rel={external ? 'noreferrer' : undefined}
-      className={`group relative inline-flex items-center justify-center overflow-hidden border-2 border-accent px-6 py-4 font-expose text-base uppercase tracking-[0.1em] text-paper clip-[polygon(0_0,94%_0,100%_100%,6%_100%)] box-shadow-[3px_3px_0_var(--color-accent-deep)] transition-all duration-200 hover:border-accent hover:bg-accent hover:text-ink hover:box-shadow-[5px_5px_0_var(--color-paper)] focus-visible:border-accent focus-visible:bg-accent focus-visible:text-ink ${className}`}
+      className={`group relative inline-flex items-center justify-center overflow-hidden border-2 border-accent px-6 py-4 font-expose text-base uppercase tracking-[0.1em] text-paper clip-[polygon(0_0,94%_0,100%_100%,6%_100%)] transition-all duration-200 hover:bg-accent hover:text-ink ${className}`}
     >
       <span
         aria-hidden="true"
@@ -109,38 +190,7 @@ function AngularButton({ children, href, external = false, className = '' }: {
   )
 }
 
-/**
- * Subtle diagonal red accent bleeding from right edge.
- */
-function DiagonalEdgeAccent() {
-  return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute right-0 top-0 h-full w-[40vw] max-w-[600px] hidden lg:block"
-      style={{
-        background: 'linear-gradient(90deg, transparent 0%, var(--color-accent) 100%)',
-        opacity: 0.03,
-        clipPath: 'polygon(30% 0, 100% 0, 100% 100%, 0% 100%)',
-      }}
-    />
-  )
-}
-
-/**
- * Halftone accent strip along left edge.
- */
-function HalftoneAccentStrip() {
-  return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute left-0 top-0 bottom-0 w-[1.5rem] bg-halftone-red opacity-10 hidden lg:block"
-    />
-  )
-}
-
-/**
- * Prev/next project navigation - two named cards (no numeric badges).
- */
+/* ── Prev / Next navigation ── */
 function PrevNextNav({
   prev,
   next,
@@ -148,13 +198,20 @@ function PrevNextNav({
   prev: { slug: string; name: string } | null
   next: { slug: string; name: string } | null
 }) {
-  const linkClass = `group flex flex-col gap-2 border-2 border-paper/25 bg-bg-content-alt px-6 py-5 clip-cut-br transition-all duration-200 hover:border-accent hover:bg-accent hover:text-ink focus-visible:border-accent focus-visible:bg-accent focus-visible:text-ink`
+  const linkClass = `group relative flex flex-col gap-2 border-2 border-paper/25 bg-bg-content-alt px-6 py-5 transition-all duration-200 hover:border-accent hover:bg-accent hover:text-ink focus-visible:border-accent focus-visible:bg-accent focus-visible:text-ink`
+  const clipLeft = 'polygon(0 0, 100% 0, calc(100% - 1rem) 100%, 0 100%)'
+  const clipRight = 'polygon(0 0, 100% 0, 100% 100%, 1rem 100%)'
 
   return (
     <nav aria-label="Navegacion entre proyectos">
       <div className="grid gap-4 sm:grid-cols-2">
         {prev ? (
-          <Link to={`/proyectos/${prev.slug}`} data-cursor="project" className={linkClass}>
+          <Link
+            to={`/proyectos/${prev.slug}`}
+            data-cursor="project"
+            className={linkClass}
+            style={{ clipPath: clipLeft }}
+          >
             <span className="flex items-center gap-2 font-expose text-label font-medium uppercase tracking-[0.3em] text-paper/50 transition-colors group-hover:text-ink/70 group-focus-visible:text-ink/70">
               <DiamondMarker size={6} />
               Anterior
@@ -167,7 +224,12 @@ function PrevNextNav({
           <span className="hidden sm:block" />
         )}
         {next ? (
-          <Link to={`/proyectos/${next.slug}`} data-cursor="project" className={`${linkClass} items-end text-right`}>
+          <Link
+            to={`/proyectos/${next.slug}`}
+            data-cursor="project"
+            className={`${linkClass} items-end text-right`}
+            style={{ clipPath: clipRight }}
+          >
             <span className="flex items-center gap-2 font-expose text-label font-medium uppercase tracking-[0.3em] text-paper/50 transition-colors group-hover:text-ink/70 group-focus-visible:text-ink/70">
               Siguiente
               <DiamondMarker size={6} />
@@ -184,6 +246,9 @@ function PrevNextNav({
   )
 }
 
+/* ════════════════════════════════════════════════════════════════
+   MAIN TEMPLATE — shared by all four project detail pages
+   ════════════════════════════════════════════════════════════════ */
 export function ProjectDetail() {
   const { slug } = useParams<{ slug: string }>()
   const project = projects.find((item) => item.slug === slug)
@@ -198,18 +263,32 @@ export function ProjectDetail() {
   const prevProject = currentIndex > 0 ? projects[currentIndex - 1] : null
   const nextProject = currentIndex < projects.length - 1 ? projects[currentIndex + 1] : null
 
+  const stackCount = project.stack?.length ?? 0
+  const screenshotCount = project.screenshots?.length ?? 0
+
   return (
     <Screen className="min-h-dvh bg-bg-hero text-paper">
-      {/* Background decorative elements */}
-      <DiagonalEdgeAccent />
-      <HalftoneAccentStrip />
+      {/* ── Background decorative layers ── */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute right-0 top-0 h-full w-[40vw] max-w-[600px] hidden lg:block"
+        style={{
+          background: 'linear-gradient(90deg, transparent 0%, var(--color-accent) 100%)',
+          opacity: 0.03,
+          clipPath: 'polygon(30% 0, 100% 0, 100% 100%, 0% 100%)',
+        }}
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute left-0 top-0 bottom-0 w-[1.5rem] bg-halftone-red opacity-10 hidden lg:block"
+      />
 
       <section className="relative px-6 py-20 md:px-10 md:py-24 pb-40">
-        <div className="mx-auto max-w-4xl relative z-10">
-          {/* ===== SECTION 1 — Header ===== */}
+        <div className="mx-auto max-w-5xl relative z-10">
+
+          {/* ═══ SECTION 1 — HEADER (full-width) ═══ */}
           <div className="relative">
-            {/* Acento de fondo: nombre del proyecto grande, tenue y rotado,
-                sangrando por el borde derecho del header */}
+            {/* Ghost text watermark */}
             <span
               aria-hidden="true"
               className="pointer-events-none absolute -right-4 -top-12 select-none font-expose uppercase leading-none text-outline-faint"
@@ -243,95 +322,149 @@ export function ProjectDetail() {
                 {project.name}
               </h1>
             </Reveal>
+
+            {/* Skewed red accent bar under title */}
+            <Reveal delay={0.08}>
+              <div className="mt-4 flex items-center gap-3">
+                <span className="h-2 w-32 -skew-x-12 bg-accent" />
+                <span className="h-3 w-3 rotate-45 bg-gold" />
+              </div>
+            </Reveal>
+
+            {/* Status bar — project metadata */}
+            <Reveal delay={0.1}>
+              <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 font-sans text-[0.65rem] uppercase tracking-[0.18em] text-paper/30">
+                <span className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rotate-45 bg-accent/60" />
+                  Stack: {stackCount} {stackCount === 1 ? 'tecnologia' : 'tecnologias'}
+                </span>
+                {screenshotCount > 0 && (
+                  <span className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rotate-45 bg-gold/60" />
+                    Galeria: {screenshotCount} capturas
+                  </span>
+                )}
+                {project.links.demo && (
+                  <span className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rotate-45 bg-green-500/60" />
+                    Demo disponible
+                  </span>
+                )}
+                {project.links.github && (
+                  <span className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rotate-45 bg-blue-400/60" />
+                    Codigo abierto
+                  </span>
+                )}
+              </div>
+            </Reveal>
           </div>
 
-          {/* Diagonal divider */}
-          <Reveal delay={0.1}>
-            <SectionDivider className="mt-10" />
-          </Reveal>
+          {/* ═══ TWO-COLUMN LAYOUT — from Resumen downward ═══ */}
+          <div className="mt-12 grid grid-cols-1 items-start gap-12 lg:mt-16 lg:grid-cols-[1fr_420px] lg:gap-10">
 
-          {/* ===== SECTION 2 — Resumen ===== */}
-          <Reveal delay={0.15}>
-            <div className="mt-12 max-w-2xl">
-              <div className="flex items-center gap-3">
-                <DiamondMarker size={8} />
-                <h2 className="font-expose text-label font-medium uppercase tracking-[0.22em] text-accent">
-                  Resumen
-                </h2>
-              </div>
-              <p className="mt-5 text-body leading-relaxed text-paper/70 max-w-2xl">
-                {project.description}
-              </p>
-            </div>
-          </Reveal>
-
-          <Reveal delay={0.18}>
-            <SectionDivider />
-          </Reveal>
-
-          {/* ===== SECTION 3 — Stack tecnico ===== */}
-          {project.stack && project.stack.length > 0 && (
-            <Reveal delay={0.2}>
-              <div className="mt-12">
-                <div className="flex items-center gap-3">
-                  <DiamondMarker size={8} />
-                  <h2 className="font-expose text-label font-medium uppercase tracking-[0.22em] text-accent">
-                    Stack tecnico
-                  </h2>
-                </div>
-                <div className="mt-8 flex flex-wrap gap-4">
-                  {project.stack.map((tech, index) => (
-                    <Reveal key={tech} delay={0.22 + index * 0.06} y={16} amount={0.3}>
-                      <StackCard tech={tech} index={index} />
-                    </Reveal>
-                  ))}
-                </div>
-              </div>
-            </Reveal>
-          )}
-
-          {project.stack && project.stack.length > 0 && (
-            <Reveal delay={0.22}>
-              <SectionDivider className="mt-12" />
-            </Reveal>
-          )}
-
-          {/* ===== SECTION 4 — Galeria ===== */}
-          {project.screenshots && project.screenshots.length > 0 && (
-            <Reveal delay={0.25}>
-              <div className="mt-12">
-                <div className="flex items-center gap-3">
-                  <DiamondMarker size={8} />
-                  <h2 className="font-expose text-label font-medium uppercase tracking-[0.22em] text-accent">
-                    Galeria
-                  </h2>
-                </div>
-                <div className="mt-10 space-y-20">
-                  {project.screenshots.map((screenshot) => (
-                    <div key={screenshot.src} className="relative">
-                      <GalleryImage screenshot={screenshot} />
+            {/* ── LEFT COLUMN: Resumen + Stack Técnico ── */}
+            <div className="flex flex-col gap-10">
+              {/* Summary card — angular-cut with red left edge */}
+              <Reveal delay={0.15}>
+                <div className="relative max-w-2xl">
+                  {/* Hard offset shadow */}
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0 bg-black"
+                    style={{
+                      clipPath: SUMMARY_CLIP,
+                      transform: 'translate(10px, 10px)',
+                    }}
+                  />
+                  {/* Outer panel (black border) */}
+                  <div
+                    className="relative p-[6px] md:p-[7px] bg-black"
+                    style={{ clipPath: SUMMARY_CLIP }}
+                  >
+                    {/* Inner content */}
+                    <div className="relative bg-white px-6 py-5 md:px-8 md:py-6">
+                      {/* Red left edge accent */}
+                      <span
+                        aria-hidden="true"
+                        className="absolute left-0 top-0 bottom-0 w-1 bg-accent"
+                      />
+                      <div className="flex items-center gap-3">
+                        <DiamondMarker size={7} />
+                        <h2 className="font-display text-base font-normal uppercase tracking-[0.2em] text-ink">
+                          Resumen
+                        </h2>
+                      </div>
+                      <p className="mt-4 text-body leading-relaxed text-ink/70">
+                        {project.description}
+                      </p>
                     </div>
-                  ))}
+                  </div>
                 </div>
+              </Reveal>
+
+              {/* Tech Stack */}
+              {project.stack && project.stack.length > 0 && (
+                <Reveal delay={0.2}>
+                  <div>
+                    <SectionHead label="Stack tecnico" />
+                    <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                      {project.stack.map((tech, index) => (
+                        <Reveal key={tech} delay={0.22 + index * 0.06} y={16} amount={0.3}>
+                          <StackCard tech={tech} index={index} />
+                        </Reveal>
+                      ))}
+                    </div>
+                  </div>
+                </Reveal>
+              )}
+
+              {/* Ghost decorative element — fills empty space in left column */}
+              <div
+                aria-hidden="true"
+                className="pointer-events-none relative hidden lg:block"
+                style={{ height: '120px' }}
+              >
+                <span
+                  className="absolute -left-8 top-0 select-none font-display uppercase leading-none text-paper/[0.03]"
+                  style={{ fontSize: 'clamp(4rem, 8vw, 7rem)', transform: 'rotate(-6deg)' }}
+                >
+                  {project.name}
+                </span>
+                {/* Diagonal stripes */}
+                <span
+                  className="absolute right-0 top-4 h-24 w-full opacity-[0.02]"
+                  style={{
+                    background: 'repeating-linear-gradient(-45deg, var(--color-accent) 0 2px, transparent 2px 12px)',
+                  }}
+                />
               </div>
-            </Reveal>
-          )}
+            </div>
 
-          {project.screenshots && project.screenshots.length > 0 && (
-            <Reveal delay={0.28}>
-              <SectionDivider className="mt-14" />
-            </Reveal>
-          )}
+            {/* ── RIGHT COLUMN: Gallery (sticky on desktop) ── */}
+            {project.screenshots && project.screenshots.length > 0 && (
+              <Reveal delay={0.25}>
+                <div className="lg:sticky lg:top-24">
+                  <SectionHead label="Galeria" />
+                  <div className="mt-6 space-y-14 md:space-y-10">
+                    {project.screenshots.map((screenshot, i) => (
+                      <GalleryImage
+                        key={screenshot.src}
+                        screenshot={screenshot}
+                        rotation={GALLERY_ROTATIONS[i % GALLERY_ROTATIONS.length]}
+                        index={i}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </Reveal>
+            )}
+          </div>
 
-          {/* ===== SECTION 5 — Cierre / enlaces ===== */}
+          {/* ═══ LINKS (full-width) ═══ */}
           <Reveal delay={0.3}>
-            <div className="mt-12">
-              <div className="flex items-center gap-3">
-                <DiamondMarker size={8} />
-                <h2 className="font-expose text-label font-medium uppercase tracking-[0.22em] text-accent">
-                  Enlaces
-                </h2>
-              </div>
+            <div className="mt-16 border-t border-paper/10 pt-10">
+              <SectionHead label="Enlaces" />
               <div className="mt-8 flex flex-wrap gap-4">
                 {project.links.demo && (
                   <AngularButton href={project.links.demo} external>
@@ -352,10 +485,10 @@ export function ProjectDetail() {
             </div>
           </Reveal>
 
-          {/* Prev/Next navigation */}
+          {/* ═══ PREV / NEXT (full-width) ═══ */}
           {prevProject || nextProject ? (
             <Reveal delay={0.35}>
-              <div className="mt-16">
+              <div className="mt-12">
                 <PrevNextNav prev={prevProject} next={nextProject} />
               </div>
             </Reveal>
