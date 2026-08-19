@@ -8,7 +8,7 @@ import type { ProjectScreenshot } from '../data/projects'
 
 /* ── Font Awesome icons ── */
 import { faReact, faNodeJs, faPython, faAndroid, faGitAlt, faJs, faCss3 } from '@fortawesome/free-brands-svg-icons'
-import { faDatabase, faBrain, faCode, faServer, faBolt, faGears, faGem, faCubes, faTerminal, faFlask } from '@fortawesome/free-solid-svg-icons'
+import { faDatabase, faBrain, faCode, faServer, faBolt, faGears, faGem, faCubes, faTerminal, faFlask, faCloudArrowUp, faMobileScreen, faBookOpen, faSearch, faLink, faUser, faShieldHalved, faDiceD20, faThumbTack, faStar, faGraduationCap, faBook, faPuzzlePiece } from '@fortawesome/free-solid-svg-icons'
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 
 /* ── Clip-paths reused from the site's visual system ── */
@@ -18,12 +18,14 @@ const STACK_CLIP = 'polygon(0 0, 100% 0, 100% calc(100% - 1rem), calc(100% - 1re
 
 const SUMMARY_CLIP = 'polygon(0 0, calc(100% - 1.5rem) 0, 100% 1.5rem, 100% 100%, 0 100%)'
 
+const FEATURE_CLIP = 'polygon(0 0, calc(100% - 0.8rem) 0, 100% 0.8rem, 100% 100%, 0 100%)'
+
 const ROTATIONS = ['-1.8deg', '1.2deg', '-0.8deg', '1.6deg', '-0.4deg', '0.7deg']
 
 const GALLERY_ROTATIONS = ['-2deg', '1.5deg', '-1deg', '2deg', '-1.5deg']
 
 /* ── Tech icon + role mapping ── */
-type TechRole = 'FRONTEND' | 'BACKEND' | 'DATABASE' | 'ORM' | 'LENGUAJE' | 'AI/ML' | 'MOVIL' | 'HERRAMIENTA'
+type TechRole = 'FRONTEND' | 'BACKEND' | 'DATABASE' | 'ORM' | 'LENGUAJE' | 'AI/ML' | 'MOVIL' | 'HERRAMIENTA' | 'ROUTING' | 'STATE' | 'PWA' | 'BAAS'
 
 interface TechMeta {
   icon: IconDefinition
@@ -50,11 +52,33 @@ const TECH_META: Record<string, TechMeta> = {
   'Android Studio': { icon: faTerminal, role: 'HERRAMIENTA' },
   Unity:          { icon: faCubes,     role: 'HERRAMIENTA' },
   Godot:          { icon: faCubes,     role: 'HERRAMIENTA' },
-  Firebase:       { icon: faFlask,     role: 'DATABASE' },
+  Firebase:       { icon: faFlask,     role: 'BAAS' },
+  'React Router':  { icon: faRoute,    role: 'ROUTING' },
+  Zustand:        { icon: faDatabase,  role: 'STATE' },
+  PWA:            { icon: faMobileScreen, role: 'PWA' },
 }
+
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+const _faRoute = faLink
 
 function getTechMeta(tech: string): TechMeta {
   return TECH_META[tech] ?? { icon: faCode, role: 'HERRAMIENTA' }
+}
+
+/* ── Feature icon mapping ── */
+const FEATURE_ICONS: Record<string, IconDefinition> = {
+  'Instant Search': faSearch,
+  'Offline Compendium': faBookOpen,
+  'Entity Relationships': faLink,
+  'Character Manager': faUser,
+  'Combat Tracker': faShieldHalved,
+  'Dice Roller': faDiceD20,
+  'Session Pins': faThumbTack,
+  'Favorites & Recents': faStar,
+  'Beginner Mode': faGraduationCap,
+  'Rules Reference': faBook,
+  'Cloud Backup': faCloudArrowUp,
+  'Progressive Web App': faMobileScreen,
 }
 
 /* ── Section header — condensed/stencil style ── */
@@ -85,7 +109,6 @@ function GalleryImage({
       className={`relative ${offsets[index % offsets.length]}`}
       style={{ transform: `rotate(${rotation})`, zIndex: 10 + index }}
     >
-      {/* Hard shadow behind */}
       <div
         aria-hidden="true"
         className="absolute inset-0 bg-black"
@@ -94,7 +117,6 @@ function GalleryImage({
           transform: 'translate(8px, 8px)',
         }}
       />
-      {/* Frame */}
       <div
         className="relative border-2 border-paper/20 bg-bg-content-alt"
         style={{ clipPath: STACK_CLIP }}
@@ -119,7 +141,6 @@ function StackCard({ tech, index }: { tech: string; index: number }) {
       className="group/card relative"
       style={{ transform: `rotate(${rotation})` }}
     >
-      {/* Hard shadow */}
       <div
         aria-hidden="true"
         className="absolute inset-0 bg-black"
@@ -128,23 +149,19 @@ function StackCard({ tech, index }: { tech: string; index: number }) {
           transform: 'translate(4px, 4px)',
         }}
       />
-      {/* Card body */}
       <div
         className="relative flex items-center gap-3 border border-paper/40 bg-[linear-gradient(155deg,#1e1e1e_0%,#161616_55%,#101010_100%)] px-4 py-3 transition-all duration-200 group-hover/card:border-accent group-hover/card:[&_svg]:fill-accent"
         style={{ clipPath: TAG_CLIP }}
       >
-        {/* Diagonal texture overlay */}
         <span
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(45deg,rgba(255,255,255,0.015)_0_2px,transparent_2px_6px)]"
         />
-        {/* Red inner outline (like sdeck cards) */}
         <span
           aria-hidden="true"
           className="pointer-events-none absolute inset-[3px] border border-accent/0 transition-colors duration-200 group-hover/card:border-accent/40"
           style={{ clipPath: TAG_CLIP }}
         />
-        {/* Icon */}
         <svg
           viewBox={`0 0 ${viewBoxW} ${viewBoxH}`}
           aria-hidden="true"
@@ -152,7 +169,6 @@ function StackCard({ tech, index }: { tech: string; index: number }) {
         >
           <path d={pathData} />
         </svg>
-        {/* Text */}
         <div className="relative flex flex-col">
           <span className="text-body font-semibold leading-tight text-paper transition-colors duration-200 group-hover/card:text-accent">
             {tech}
@@ -163,6 +179,44 @@ function StackCard({ tech, index }: { tech: string; index: number }) {
         </div>
       </div>
     </div>
+  )
+}
+
+/* ── Feature card ── */
+function FeatureCard({ name, description, index }: { name: string; description: string; index: number }) {
+  const icon = FEATURE_ICONS[name] ?? faPuzzlePiece
+  const [viewBoxW, viewBoxH] = [icon.icon[0], icon.icon[1]]
+  const pathData = icon.icon[4]
+
+  return (
+    <Reveal delay={0.05 + index * 0.04} y={12}>
+      <div
+        className="group relative border border-paper/15 bg-bg-content-alt p-4 transition-all duration-200 hover:border-accent/40"
+        style={{ clipPath: FEATURE_CLIP }}
+      >
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(45deg,rgba(255,255,255,0.01)_0_2px,transparent_2px_8px)]"
+        />
+        <div className="relative flex items-start gap-3">
+          <svg
+            viewBox={`0 0 ${viewBoxW} ${viewBoxH}`}
+            aria-hidden="true"
+            className="mt-0.5 h-4 w-4 shrink-0 fill-accent/70 transition-colors duration-200 group-hover:fill-accent"
+          >
+            <path d={pathData} />
+          </svg>
+          <div>
+            <h3 className="font-display text-sm font-normal uppercase tracking-[0.12em] text-paper transition-colors group-hover:text-accent">
+              {name}
+            </h3>
+            <p className="mt-1.5 text-[0.8rem] leading-relaxed text-paper/55">
+              {description}
+            </p>
+          </div>
+        </div>
+      </div>
+    </Reveal>
   )
 }
 
@@ -288,7 +342,6 @@ export function ProjectDetail() {
 
           {/* ═══ SECTION 1 — HEADER (full-width) ═══ */}
           <div className="relative">
-            {/* Ghost text watermark */}
             <span
               aria-hidden="true"
               className="pointer-events-none absolute -right-4 -top-12 select-none font-expose uppercase leading-none text-outline-faint"
@@ -323,7 +376,15 @@ export function ProjectDetail() {
               </h1>
             </Reveal>
 
-            {/* Skewed red accent bar under title */}
+            {/* Tagline */}
+            {project.tagline && (
+              <Reveal delay={0.07}>
+                <p className="mt-3 font-sans text-sm uppercase tracking-[0.15em] text-paper/40">
+                  {project.tagline}
+                </p>
+              </Reveal>
+            )}
+
             <Reveal delay={0.08}>
               <div className="mt-4 flex items-center gap-3">
                 <span className="h-2 w-32 -skew-x-12 bg-accent" />
@@ -331,9 +392,15 @@ export function ProjectDetail() {
               </div>
             </Reveal>
 
-            {/* Status bar — project metadata */}
+            {/* Status bar */}
             <Reveal delay={0.1}>
               <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 font-sans text-[0.65rem] uppercase tracking-[0.18em] text-paper/30">
+                {project.version && (
+                  <span className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rotate-45 bg-paper/40" />
+                    v{project.version}
+                  </span>
+                )}
                 <span className="flex items-center gap-2">
                   <span className="h-1.5 w-1.5 rotate-45 bg-accent/60" />
                   Stack: {stackCount} {stackCount === 1 ? 'tecnologia' : 'tecnologias'}
@@ -358,17 +425,27 @@ export function ProjectDetail() {
                 )}
               </div>
             </Reveal>
+
+            {/* Hero CTA */}
+            {project.ctaUrl && (
+              <Reveal delay={0.12}>
+                <div className="mt-8">
+                  <AngularButton href={project.ctaUrl} external>
+                    {project.ctaLabel ?? 'View Live Demo'}
+                  </AngularButton>
+                </div>
+              </Reveal>
+            )}
           </div>
 
-          {/* ═══ TWO-COLUMN LAYOUT — from Resumen downward ═══ */}
+          {/* ═══ TWO-COLUMN LAYOUT ═══ */}
           <div className="mt-12 grid grid-cols-1 items-start gap-12 lg:mt-16 lg:grid-cols-[1fr_420px] lg:gap-10">
 
-            {/* ── LEFT COLUMN: Resumen + Stack Técnico ── */}
+            {/* ── LEFT COLUMN ── */}
             <div className="flex flex-col gap-10">
-              {/* Summary card — angular-cut with red left edge */}
+              {/* Summary card */}
               <Reveal delay={0.15}>
                 <div className="relative max-w-2xl">
-                  {/* Hard offset shadow */}
                   <div
                     aria-hidden="true"
                     className="absolute inset-0 bg-black"
@@ -377,14 +454,11 @@ export function ProjectDetail() {
                       transform: 'translate(10px, 10px)',
                     }}
                   />
-                  {/* Outer panel (black border) */}
                   <div
                     className="relative p-[6px] md:p-[7px] bg-black"
                     style={{ clipPath: SUMMARY_CLIP }}
                   >
-                    {/* Inner content */}
                     <div className="relative bg-white px-6 py-5 md:px-8 md:py-6">
-                      {/* Red left edge accent */}
                       <span
                         aria-hidden="true"
                         className="absolute left-0 top-0 bottom-0 w-1 bg-accent"
@@ -419,7 +493,7 @@ export function ProjectDetail() {
                 </Reveal>
               )}
 
-              {/* Ghost decorative element — fills empty space in left column */}
+              {/* Ghost decorative element */}
               <div
                 aria-hidden="true"
                 className="pointer-events-none relative hidden lg:block"
@@ -431,7 +505,6 @@ export function ProjectDetail() {
                 >
                   {project.name}
                 </span>
-                {/* Diagonal stripes */}
                 <span
                   className="absolute right-0 top-4 h-24 w-full opacity-[0.02]"
                   style={{
@@ -449,7 +522,7 @@ export function ProjectDetail() {
                   <div className="mt-6 space-y-14 md:space-y-10">
                     {project.screenshots.map((screenshot, i) => (
                       <GalleryImage
-                        key={screenshot.src}
+                        key={`${screenshot.alt}-${i}`}
                         screenshot={screenshot}
                         rotation={GALLERY_ROTATIONS[i % GALLERY_ROTATIONS.length]}
                         index={i}
@@ -461,8 +534,140 @@ export function ProjectDetail() {
             )}
           </div>
 
-          {/* ═══ LINKS (full-width) ═══ */}
-          <Reveal delay={0.3}>
+          {/* ═══ FEATURES ═══ */}
+          {project.features && project.features.length > 0 && (
+            <Reveal delay={0.28}>
+              <div className="mt-16 border-t border-paper/10 pt-10">
+                <SectionHead label="Key features" />
+                <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  {project.features.map((feature, i) => (
+                    <FeatureCard
+                      key={feature.name}
+                      name={feature.name}
+                      description={feature.description}
+                      index={i}
+                    />
+                  ))}
+                </div>
+              </div>
+            </Reveal>
+          )}
+
+          {/* ═══ CONCEPT BLOCK (e.g. Why Offline-First?) ═══ */}
+          {project.conceptBlock && (
+            <Reveal delay={0.3}>
+              <div className="mt-16 border-t border-paper/10 pt-10">
+                <SectionHead label={project.conceptBlock.title} />
+                <div className="mt-8 max-w-3xl">
+                  {project.conceptBlock.paragraphs.map((p, i) => (
+                    <p key={i} className="text-body leading-relaxed text-paper/70">
+                      {p}
+                    </p>
+                  ))}
+                  {project.conceptBlock.highlights && project.conceptBlock.highlights.length > 0 && (
+                    <div className="mt-8 flex flex-wrap gap-3">
+                      {project.conceptBlock.highlights.map((h) => (
+                        <span
+                          key={h}
+                          className="border border-accent/30 bg-accent/5 px-4 py-2 font-display text-xs font-normal uppercase tracking-[0.15em] text-accent"
+                          style={{ clipPath: 'polygon(0 0, calc(100% - 0.5rem) 0, 100% 0.5rem, 100% 100%, 0.5rem 100%, 0 calc(100% - 0.5rem))' }}
+                        >
+                          {h}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </Reveal>
+          )}
+
+          {/* ═══ DESIGN SYSTEM ═══ */}
+          {project.designSystem && (
+            <Reveal delay={0.32}>
+              <div className="mt-16 border-t border-paper/10 pt-10">
+                <SectionHead label={project.designSystem.title} />
+                <div className="mt-8 max-w-3xl">
+                  <p className="text-body leading-relaxed text-paper/70">
+                    {project.designSystem.description}
+                  </p>
+                  <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                    {project.designSystem.points.map((point) => (
+                      <div
+                        key={point}
+                        className="flex items-center gap-2 border border-paper/10 bg-bg-content-alt/50 px-3 py-2"
+                        style={{ clipPath: FEATURE_CLIP }}
+                      >
+                        <span className="h-1.5 w-1.5 shrink-0 rotate-45 bg-accent/60" />
+                        <span className="font-sans text-[0.7rem] uppercase tracking-[0.1em] text-paper/50">
+                          {point}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </Reveal>
+          )}
+
+          {/* ═══ ARCHITECTURE ═══ */}
+          {project.architecture && (
+            <Reveal delay={0.34}>
+              <div className="mt-16 border-t border-paper/10 pt-10">
+                <SectionHead label={project.architecture.title} />
+                {project.architecture.description && (
+                  <p className="mt-4 max-w-3xl text-body leading-relaxed text-paper/60">
+                    {project.architecture.description}
+                  </p>
+                )}
+                <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                  {project.architecture.layers.map((layer, i) => (
+                    <Reveal key={layer.number} delay={0.36 + i * 0.06} y={12}>
+                      <div
+                        className="relative border border-paper/15 bg-bg-content-alt p-5"
+                        style={{ clipPath: FEATURE_CLIP }}
+                      >
+                        <span
+                          aria-hidden="true"
+                          className="absolute left-0 top-0 bottom-0 w-1 bg-accent/40"
+                        />
+                        <span className="font-display text-3xl font-normal text-accent/20">
+                          {layer.number}
+                        </span>
+                        <h3 className="mt-2 font-display text-sm font-normal uppercase tracking-[0.12em] text-paper">
+                          {layer.title}
+                        </h3>
+                        <p className="mt-2 text-[0.8rem] leading-relaxed text-paper/50">
+                          {layer.description}
+                        </p>
+                      </div>
+                    </Reveal>
+                  ))}
+                </div>
+              </div>
+            </Reveal>
+          )}
+
+          {/* ═══ CLOSING ═══ */}
+          {project.closingLine && (
+            <Reveal delay={0.38}>
+              <div className="mt-20 border-t border-paper/10 pt-12 text-center">
+                <p className="font-display text-lg font-normal uppercase tracking-[0.15em] text-paper/50">
+                  {project.closingLine}
+                </p>
+                {project.ctaUrl && (
+                  <div className="mt-8">
+                    <AngularButton href={project.ctaUrl} external>
+                      {project.ctaLabel ?? 'View Live Demo'}
+                    </AngularButton>
+                  </div>
+                )}
+              </div>
+            </Reveal>
+          )}
+
+          {/* ═══ LINKS ═══ */}
+          <Reveal delay={0.4}>
             <div className="mt-16 border-t border-paper/10 pt-10">
               <SectionHead label="Enlaces" />
               <div className="mt-8 flex flex-wrap gap-4">
@@ -485,9 +690,9 @@ export function ProjectDetail() {
             </div>
           </Reveal>
 
-          {/* ═══ PREV / NEXT (full-width) ═══ */}
+          {/* ═══ PREV / NEXT ═══ */}
           {prevProject || nextProject ? (
-            <Reveal delay={0.35}>
+            <Reveal delay={0.42}>
               <div className="mt-12">
                 <PrevNextNav prev={prevProject} next={nextProject} />
               </div>
