@@ -135,17 +135,6 @@
   );
 }
 
-/* Speed-lines diagonales del hero (solo menu principal) */
-@utility bg-speed-lines {
-  background-image: repeating-linear-gradient(
-    115deg,
-    transparent 0 38px,
-    color-mix(in srgb, var(--color-accent) 6%, transparent) 38px 40px,
-    transparent 40px 90px
-  );
-  animation: hero-drift-lines 18s linear infinite;
-}
-
 /* Scanlines horizontales sutiles del hero (solo menu principal) */
 @utility bg-scanlines {
   background-image: repeating-linear-gradient(
@@ -187,63 +176,9 @@
    Cortes angulares de panel (viñeta de comic)
    ============================================================ */
 
-/* Corte en esquina inferior derecha */
-@utility clip-cut-br {
-  clip-path: polygon(
-    0 0,
-    100% 0,
-    100% calc(100% - 1rem),
-    calc(100% - 1rem) 100%,
-    0 100%
-  );
-}
-
-/* Corte en esquina inferior izquierda */
-@utility clip-cut-bl {
-  clip-path: polygon(
-    0 0,
-    100% 0,
-    100% 100%,
-    calc(100% - 1rem) 100%,
-    0 calc(100% - 1rem)
-  );
-}
-
-/* Doble chaflan inferior (trapecio angular) */
-@utility clip-notch {
-  clip-path: polygon(
-    0 0,
-    100% 0,
-    100% calc(100% - 0.9rem),
-    calc(100% - 0.9rem) 100%,
-    0.9rem 100%,
-    0 calc(100% - 0.9rem)
-  );
-}
-
 /* ============================================================
    Menu principal (hero) — tarjeta de comando con glitch-slice
    ============================================================ */
-
-/* Cuadrados flotantes que suben desde abajo del viewport */
-@keyframes hero-drift {
-  from {
-    transform: translateY(0) rotate(0deg);
-  }
-  to {
-    transform: translateY(-120vh) rotate(180deg);
-  }
-}
-
-/* Desplazamiento de fondo de las speed-lines */
-@keyframes hero-drift-lines {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: 600px 0;
-  }
-}
 
 /* Slice de glitch que cruza la tarjeta al hacer hover: banda fina baja
    (borde inferior, lejos del label para que no parezca un tachado),
@@ -340,30 +275,6 @@
   transition: transform 0.1s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Hover: snap angular con acento rojo */
-.metro-menu-btn:hover,
-.metro-menu-btn:focus-visible {
-  transform: skewX(-11deg) translateX(-8px) scale(1.02);
-}
-
-.metro-menu-btn:hover .hero-cmd-track,
-.metro-menu-btn:focus-visible .hero-cmd-track {
-  inset: 1px;
-  background-color: var(--color-accent);
-}
-
-.metro-menu-btn:hover .hero-btn-icon,
-.metro-menu-btn:focus-visible .hero-btn-icon {
-  border-color: currentColor;
-  transform: skewX(11deg) rotate(-6deg) scale(1.1);
-  transition: transform 0.1s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.metro-menu-btn:hover > span:nth-child(3) {
-  transform: skewX(11deg) translateX(4px);
-  transition: transform 0.1s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
 /* Click: snap contundente */
 .metro-menu-btn:active {
   transform: skewX(-11deg) translateX(-2px) scale(0.98) !important;
@@ -407,44 +318,6 @@
    hueca (contorno) a estrella dorada rellena segun el estado de cada
    categoria. Solo dos estados (empty → full) con transicion limpia; sin
    estados intermedios. */
-.star-badge {
-  width: 2rem;
-  height: 2rem;
-}
-
-.star-badge svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.star-outline {
-  fill: none;
-  stroke: color-mix(in srgb, var(--color-paper) 28%, transparent);
-  stroke-width: 3;
-  stroke-linejoin: round;
-  transition: stroke 0.4s ease;
-}
-
-.star-fill {
-  fill: var(--color-gold);
-  opacity: 0;
-  transform-origin: 50% 50%;
-  transform: scale(0.6);
-  transition:
-    opacity 0.6s ease,
-    transform 0.6s ease;
-}
-
-.star-badge[data-state="full"] .star-fill {
-  opacity: 1;
-  transform: scale(1.15);
-}
-
-.star-badge[data-state="full"] .star-outline {
-  stroke: var(--color-gold);
-}
-
 /* Flotacion del antifaz: respiracion casi imperceptible (4px en ~7s).
    La silueta del antifaz no tiene filtro propio: el rim-light rojo lo
    anima motion (fases de entrada). reduced-motion anula el loop via la
@@ -615,21 +488,6 @@
   background-color: rgba(255, 72, 54, 0.7);
 }
 
-/* Sacudida tenue del nodo bloqueado al hacer hover: aviso fisico de que
-   no es seleccionable (sin escala ni glow). Una pasada breve, sutil. */
-@keyframes hex-locked {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  25% {
-    transform: translateX(-2px);
-  }
-  75% {
-    transform: translateX(2px);
-  }
-}
-
 /* Panel del marcador Q: marco rojo con esquinas cortadas y fondo oscuro
    translucido, para la composicion inferior de la pantalla de carga. */
 .load-panel {
@@ -798,24 +656,6 @@
     rotate(var(--proj-rot, 0deg));
 }
 
-/* Marcador angular del indicador de scroll */
-@keyframes scroll-marker {
-  0% {
-    transform: translateX(0);
-    opacity: 0;
-  }
-  15% {
-    opacity: 1;
-  }
-  80% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(120px);
-    opacity: 0;
-  }
-}
-
 /* CSS recomendado por Lenis para integracion con scroll nativo */
 html.lenis,
 html.lenis body {
@@ -837,126 +677,6 @@ html.lenis body {
 /* ============================================================
    Skill Menu — entradas de menu estilo Persona 5
    ============================================================ */
-
-/* Panel base: superficie oscura con borde fino, recorte angular.
-   El hover desplaza el panel a la derecha y abre la barra roja. */
-.skill-entry {
-  position: relative;
-  padding: 1.25rem 1.5rem 1.125rem;
-  background-color: var(--color-bg-content-alt);
-  border: 1px solid rgba(245, 245, 240, 0.07);
-  transition:
-    transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
-    border-color 0.22s;
-  overflow: hidden;
-}
-
-.skill-entry:hover {
-  transform: translateX(6px);
-  border-color: rgba(245, 245, 240, 0.14);
-}
-
-/* Barra de acento rojo — desliza desde arriba al hacer hover */
-.skill-entry__bar {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background-color: var(--color-accent);
-  transform: scaleY(0);
-  transform-origin: top;
-  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.skill-entry:hover .skill-entry__bar {
-  transform: scaleY(1);
-}
-
-/* Titulo de categoria — fuente P5 Menu, cambia a rojo en hover */
-.skill-entry__title {
-  font-family: var(--font-expose);
-  font-size: 1.05rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-paper);
-  transition: color 0.2s;
-}
-
-.skill-entry:hover .skill-entry__title {
-  color: var(--color-accent);
-}
-
-/* Etiqueta de sistema — tiny, tenue, se tinto en rojo al hover */
-.skill-entry__sys {
-  font-family: var(--font-sans);
-  font-size: 0.6rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: rgba(245, 245, 240, 0.25);
-  transition: color 0.2s;
-}
-
-.skill-entry:hover .skill-entry__sys {
-  color: rgba(230, 0, 18, 0.5);
-}
-
-/* Contador de items */
-.skill-entry__count {
-  font-family: var(--font-sans);
-  font-size: 0.55rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(245, 245, 240, 0.2);
-  transition: color 0.2s;
-}
-
-.skill-entry:hover .skill-entry__count {
-  color: rgba(230, 0, 18, 0.5);
-}
-
-/* Indicador diamante — aparece al hacer hover */
-.skill-entry__diamond {
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  background-color: var(--color-accent);
-  transform: rotate(45deg) scale(0);
-  opacity: 0;
-  transition:
-    opacity 0.2s,
-    transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.skill-entry:hover .skill-entry__diamond {
-  opacity: 1;
-  transform: rotate(45deg) scale(1);
-}
-
-/* Grid de items tech */
-.skill-entry__items {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem 1.25rem;
-  margin-top: 0.875rem;
-}
-
-/* Item individual — se ilumina y desplaza en hover */
-.skill-entry__item {
-  font-family: var(--font-sans);
-  font-size: 0.875rem;
-  letter-spacing: 0.03em;
-  color: rgba(245, 245, 240, 0.65);
-  transition:
-    color 0.18s,
-    padding-left 0.22s;
-  padding-left: 0;
-}
-
-.skill-entry:hover .skill-entry__item {
-  color: var(--color-paper);
-  padding-left: 0.375rem;
-}
 
 /* ============================================================
    SKILL CARD DECK — Persona 5 inspired compact card deck
@@ -1576,41 +1296,6 @@ html.lenis body {
   animation: skill-panel-in 0.3s cubic-bezier(0.76, 0, 0.24, 1) both;
 }
 
-/* aRBOL DE HABILIDADES — entrada escalonada de los hexagonos desde la raiz
-   (TELECO) hacia fuera. Escalado por indice via animation-delay inline. */
-@keyframes skill-node-enter {
-  from {
-    opacity: 0;
-    transform: translate(-50%, calc(-50% + 14px));
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%);
-  }
-}
-
-.skill-node-enter {
-  animation: skill-node-enter 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-/* aRBOL DE HABILIDADES — dibujado en cascada de las lineas conectoras reales
-   (stroke-dashoffset normalizado con pathLength=1). El retardo por borde
-   llega como custom property --skill-line-d desde el <g>. */
-@keyframes skill-line-draw {
-  from {
-    stroke-dashoffset: 1;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-.skill-line-draw {
-  stroke-dasharray: 1;
-  animation: skill-line-draw 0.6s cubic-bezier(0.76, 0, 0.24, 1)
-    var(--skill-line-d, 0s) both;
-}
-
 /* ============================================================
    Skill Tree — Persona 5 visual identity overhaul
    ============================================================ */
@@ -1658,26 +1343,6 @@ html.lenis body {
 
 .node-diamond-enter {
   animation: node-diamond-enter 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-/* Node sequential entry: flash-in one by one (system boot feel) */
-@keyframes node-enter-flash {
-  0% {
-    opacity: 0;
-    filter: brightness(4);
-  }
-  50% {
-    opacity: 1;
-    filter: brightness(1.8);
-  }
-  100% {
-    opacity: 1;
-    filter: brightness(1);
-  }
-}
-
-.node-enter-flash {
-  animation: node-enter-flash 0.35s steps(3) both;
 }
 
 /* Halo breathing for angular nodes */
@@ -1839,7 +1504,7 @@ html.lenis body {
 }
 
 .bgm-bar__title {
-  font-family: var(--font-p5menu);
+  font-family: var(--font-p5-menu);
   font-size: 12px;
   letter-spacing: 0.04em;
   color: var(--color-paper);
@@ -1970,7 +1635,7 @@ html.lenis body {
 }
 
 .bgm-panel__title {
-  font-family: var(--font-p5menu);
+  font-family: var(--font-p5-menu);
   font-size: 22px;
   letter-spacing: 0.03em;
   color: var(--color-paper);

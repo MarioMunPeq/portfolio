@@ -15,7 +15,7 @@ export function markBooted() {
   listeners.forEach((listener) => listener());
 }
 
-export function isBooted() {
+function isBooted() {
   return booted;
 }
 

@@ -25,7 +25,7 @@ const LEGAL_SUFFIX =
  * "Michelin" → "michelin" · "Synersight, S.L." → "synersight"
  * · "Diputacion de Valladolid" → "diputacion-de-valladolid".
  */
-export function companyToSlug(company: string): string {
+function companyToSlug(company: string): string {
   const base = company.match(LEGAL_SUFFIX)?.[1] ?? company.split(",")[0];
   return base
     .trim()

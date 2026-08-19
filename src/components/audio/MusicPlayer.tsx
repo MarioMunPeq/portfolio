@@ -176,7 +176,6 @@ export function MusicPlayer() {
   const [expanded, setExpanded] = useState(false);
   const [duration, setDuration] = useState(0);
   const [selectorOpen, setSelectorOpen] = useState(false);
-  const [_autoplayBlocked, setAutoplayBlocked] = useState(false);
 
   /* Ref mirrors (avoid stale closures) */
   const isPlayingRef = useRef(false);
@@ -307,10 +306,8 @@ export function MusicPlayer() {
               await a.play();
               setIsPlaying(true);
               isPlayingRef.current = true;
-              setAutoplayBlocked(false);
             } catch (err) {
               console.warn("[BGM] Auto-play blocked:", err);
-              setAutoplayBlocked(true);
               setIsPlaying(false);
               isPlayingRef.current = false;
             }
@@ -362,7 +359,6 @@ export function MusicPlayer() {
         await a.play();
         setIsPlaying(true);
         isPlayingRef.current = true;
-        setAutoplayBlocked(false);
       } catch (err) {
         console.warn("[BGM] Play blocked:", err);
       }
