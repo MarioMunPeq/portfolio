@@ -229,7 +229,7 @@ export function Cursor() {
           unos pixeles detras del principal y con lag suavizado. */}
       <motion.div
         aria-hidden="true"
-        className="pointer-events-none fixed left-0 top-0 z-[119]"
+        className="pointer-events-none fixed left-0 top-0 z-[10000]"
         style={{ x: ghostX, y: ghostY }}
       >
         <div className="-ml-[10px] -mt-[10px]" style={{ transform: 'translate(8px, 8px)' }}>
@@ -247,7 +247,7 @@ export function Cursor() {
       {/* Capa principal: diamante blanco de 2px que rota de forma continua. */}
       <motion.div
         aria-hidden="true"
-        className="pointer-events-none fixed left-0 top-0 z-[120]"
+        className="pointer-events-none fixed left-0 top-0 z-[10001]"
         style={{ x, y }}
       >
         <div className="relative -ml-[12px] -mt-[12px]">

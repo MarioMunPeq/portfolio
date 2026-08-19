@@ -164,7 +164,7 @@ export function MusicPlayer() {
   const [expanded, setExpanded] = useState(false)
   const [duration, setDuration] = useState(0)
   const [selectorOpen, setSelectorOpen] = useState(false)
-  const [autoplayBlocked, setAutoplayBlocked] = useState(false)
+  const [_autoplayBlocked, setAutoplayBlocked] = useState(false)
 
   /* Ref mirrors (avoid stale closures) */
   const isPlayingRef = useRef(false)

@@ -1,15 +1,16 @@
+import { useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { Reveal } from '../components/primitives/Reveal'
 import { Screen } from '../components/transition/Screen'
 import { DiamondMarker } from '../components/shared/DiamondMarker'
 import { PreviewBox } from '../components/ui/PreviewBox'
+import { Lightbox } from '../components/ui/Lightbox'
 import { projects } from '../data/projects'
 import type { ProjectScreenshot } from '../data/projects'
 
 /* ── Font Awesome icons ── */
 import { faReact, faNodeJs, faPython, faAndroid, faGitAlt, faJs, faCss3 } from '@fortawesome/free-brands-svg-icons'
-import { faDatabase, faBrain, faCode, faServer, faBolt, faGears, faGem, faCubes, faTerminal, faFlask, faCloudArrowUp, faMobileScreen, faBookOpen, faSearch, faLink, faUser, faShieldHalved, faDiceD20, faThumbTack, faStar, faGraduationCap, faBook, faPuzzlePiece } from '@fortawesome/free-solid-svg-icons'
-import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
+import { faDatabase, faBrain, faCode, faServer, faBolt, faGears, faGem, faCubes, faTerminal, faFlask, faCloudArrowUp, faMobileScreen, faBookOpen, faSearch, faLink, faUser, faShieldHalved, faRoute, faDiceD20, faThumbTack, faStar, faGraduationCap, faBook, faPuzzlePiece } from '@fortawesome/free-solid-svg-icons'
 
 /* ── Clip-paths reused from the site's visual system ── */
 const TAG_CLIP = 'polygon(0 0, calc(100% - 1rem) 0, 100% 1rem, 100% 100%, 0 100%)'
@@ -28,7 +29,7 @@ const GALLERY_ROTATIONS = ['-2deg', '1.5deg', '-1deg', '2deg', '-1.5deg']
 type TechRole = 'FRONTEND' | 'BACKEND' | 'DATABASE' | 'ORM' | 'LENGUAJE' | 'AI/ML' | 'MOVIL' | 'HERRAMIENTA' | 'ROUTING' | 'STATE' | 'PWA' | 'BAAS'
 
 interface TechMeta {
-  icon: IconDefinition
+  icon: typeof faCode
   role: TechRole
 }
 
@@ -58,27 +59,24 @@ const TECH_META: Record<string, TechMeta> = {
   PWA:            { icon: faMobileScreen, role: 'PWA' },
 }
 
-/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-const _faRoute = faLink
-
 function getTechMeta(tech: string): TechMeta {
   return TECH_META[tech] ?? { icon: faCode, role: 'HERRAMIENTA' }
 }
 
 /* ── Feature icon mapping ── */
-const FEATURE_ICONS: Record<string, IconDefinition> = {
-  'Instant Search': faSearch,
-  'Offline Compendium': faBookOpen,
-  'Entity Relationships': faLink,
-  'Character Manager': faUser,
-  'Combat Tracker': faShieldHalved,
-  'Dice Roller': faDiceD20,
-  'Session Pins': faThumbTack,
-  'Favorites & Recents': faStar,
-  'Beginner Mode': faGraduationCap,
-  'Rules Reference': faBook,
-  'Cloud Backup': faCloudArrowUp,
-  'Progressive Web App': faMobileScreen,
+const FEATURE_ICONS: Record<string, typeof faCode> = {
+  'Búsqueda instantánea': faSearch,
+  'Compendio sin conexión': faBookOpen,
+  'Relaciones entre entidades': faLink,
+  'Gestión de personajes': faUser,
+  'Seguimiento de combate': faShieldHalved,
+  'Tirada de dados': faDiceD20,
+  'Marcadores de sesión': faThumbTack,
+  'Favoritos y recientes': faStar,
+  'Modo principiante': faGraduationCap,
+  'Referencia de reglas': faBook,
+  'Copia de seguridad en la nube': faCloudArrowUp,
+  'Aplicación web progresiva': faMobileScreen,
 }
 
 /* ── Section header — condensed/stencil style ── */
@@ -98,16 +96,19 @@ function GalleryImage({
   screenshot,
   rotation,
   index,
+  onOpen,
 }: {
   screenshot: ProjectScreenshot
   rotation: string
   index: number
+  onOpen: () => void
 }) {
   const offsets = ['md:ml-[4%]', 'md:ml-[8%]', 'md:ml-[2%]', 'md:ml-[10%]', 'md:ml-[6%]']
   return (
     <div
-      className={`relative ${offsets[index % offsets.length]}`}
+      className={`group/gal relative cursor-pointer ${offsets[index % offsets.length]}`}
       style={{ transform: `rotate(${rotation})`, zIndex: 10 + index }}
+      onClick={onOpen}
     >
       <div
         aria-hidden="true"
@@ -118,12 +119,22 @@ function GalleryImage({
         }}
       />
       <div
-        className="relative border-2 border-paper/20 bg-bg-content-alt"
+        className="relative border-2 border-paper/20 bg-bg-content-alt transition-colors duration-200 group-hover/gal:border-accent/60"
         style={{ clipPath: STACK_CLIP }}
       >
         <PreviewBox src={screenshot.src} alt={screenshot.alt} caption={screenshot.caption} className="relative">
           <span aria-hidden="true" className="absolute inset-0 bg-halftone-red/5" />
         </PreviewBox>
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center border border-paper/30 bg-black/60 text-paper/50 opacity-0 transition-opacity duration-200 group-hover/gal:opacity-100"
+          style={{ clipPath: 'polygon(0 0, calc(100% - 0.35rem) 0, 100% 0.35rem, 100% 100%, 0.35rem 100%, 0 calc(100% - 0.35rem))' }}
+        >
+          <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="11" cy="11" r="8" />
+            <path d="M21 21l-4.35-4.35M11 8v6M8 11h6" />
+          </svg>
+        </span>
       </div>
     </div>
   )
@@ -167,7 +178,9 @@ function StackCard({ tech, index }: { tech: string; index: number }) {
           aria-hidden="true"
           className="relative h-5 w-5 shrink-0 fill-paper transition-colors duration-200"
         >
-          <path d={pathData} />
+          {Array.isArray(pathData)
+            ? pathData.map((d) => <path key={d} d={d} />)
+            : <path d={pathData} />}
         </svg>
         <div className="relative flex flex-col">
           <span className="text-body font-semibold leading-tight text-paper transition-colors duration-200 group-hover/card:text-accent">
@@ -204,7 +217,9 @@ function FeatureCard({ name, description, index }: { name: string; description: 
             aria-hidden="true"
             className="mt-0.5 h-4 w-4 shrink-0 fill-accent/70 transition-colors duration-200 group-hover:fill-accent"
           >
-            <path d={pathData} />
+            {Array.isArray(pathData)
+              ? pathData.map((d) => <path key={d} d={d} />)
+              : <path d={pathData} />}
           </svg>
           <div>
             <h3 className="font-display text-sm font-normal uppercase tracking-[0.12em] text-paper transition-colors group-hover:text-accent">
@@ -306,6 +321,7 @@ function PrevNextNav({
 export function ProjectDetail() {
   const { slug } = useParams<{ slug: string }>()
   const project = projects.find((item) => item.slug === slug)
+  const [lightbox, setLightbox] = useState<{ src: string; alt: string } | null>(null)
 
   if (!project) {
     return <Navigate to="/404" replace />
@@ -338,7 +354,7 @@ export function ProjectDetail() {
       />
 
       <section className="relative px-6 py-20 md:px-10 md:py-24 pb-40">
-        <div className="mx-auto max-w-5xl relative z-10">
+        <div className="mx-auto max-w-[var(--max-w-content)] relative z-10">
 
           {/* ═══ SECTION 1 — HEADER (full-width) ═══ */}
           <div className="relative">
@@ -439,7 +455,7 @@ export function ProjectDetail() {
           </div>
 
           {/* ═══ TWO-COLUMN LAYOUT ═══ */}
-          <div className="mt-12 grid grid-cols-1 items-start gap-12 lg:mt-16 lg:grid-cols-[1fr_420px] lg:gap-10">
+          <div className="mt-12 grid grid-cols-1 items-start gap-12 lg:mt-16 lg:grid-cols-[1fr_480px] lg:gap-10">
 
             {/* ── LEFT COLUMN ── */}
             <div className="flex flex-col gap-10">
@@ -493,25 +509,99 @@ export function ProjectDetail() {
                 </Reveal>
               )}
 
-              {/* Ghost decorative element */}
-              <div
-                aria-hidden="true"
-                className="pointer-events-none relative hidden lg:block"
-                style={{ height: '120px' }}
-              >
-                <span
-                  className="absolute -left-8 top-0 select-none font-display uppercase leading-none text-paper/[0.03]"
-                  style={{ fontSize: 'clamp(4rem, 8vw, 7rem)', transform: 'rotate(-6deg)' }}
-                >
-                  {project.name}
-                </span>
-                <span
-                  className="absolute right-0 top-4 h-24 w-full opacity-[0.02]"
-                  style={{
-                    background: 'repeating-linear-gradient(-45deg, var(--color-accent) 0 2px, transparent 2px 12px)',
-                  }}
-                />
-              </div>
+              {/* Mi rol / Aportación */}
+              {project.role && (
+                <Reveal delay={0.24}>
+                  <div className="relative max-w-2xl">
+                    <div
+                      aria-hidden="true"
+                      className="absolute inset-0 bg-black"
+                      style={{
+                        clipPath: SUMMARY_CLIP,
+                        transform: 'translate(10px, 10px)',
+                      }}
+                    />
+                    <div
+                      className="relative p-[6px] md:p-[7px] bg-black"
+                      style={{ clipPath: SUMMARY_CLIP }}
+                    >
+                      <div className="relative bg-white px-6 py-5 md:px-8 md:py-6">
+                        <span
+                          aria-hidden="true"
+                          className="absolute left-0 top-0 bottom-0 w-1 bg-accent"
+                        />
+                        <div className="flex items-center gap-3">
+                          <DiamondMarker size={7} />
+                          <h2 className="font-display text-base font-normal uppercase tracking-[0.2em] text-ink">
+                            {project.role.title}
+                          </h2>
+                        </div>
+                        <ul className="mt-4 space-y-3">
+                          {project.role.items.map((item, i) => (
+                            <li key={i} className="flex gap-3 text-body leading-relaxed text-ink/70">
+                              <span className="mt-2 h-1.5 w-1.5 shrink-0 rotate-45 bg-accent/60" />
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </Reveal>
+              )}
+
+              {/* Retos técnicos */}
+              {project.challenges && (
+                <Reveal delay={0.26}>
+                  <div>
+                    <SectionHead label={project.challenges.title} />
+                    <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                      {project.challenges.items.map((challenge, i) => (
+                        <Reveal key={challenge.label} delay={0.28 + i * 0.04} y={12} amount={0.3}>
+                          <div
+                            className="group relative border border-paper/15 bg-bg-content-alt p-4 transition-all duration-200 hover:border-accent/40"
+                            style={{ clipPath: FEATURE_CLIP }}
+                          >
+                            <span
+                              aria-hidden="true"
+                              className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(45deg,rgba(255,255,255,0.01)_0_2px,transparent_2px_8px)]"
+                            />
+                            <div className="relative">
+                              <span className="font-display text-xs font-normal uppercase tracking-[0.12em] text-accent/80">
+                                {challenge.label}
+                              </span>
+                              <p className="mt-2 text-[0.8rem] leading-relaxed text-paper/55">
+                                {challenge.detail}
+                              </p>
+                            </div>
+                          </div>
+                        </Reveal>
+                      ))}
+                    </div>
+                  </div>
+                </Reveal>
+              )}
+
+              {/* Links */}
+              {(project.links.demo || project.links.github) && (
+                <Reveal delay={0.3}>
+                  <div>
+                    <SectionHead label="Enlaces" />
+                    <div className="mt-6 flex flex-wrap gap-4">
+                      {project.links.demo && (
+                        <AngularButton href={project.links.demo} external>
+                          Ver demo
+                        </AngularButton>
+                      )}
+                      {project.links.github && (
+                        <AngularButton href={project.links.github} external>
+                          Codigo
+                        </AngularButton>
+                      )}
+                    </div>
+                  </div>
+                </Reveal>
+              )}
             </div>
 
             {/* ── RIGHT COLUMN: Gallery (sticky on desktop) ── */}
@@ -519,13 +609,14 @@ export function ProjectDetail() {
               <Reveal delay={0.25}>
                 <div className="lg:sticky lg:top-24">
                   <SectionHead label="Galeria" />
-                  <div className="mt-6 space-y-14 md:space-y-10">
+                  <div className="mt-6 space-y-10 md:space-y-8">
                     {project.screenshots.map((screenshot, i) => (
                       <GalleryImage
                         key={`${screenshot.alt}-${i}`}
                         screenshot={screenshot}
                         rotation={GALLERY_ROTATIONS[i % GALLERY_ROTATIONS.length]}
                         index={i}
+                        onOpen={() => setLightbox({ src: screenshot.src ?? '', alt: screenshot.alt })}
                       />
                     ))}
                   </div>
@@ -538,7 +629,7 @@ export function ProjectDetail() {
           {project.features && project.features.length > 0 && (
             <Reveal delay={0.28}>
               <div className="mt-16 border-t border-paper/10 pt-10">
-                <SectionHead label="Key features" />
+                <SectionHead label="Funcionalidades principales" />
                 <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {project.features.map((feature, i) => (
                     <FeatureCard
@@ -666,30 +757,6 @@ export function ProjectDetail() {
             </Reveal>
           )}
 
-          {/* ═══ LINKS ═══ */}
-          <Reveal delay={0.4}>
-            <div className="mt-16 border-t border-paper/10 pt-10">
-              <SectionHead label="Enlaces" />
-              <div className="mt-8 flex flex-wrap gap-4">
-                {project.links.demo && (
-                  <AngularButton href={project.links.demo} external>
-                    Ver demo
-                  </AngularButton>
-                )}
-                {project.links.github && (
-                  <AngularButton href={project.links.github} external>
-                    Codigo
-                  </AngularButton>
-                )}
-              </div>
-              {!project.links.demo && !project.links.github && (
-                <p className="mt-4 text-label uppercase tracking-[0.25em] text-paper/40">
-                  Sin enlaces publicos disponibles
-                </p>
-              )}
-            </div>
-          </Reveal>
-
           {/* ═══ PREV / NEXT ═══ */}
           {prevProject || nextProject ? (
             <Reveal delay={0.42}>
@@ -706,6 +773,9 @@ export function ProjectDetail() {
           />
         </div>
       </section>
+      {lightbox && (
+        <Lightbox src={lightbox.src} alt={lightbox.alt} onClose={() => setLightbox(null)} />
+      )}
     </Screen>
   )
 }

@@ -1210,6 +1210,9 @@ html.lenis body {
   --color-ink: #0a0a0a;
   --color-paper: #f5f5f0;
 
+  /* --- Layout: contenedor global de contenido --- */
+  --max-w-content: 90rem;
+
   /* --- Iconografia tipo boton de mando (△ □ ○ ✕ ※) --- */
   --color-face-tri: #5ad1ff;
   --color-face-sq: #ff5ac8;

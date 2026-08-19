@@ -1,4 +1,3 @@
-import type { CSSProperties } from 'react'
 import { useReducedMotion } from 'motion/react'
 import { Reveal } from '../components/primitives/Reveal'
 import { Screen } from '../components/transition/Screen'
