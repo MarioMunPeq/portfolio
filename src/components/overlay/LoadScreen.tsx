@@ -18,24 +18,40 @@ const PROGRESS_EASE: [number, number, number, number] = [0.65, 0, 0.35, 1];
 const EXIT_EASE: [number, number, number, number] = [0.85, 0, 0.15, 1];
 const LOAD_DURATION = 3.5;
 
-/** Preguntas tontas del marcador Q: se rota una al azar por carga. */
 const SURVEY_QUESTIONS = ["¿Viaje antes que destino?"];
-
-/** Antifaz de identidad (imagen PNG en public/). BASE_URL respeta el prefijo
- *  de despliegue (/portfolio/) tanto en dev como en build. */
 const MASK_SRC = `${import.meta.env.BASE_URL}images/ui/persona-mask.png`;
 
-/** Fases de entrada del antifaz (fracciones de la carga simulada):
- *  AUSENCIA [0 – REVEAL_START]: sin antifaz; solo indicios (linea roja,
- *  barrido vertical).
- *  REVELADO [REVEAL_START – REVEAL_END]: el clip-path diagonal lo ensambla,
- *  el rim-light gana intensidad y una linea de escaneo lo cruza una vez.
- *  IMPACTO [≈IMPACT_AT]: micro-overshoot, destello radial y diamantes.
- *  ESTABILIZACIoN [0.6 – 1]: respiracion casi imperceptible.
- */
 const REVEAL_START = 0.08;
 const REVEAL_END = 0.52;
 const IMPACT_AT = 0.55;
+
+/** Background shared by tear shards — same gradient + skyline as the loading screen. */
+const LOADING_BG = `linear-gradient(to bottom, rgba(10,10,10,0.8), rgba(10,10,10,0.6) 40%, rgba(10,10,10,0.88)), url(${loadingBg})`;
+
+/** Diagonal tear shard definitions — irregular slices ~15-20deg. */
+const TEAR_SHARDS = [
+  {
+    clipPath: "polygon(0 0, 48% 0, 38% 100%, 0 100%)",
+    exitX: "-110%",
+    exitY: "-6%",
+    exitRotate: -4,
+    delay: 0,
+  },
+  {
+    clipPath: "polygon(38% 0, 78% 0, 68% 100%, 28% 100%)",
+    exitX: "0%",
+    exitY: "-110%",
+    exitRotate: 2,
+    delay: 0.07,
+  },
+  {
+    clipPath: "polygon(68% 0, 100% 0, 100% 100%, 58% 100%)",
+    exitX: "110%",
+    exitY: "6%",
+    exitRotate: 5,
+    delay: 0.14,
+  },
+];
 
 let loadScreenShown = false;
 
@@ -43,19 +59,23 @@ export function LoadScreen() {
   const reduced = useReducedMotion();
   const [hidden, setHidden] = useState(loadScreenShown);
   const [visible, setVisible] = useState(false);
-  const [exiting, setExiting] = useState(false);
   const [exitScan, setExitScan] = useState(false);
   const [impact, setImpact] = useState(false);
   const [question, setQuestion] = useState<string | null>(null);
   const barRef = useRef<HTMLDivElement>(null);
   const pctRef = useRef<HTMLSpanElement>(null);
 
+  /* --- Exit states --- */
+  const [mainFading, setMainFading] = useState(false);
+  const [tearing, setTearing] = useState(false);
+  const [maskExiting, setMaskExiting] = useState(false);
+  const [pollExiting, setPollExiting] = useState(false);
+
   const progress = useMotionValue(0);
-  const exitProgress = useMotionValue(0);
   const impactScale = useMotionValue(1);
   const glowBoost = useMotionValue(0);
 
-  // --- Entrada del antifaz (todo derivado del progreso real) ---
+  /* --- Mask reveal (during loading phase) --- */
   const revealEdge = useTransform(
     progress,
     [REVEAL_START, REVEAL_END],
@@ -79,8 +99,8 @@ export function LoadScreen() {
     progress,
     [0.25, IMPACT_AT],
     [
-      "drop-shadow(0 0 8px rgba(230,0,18,0.16)) drop-shadow(0 0 2px rgba(230,0,18,0.18)) drop-shadow(7px 5px 0 rgba(230,0,18,0.14))",
-      "drop-shadow(0 0 24px rgba(230,0,18,0.42)) drop-shadow(0 0 5px rgba(230,0,18,0.3)) drop-shadow(7px 5px 0 rgba(230,0,18,0.2))",
+      "drop-shadow(0 0 4px rgba(230,0,18,0.22)) drop-shadow(0 0 10px rgba(230,0,18,0.12)) drop-shadow(0 0 28px rgba(230,0,18,0.06))",
+      "drop-shadow(0 0 6px rgba(230,0,18,0.5)) drop-shadow(0 0 16px rgba(230,0,18,0.28)) drop-shadow(0 0 42px rgba(230,0,18,0.12))",
     ],
   );
   const scanTop = useTransform(progress, [0.16, 0.5], ["0%", "100%"]);
@@ -89,19 +109,24 @@ export function LoadScreen() {
     [0.16, 0.2, 0.46, 0.5],
     [0, 0.55, 0.55, 0],
   );
-
-  // --- Salida (transicion de escena hacia la HOME) ---
-  const clipY = useTransform(exitProgress, (p) => `${-50 - p * 11}%`);
-  const clipScale = useTransform(exitProgress, [0, 1], [1, 0.98]);
-  const rootClip = useTransform(
-    exitProgress,
-    (p) =>
-      `polygon(0% 0%, 100% 0%, 100% ${100 - p * 45}%, 0% ${100 - p * 100}%)`,
-  );
-  const rootY = useTransform(exitProgress, [0, 1], [0, 0]);
+  const glowCombinedOpacity = useTransform(maskOpacity, (o) => o * glowOpacity);
 
   const impactFired = useRef(false);
   const exitStarted = useRef(false);
+  const [glowOpacity, setGlowOpacity] = useState(0.65);
+
+  /* Layered glow breathing — subtle 3s cycle. */
+  useEffect(() => {
+    if (reduced) return;
+    let raf: number;
+    const tick = () => {
+      const t = performance.now() / 3000;
+      setGlowOpacity(0.5 + 0.15 * Math.sin(t * Math.PI * 2));
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [reduced]);
 
   const hide = useCallback(() => {
     setHidden(true);
@@ -114,18 +139,23 @@ export function LoadScreen() {
     }
   }, [hidden]);
 
-  /** Secuencia de salida: snap seco + barrido + levantar la escena. */
+  /** Exit sequence: poll exits early → main fades → shards tear → mask flies away → hide. */
   const startExit = useCallback(() => {
     if (exitStarted.current) return;
     exitStarted.current = true;
-    animate(impactScale, [1, 1.022, 1], { duration: 0.26, ease: "easeOut" });
+    animate(impactScale, [1, 1.022, 1], {
+      duration: 0.26,
+      ease: "easeOut",
+    });
     setExitScan(true);
-    window.setTimeout(() => setExiting(true), 170);
-    window.setTimeout(hide, 980);
+    setPollExiting(true);
+    setMainFading(true);
+    setTearing(true);
+    window.setTimeout(() => setMaskExiting(true), 180);
+    window.setTimeout(hide, 680);
   }, [hide, impactScale]);
 
-  // Barra y porcentaje: escritura directa en el DOM (sin re-renders de
-  // React por fotograma).
+  /* Barra y porcentaje: escritura directa en el DOM (sin re-renders). */
   useMotionValueEvent(progress, "change", (value) => {
     if (pctRef.current)
       pctRef.current.textContent = String(Math.round(value * 100));
@@ -150,13 +180,12 @@ export function LoadScreen() {
     setVisible(true);
   }, []);
 
-  // Selecciona una pregunta al azar cuando se monta.
   useEffect(() => {
     const i = Math.floor(Math.random() * SURVEY_QUESTIONS.length);
     setQuestion(SURVEY_QUESTIONS[i]);
   }, []);
 
-  // Carga simulada 0 → 1 en LOAD_DURATION.
+  /* Simulated loading 0 → 1. */
   useEffect(() => {
     if (!visible) return;
     const controls = animate(progress, 1, {
@@ -171,259 +200,336 @@ export function LoadScreen() {
     return () => controls.stop();
   }, [progress, visible, reduced, hide, startExit]);
 
-  // Levantar la escena: recorte diagonal + desplazamiento sutil.
-  useEffect(() => {
-    if (!exiting) return;
-    const controls = animate(exitProgress, 1, {
-      duration: 0.7,
-      ease: EXIT_EASE,
-    });
-    return () => controls.stop();
-  }, [exiting, exitProgress]);
-
   if (hidden) return null;
 
   return (
-    <motion.div
-      className="loadscreen-content fixed inset-0 z-[100] overflow-hidden bg-bg-hero text-paper"
-      style={{ clipPath: rootClip, y: rootY }}
-      onPointerDown={skip}
-      aria-hidden="true"
-    >
-      {/* Fondo: skyline real con rampa de brillo (nace desde la oscuridad) */}
+    <>
+      {/* ============================================================
+          MAIN CONTENT — fades out quickly at exit (z-100)
+          ============================================================ */}
       <motion.div
+        className="loadscreen-content fixed inset-0 z-[100] overflow-hidden bg-bg-hero text-paper"
+        animate={{ opacity: mainFading ? 0 : 1 }}
+        transition={{ duration: 0.22 }}
+        onPointerDown={skip}
         aria-hidden="true"
-        className="absolute inset-0"
-        style={{
-          backgroundImage: `linear-gradient(to bottom, rgba(10,10,10,0.8), rgba(10,10,10,0.6) 40%, rgba(10,10,10,0.88)), url(${loadingBg})`,
-          backgroundSize: "cover, cover",
-          backgroundPosition: "center, center",
-        }}
-        initial={{ opacity: 0.55, scale: 1 }}
-        animate={{ opacity: 1, scale: reduced ? 1 : 1.015 }}
-        transition={{ duration: LOAD_DURATION, ease: "easeOut" }}
-      />
-
-      {/* Rim-light rojo del horizonte, tenue */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 h-[160px]"
-        style={{
-          top: "32%",
-          background:
-            "linear-gradient(to bottom, transparent, rgba(230,0,18,0.4) 50%, transparent)",
-          filter: "blur(48px)",
-          mixBlendMode: "screen",
-          opacity: 0.24,
-        }}
-      />
-
-      {/* FASE 1 — AUSENCIA: solo indicios (con movimiento permitido) */}
-      {!reduced && (
-        <>
-          <div
-            aria-hidden="true"
-            className="load-scan-v pointer-events-none absolute inset-y-0 z-30 w-px bg-accent"
-          />
-          <div
-            aria-hidden="true"
-            className="load-core-line pointer-events-none absolute z-30 h-px -translate-x-1/2 -translate-y-1/2 bg-accent"
-            style={{ left: "50%", top: "46%" }}
-          />
-        </>
-      )}
-
-      {/* Anillos: composicion grafica tenue que enmarca el antifaz */}
-      <ConcentricRings revealed={impact} reduced={!!reduced} />
-
-      {/* Antifaz protagonista */}
-      <div
-        aria-hidden="true"
-        className="load-mask-float pointer-events-none absolute"
-        style={{ left: "50%", top: "46%" }}
       >
+        {/* Fondo: skyline real con rampa de brillo */}
         <motion.div
-          className="relative w-[min(82vw,560px)] max-w-none"
+          aria-hidden="true"
+          className="absolute inset-0"
           style={{
-            x: "-50%",
-            y: clipY,
-            scale: clipScale,
-            clipPath: reduced ? "none" : maskClip,
+            backgroundImage: `linear-gradient(to bottom, rgba(10,10,10,0.8), rgba(10,10,10,0.6) 40%, rgba(10,10,10,0.88)), url(${loadingBg})`,
+            backgroundSize: "cover, cover",
+            backgroundPosition: "center, center",
           }}
-        >
-          <motion.img
-            src={MASK_SRC}
-            alt=""
-            draggable={false}
-            className="block w-full max-w-none"
-            style={{
-              scale: reduced ? 1 : maskCombinedScale,
-              opacity: reduced ? 1 : maskOpacity,
-              filter: reduced ? "none" : maskFilter,
-            }}
-          />
+          initial={{ opacity: 0.55, scale: 1 }}
+          animate={{ opacity: 1, scale: reduced ? 1 : 1.015 }}
+          transition={{ duration: LOAD_DURATION, ease: "easeOut" }}
+        />
 
-          {/* FASE 2 — REVELADO: linea de escaneo cruzando el antifaz */}
-          {!reduced && (
-            <motion.div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-x-0 h-px bg-accent"
-              style={{
-                top: scanTop,
-                opacity: scanOpacity,
-                boxShadow: "0 0 12px rgba(230,0,18,0.65)",
-              }}
-            />
-          )}
-        </motion.div>
+        {/* Rim-light rojo */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 h-[160px]"
+          style={{
+            top: "32%",
+            background:
+              "linear-gradient(to bottom, transparent, rgba(230,0,18,0.4) 50%, transparent)",
+            filter: "blur(48px)",
+            mixBlendMode: "screen",
+            opacity: 0.24,
+          }}
+        />
 
-        {/* FASE 3 — IMPACTO: diamantes que saltan desde las esquinas */}
-        {!reduced && impact && (
+        {/* FASE 1 — AUSENCIA: indicios */}
+        {!reduced && (
           <>
-            <span
-              className="load-impact-diamond absolute left-0 top-0 size-[5px] bg-accent"
-              style={{ "--dx": "-22px", "--dy": "-22px" } as CSSProperties}
+            <div
+              aria-hidden="true"
+              className="load-scan-v pointer-events-none absolute inset-y-0 z-30 w-px bg-accent"
             />
-            <span
-              className="load-impact-diamond absolute right-0 top-0 size-[5px] bg-accent"
-              style={{ "--dx": "22px", "--dy": "-22px" } as CSSProperties}
-            />
-            <span
-              className="load-impact-diamond absolute bottom-0 left-0 size-[5px] bg-accent"
-              style={{ "--dx": "-22px", "--dy": "22px" } as CSSProperties}
-            />
-            <span
-              className="load-impact-diamond absolute bottom-0 right-0 size-[5px] bg-accent"
-              style={{ "--dx": "22px", "--dy": "22px" } as CSSProperties}
+            <div
+              aria-hidden="true"
+              className="load-core-line pointer-events-none absolute z-30 h-px -translate-x-1/2 -translate-y-1/2 bg-accent"
+              style={{ left: "50%", top: "50%" }}
             />
           </>
         )}
-      </div>
 
-      {/* Destello radial del impacto (detras del antifaz) */}
-      {!reduced && (
+        <ConcentricRings revealed={impact} reduced={!!reduced} />
+
+        {/* Destello radial del impacto */}
+        {!reduced && (
+          <motion.div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0"
+            style={{
+              opacity: glowBoost,
+              background:
+                "radial-gradient(ellipse at 50% 50%, rgba(230,0,18,0.4), transparent 55%)",
+              mixBlendMode: "screen",
+            }}
+          />
+        )}
+
+        <HudCorners />
+
+        {/* HUD periferico superior */}
         <motion.div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0"
-          style={{
-            opacity: glowBoost,
-            background:
-              "radial-gradient(ellipse at 50% 46%, rgba(230,0,18,0.4), transparent 55%)",
-            mixBlendMode: "screen",
-          }}
-        />
-      )}
+          className="pointer-events-none absolute inset-x-0 top-0 z-30"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: reduced ? 0 : 0.6 }}
+        >
+          <div className="flex items-center justify-between px-6 pt-6 text-label uppercase tracking-[0.3em] text-paper/45 md:px-10">
+            <span className="flex items-center gap-2">
+              <span className="inline-block size-[3px] bg-accent" />
+              {profile.branding.system.toUpperCase()}
+            </span>
+            <span className="hidden sm:block">
+              SISTEMA {profile.branding.version.toUpperCase()}
+            </span>
+          </div>
+        </motion.div>
 
-      <HudCorners />
-
-      {/* HUD periferico superior — muy discreto */}
-      <motion.div
-        className="pointer-events-none absolute inset-x-0 top-0 z-30"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: reduced ? 0 : 0.6 }}
-      >
-        <div className="flex items-center justify-between px-6 pt-6 text-label uppercase tracking-[0.3em] text-paper/45 md:px-10">
-          <span className="flex items-center gap-2">
-            <span className="inline-block size-[3px] bg-accent" />
-            {profile.branding.system.toUpperCase()}
-          </span>
-          <span className="hidden sm:block">
-            SISTEMA {profile.branding.version.toUpperCase()}
-          </span>
-        </div>
-      </motion.div>
-
-      {/* Micro-marcas laterales que encuadran el antifaz (solo escritorio) */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute z-20 hidden flex-col items-center lg:flex"
-        style={{ top: "46%", left: "20%", transform: "translate(-50%, -50%)" }}
-      >
-        <span className="h-[44px] w-px bg-paper/12" />
-        <span className="mt-[10px] h-[2px] w-[7px] bg-accent/60" />
-      </div>
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute z-20 hidden flex-col items-center lg:flex"
-        style={{ top: "46%", right: "20%", transform: "translate(50%, -50%)" }}
-      >
-        <span className="h-[44px] w-px bg-paper/12" />
-        <span className="mt-[10px] h-[2px] w-[7px] bg-accent/60" />
-      </div>
-
-      {/* Barrido de salida (justo antes de levantar la escena) */}
-      {exitScan && !reduced && (
+        {/* Micro-marcas laterales */}
         <div
           aria-hidden="true"
-          className="load-exit-scan pointer-events-none absolute inset-x-0 z-40 h-[2px] bg-accent"
-          style={{ boxShadow: "0 0 14px rgba(230,0,18,0.7)" }}
-        />
-      )}
+          className="pointer-events-none absolute z-20 hidden flex-col items-center lg:flex"
+          style={{
+            top: "50%",
+            left: "20%",
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          <span className="h-[44px] w-px bg-paper/12" />
+          <span className="mt-[10px] h-[2px] w-[7px] bg-accent/60" />
+        </div>
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute z-20 hidden flex-col items-center lg:flex"
+          style={{
+            top: "50%",
+            right: "20%",
+            transform: "translate(50%, -50%)",
+          }}
+        >
+          <span className="h-[44px] w-px bg-paper/12" />
+          <span className="mt-[10px] h-[2px] w-[7px] bg-accent/60" />
+        </div>
 
-      {/* Progreso — composicion original del menu de juego: Q + pregunta,
-          barra trapezoidal y porcentaje (Si %) */}
-      <motion.div
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-30"
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: reduced ? 0 : 0.6, delay: reduced ? 0 : 0.25 }}
-      >
-        <div className="load-base absolute inset-x-0 bottom-0 h-[min(38vh,380px)] w-full">
-          <div className="pointer-events-none absolute bottom-12 right-6 z-20 w-[min(35rem,80vw)]">
-            <div className="load-panel">
-              <div className="load-panel-inner px-7 pb-6 pt-[6.5rem]">
-                {/* Pregunta, con la Q a la izquierda; barra y % debajo */}
-                <p
-                  className="load-question max-w-full truncate pl-[2.5rem] text-left font-anton uppercase leading-[1.05] text-paper"
-                  style={{ fontSize: "clamp(1.3rem, 2.2vw, 2rem)" }}
-                >
-                  {question && (
-                    <>
-                      {question.slice(0, -1)}
-                      <span className="text-accent">?</span>
-                    </>
-                  )}
-                </p>
+        {/* Barrido de salida */}
+        {exitScan && !reduced && (
+          <div
+            aria-hidden="true"
+            className="load-exit-scan pointer-events-none absolute inset-x-0 z-40 h-[2px] bg-accent"
+            style={{ boxShadow: "0 0 14px rgba(230,0,18,0.7)" }}
+          />
+        )}
 
-                {/* Q + barra + % */}
-                <div className="load-bar-block relative mt-2 flex items-center pl-[2.5rem]">
-                  {/* Letra Q suelta, borde inferior solapando la esquina sup-izq de la barra */}
-                  <span
-                    aria-hidden="true"
-                    className="load-q absolute bottom-[50px] left-0 font-anton text-[5.5rem] leading-none text-paper [text-shadow:-2px_-2px_0_#000,2px_-2px_0_#000,-2px_2px_0_#000,2px_2px_0_#000,-3px_-3px_0_#000,3px_-3px_0_#000,-3px_3px_0_#000,3px_3px_0_#000]"
+        {/* Progreso — poll panel exits early (slide right + fade) */}
+        <motion.div
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-30"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            duration: reduced ? 0 : 0.6,
+            delay: reduced ? 0 : 0.25,
+          }}
+        >
+          <motion.div
+            className="load-base absolute inset-x-0 bottom-0 h-[min(38vh,380px)] w-full"
+            animate={{
+              x: pollExiting ? "20%" : "0%",
+              opacity: pollExiting ? 0 : 1,
+            }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
+          >
+            <div className="pointer-events-none absolute bottom-12 right-6 z-20 w-[min(35rem,80vw)]">
+              <div className="load-panel">
+                <div className="load-panel-inner px-7 pb-6 pt-[6.5rem]">
+                  <p
+                    className="load-question max-w-full truncate pl-[2.5rem] text-left font-anton uppercase leading-[1.05] text-paper"
+                    style={{ fontSize: "clamp(1.3rem, 2.2vw, 2rem)" }}
                   >
-                    Q
-                  </span>
+                    {question && (
+                      <>
+                        {question.slice(0, -1)}
+                        <span className="text-accent">?</span>
+                      </>
+                    )}
+                  </p>
 
-                  {/* Barra trapezoidal larga y fina (~7:1) */}
-                  <div className="relative h-[52px] w-full [transform:skewX(-6deg)]">
-                    {/* Marco blanco + relleno rojo de progreso con pulso de
-                        brillo/glow ritmico (solo con movimiento permitido) */}
-                    <div className="absolute inset-0 bg-paper [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
-                      <div className="absolute inset-[3px] bg-bg-hero [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
-                        <div
-                          ref={barRef}
-                          className={`absolute inset-y-0 left-0 bg-accent${reduced ? "" : " bar-breathe"}`}
-                        />
+                  <div className="load-bar-block relative mt-2 flex items-center pl-[2.5rem]">
+                    <span
+                      aria-hidden="true"
+                      className="load-q absolute bottom-[50px] left-0 font-anton text-[5.5rem] leading-none text-paper [text-shadow:-2px_-2px_0_#000,2px_-2px_0_#000,-2px_2px_0_#000,2px_2px_0_#000,-3px_-3px_0_#000,3px_-3px_0_#000,-3px_3px_0_#000,3px_3px_0_#000]"
+                    >
+                      Q
+                    </span>
+
+                    <div className="relative h-[52px] w-full [transform:skewX(-6deg)]">
+                      <div className="absolute inset-0 bg-paper [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
+                        <div className="absolute inset-[3px] bg-bg-hero [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
+                          <div
+                            ref={barRef}
+                            className={`absolute inset-y-0 left-0 bg-accent${reduced ? "" : " bar-breathe"}`}
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Si {porcentaje}% — caja de ancho fijo para que el
-                      numero a 1-3 digitos nunca desplace la barra */}
-                  <span className="load-pct ml-4 shrink-0 font-anton text-[3.5rem] leading-none text-accent [transform:skewX(-10deg)] [text-shadow:-2px_-2px_0_#000,2px_-2px_0_#000,-2px_2px_0_#000,2px_2px_0_#000,-3px_-3px_0_#000,3px_-3px_0_#000,-3px_3px_0_#000,3px_3px_0_#000,4px_4px_0_rgba(0,0,0,0.5)]">
-                    Si{" "}
-                    <span className="inline-block min-w-[4.5ch] text-right tabular-nums">
-                      <span ref={pctRef}>0</span>%
+                    <span className="load-pct ml-4 shrink-0 font-anton text-[3.5rem] leading-none text-accent [transform:skewX(-10deg)] [text-shadow:-2px_-2px_0_#000,2px_-2px_0_#000,-2px_2px_0_#000,2px_2px_0_#000,-3px_-3px_0_#000,3px_-3px_0_#000,-3px_3px_0_#000,3px_3px_0_#000,4px_4px_0_rgba(0,0,0,0.5)]">
+                      Si{" "}
+                      <span className="inline-block min-w-[4.5ch] text-right tabular-nums">
+                        <span ref={pctRef}>0</span>%
+                      </span>
                     </span>
-                  </span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
+        </motion.div>
+      </motion.div>
+
+      {/* ============================================================
+          MASK — separate layer for special exit treatment (z-101).
+          Stays visible ~100ms longer than the main content, then is
+          violently pulled upward as the final focal piece.
+          ============================================================ */}
+      <motion.div
+        className="fixed inset-0 z-[101] pointer-events-none"
+        animate={{
+          opacity: maskExiting ? 0 : 1,
+          y: maskExiting ? "-12%" : "0%",
+          scale: maskExiting ? 1.12 : 1,
+        }}
+        transition={{ duration: 0.4, ease: EXIT_EASE }}
+      >
+        <div
+          className="load-mask-float pointer-events-none absolute"
+          style={{ left: "50%", top: "50%" }}
+        >
+          <motion.div
+            className="relative w-[min(82vw,560px)] max-w-none"
+            style={{
+              x: "-50%",
+              clipPath: reduced ? "none" : maskClip,
+            }}
+          >
+            <motion.img
+              src={MASK_SRC}
+              alt=""
+              draggable={false}
+              className="block w-full max-w-none relative z-[1]"
+              style={{
+                scale: reduced ? 1 : maskCombinedScale,
+                opacity: reduced ? 1 : maskOpacity,
+                filter: reduced ? "none" : maskFilter,
+              }}
+            />
+
+            {/* Layered glow — tight inner + medium + soft outer halo, breathing pulse */}
+            {!reduced && (
+              <motion.div
+                aria-hidden="true"
+                className="absolute inset-0 z-0"
+                style={{
+                  opacity: glowCombinedOpacity,
+                  background: [
+                    "radial-gradient(circle at 50% 50%, rgba(230,0,18,0.38) 0%, transparent 18%)",
+                    "radial-gradient(circle at 50% 50%, rgba(230,0,18,0.16) 0%, transparent 35%)",
+                    "radial-gradient(circle at 50% 50%, rgba(230,0,18,0.06) 0%, transparent 55%)",
+                  ].join(", "),
+                  mixBlendMode: "screen",
+                }}
+              />
+            )}
+
+            {/* FASE 2 — REVELADO: linea de escaneo */}
+            {!reduced && (
+              <motion.div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-0 h-px bg-accent"
+                style={{
+                  top: scanTop,
+                  opacity: scanOpacity,
+                  boxShadow: "0 0 12px rgba(230,0,18,0.65)",
+                }}
+              />
+            )}
+          </motion.div>
+
+          {/* FASE 3 — IMPACTO: diamantes */}
+          {!reduced && impact && (
+            <>
+              <span
+                className="load-impact-diamond absolute left-0 top-0 size-[5px] bg-accent"
+                style={{ "--dx": "-22px", "--dy": "-22px" } as CSSProperties}
+              />
+              <span
+                className="load-impact-diamond absolute right-0 top-0 size-[5px] bg-accent"
+                style={{ "--dx": "22px", "--dy": "-22px" } as CSSProperties}
+              />
+              <span
+                className="load-impact-diamond absolute bottom-0 left-0 size-[5px] bg-accent"
+                style={{ "--dx": "-22px", "--dy": "22px" } as CSSProperties}
+              />
+              <span
+                className="load-impact-diamond absolute bottom-0 right-0 size-[5px] bg-accent"
+                style={{ "--dx": "22px", "--dy": "22px" } as CSSProperties}
+              />
+            </>
+          )}
         </div>
       </motion.div>
-    </motion.div>
+
+      {/* ============================================================
+          TEAR SHARDS — diagonal panels that fly apart (z-102).
+          Each shard shows the same background in a diagonal slice,
+          then translates away in a different direction.
+          ============================================================ */}
+      {tearing && !reduced && (
+        <div className="fixed inset-0 z-[102] pointer-events-none">
+          {TEAR_SHARDS.map((shard, i) => (
+            <motion.div
+              key={i}
+              className="absolute inset-0"
+              style={{
+                backgroundImage: LOADING_BG,
+                backgroundSize: "cover, cover",
+                backgroundPosition: "center, center",
+                clipPath: shard.clipPath,
+              }}
+              initial={{ x: 0, y: 0, rotate: 0, opacity: 1 }}
+              animate={{
+                x: shard.exitX,
+                y: shard.exitY,
+                rotate: shard.exitRotate,
+                opacity: 0,
+              }}
+              transition={{
+                duration: 0.55,
+                delay: shard.delay,
+                ease: EXIT_EASE,
+              }}
+            />
+          ))}
+          {/* Brief red diagonal flash — existing P5 graphic language */}
+          <motion.div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(135deg, transparent 42%, rgba(230,0,18,0.25) 50%, transparent 58%)",
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 0.9, 0] }}
+            transition={{ duration: 0.45, ease: "easeOut" }}
+          />
+        </div>
+      )}
+    </>
   );
 }

@@ -1,8 +1,10 @@
+import { useEffect, useState } from "react";
 import { Screen } from "../components/transition/Screen";
 import { SystemLabel } from "../components/shared/SystemLabel";
 import { Wordmark } from "../components/ui/Wordmark";
 import { CommandNavItem } from "../components/hero/CommandNavItem";
 import { HERO_COMMANDS } from "../components/hero/hero-commands";
+import { useBooted } from "../lib/boot";
 
 const SESSION_TIME = new Date().toTimeString().slice(0, 8);
 
@@ -19,6 +21,15 @@ const MENU_CHAOS = [
  * con entrada escalonada.
  */
 export function Home() {
+  const booted = useBooted();
+  const [entered, setEntered] = useState(false);
+
+  useEffect(() => {
+    if (!booted || entered) return;
+    const t = window.setTimeout(() => setEntered(true), 400);
+    return () => window.clearTimeout(t);
+  }, [booted, entered]);
+
   return (
     <Screen className="bg-ink text-paper">
       <section className="relative h-dvh w-full overflow-hidden">
@@ -80,7 +91,9 @@ export function Home() {
           aria-label="Menu principal del portfolio"
           className="absolute left-[4%] top-1/2 z-20 -translate-y-1/2 sm:left-[5%] lg:left-[6%]"
         >
-          <ol className="flex w-[min(85vw,425px)] flex-col gap-3">
+          <ol
+            className={`flex w-[min(85vw,425px)] flex-col gap-3${entered ? " hero-commands--enter" : ""}`}
+          >
             {HERO_COMMANDS.map((command, i) => (
               <CommandNavItem
                 key={command.id}

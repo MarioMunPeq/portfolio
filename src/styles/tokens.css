@@ -216,6 +216,36 @@
     rotate(calc(var(--rot, 0deg) * 1.5));
 }
 
+/* === Menu stamp-in entrance — BAM BAM BAM BAM === */
+@keyframes menu-stamp-in {
+  0% {
+    opacity: 0;
+    transform: translateX(var(--off, 0px)) rotate(var(--rot, 0deg)) scale(1.35);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(var(--off, 0px)) rotate(var(--rot, 0deg)) scale(1);
+  }
+}
+
+.hero-commands--enter .hero-command-item {
+  opacity: 0;
+  animation: menu-stamp-in 0.17s cubic-bezier(0.12, 0.9, 0.3, 1) both;
+}
+
+.hero-commands--enter .hero-command-item:nth-child(1) {
+  animation-delay: 0ms;
+}
+.hero-commands--enter .hero-command-item:nth-child(2) {
+  animation-delay: 80ms;
+}
+.hero-commands--enter .hero-command-item:nth-child(3) {
+  animation-delay: 160ms;
+}
+.hero-commands--enter .hero-command-item:nth-child(4) {
+  animation-delay: 240ms;
+}
+
 .hero-cmd {
   position: relative;
   display: flex;
