@@ -137,6 +137,6 @@ export const profile: Profile = {
       { name: 'Ingles', level: 'B2', note: 'Certificado (Oxford, Trinity)' },
     ],
     license: 'Permiso de conducir B',
-    avatar: null,
+    avatar: { src: '/portfolio/images/retrato.png', alt: 'Retrato de Mario Muñoz Pequeño' },
   },
 }

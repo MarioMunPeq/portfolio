@@ -1099,7 +1099,7 @@ html.lenis body {
 
 .sdeck__corner--br {
   align-self: flex-end;
-  padding: 0 16px 14px 0;
+  padding: 8px 0 0 10px;
   transform: rotate(180deg);
 }
 
