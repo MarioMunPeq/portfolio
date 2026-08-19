@@ -388,13 +388,22 @@ export function About() {
           {/* ===== Contenido: Bio ===== */}
           <Reveal delay={0.16}>
             <div className="mt-14 lg:mt-16 lg:max-w-[55%]">
-              <h2 className="flex items-center gap-2 text-label font-medium uppercase tracking-[0.22em] text-accent">
-                <DiamondMarker size={6} />
-                Bio
-              </h2>
-              <p className="mt-4 text-body leading-relaxed text-paper/75">
-                {about.bio}
-              </p>
+              <div className="relative border border-paper/8 bg-bg-content-alt/70 p-6 pr-8 sm:p-8 sm:pr-10 [clip-path:polygon(0_0,calc(100%_-_12px)_0,100%_12px,100%_100%,12px_100%,0_calc(100%_-_12px))]">
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute right-0 top-0 h-5 w-5"
+                >
+                  <span className="absolute right-0 top-0 h-[1px] w-5 bg-accent/50" />
+                  <span className="absolute right-0 top-0 h-5 w-[1px] bg-accent/50" />
+                </span>
+                <h2 className="flex items-center gap-2 text-label font-medium uppercase tracking-[0.22em] text-accent">
+                  <DiamondMarker size={6} />
+                  Bio
+                </h2>
+                <p className="mt-4 text-body leading-relaxed text-paper/75">
+                  {about.bio}
+                </p>
+              </div>
             </div>
           </Reveal>
 

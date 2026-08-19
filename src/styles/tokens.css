@@ -1471,7 +1471,7 @@ html.lenis body {
 }
 
 .bgm-bar__label {
-  font-family: var(--font-expose);
+  font-family: var(--font-sans);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -1504,7 +1504,7 @@ html.lenis body {
 }
 
 .bgm-bar__title {
-  font-family: var(--font-p5-menu);
+  font-family: var(--font-sans);
   font-size: 12px;
   letter-spacing: 0.04em;
   color: var(--color-paper);
@@ -1602,7 +1602,7 @@ html.lenis body {
 }
 
 .bgm-panel__sys {
-  font-family: var(--font-expose);
+  font-family: var(--font-sans);
   font-size: 9px;
   font-weight: 600;
   letter-spacing: 0.25em;
@@ -1635,7 +1635,7 @@ html.lenis body {
 }
 
 .bgm-panel__title {
-  font-family: var(--font-p5-menu);
+  font-family: var(--font-sans);
   font-size: 22px;
   letter-spacing: 0.03em;
   color: var(--color-paper);

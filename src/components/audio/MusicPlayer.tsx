@@ -169,7 +169,7 @@ export function MusicPlayer() {
   const volFillRef = useRef<HTMLDivElement>(null);
 
   /* Reactive state */
-  const [trackIndex, setTrackIndex] = useState(1);
+  const [trackIndex, setTrackIndex] = useState(3);
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(DEFAULT_VOLUME);
   const [muted, setMuted] = useState(false);
@@ -181,7 +181,7 @@ export function MusicPlayer() {
   const isPlayingRef = useRef(false);
   const volumeRef = useRef(DEFAULT_VOLUME);
   const mutedRef = useRef(false);
-  const trackIndexRef = useRef(1);
+  const trackIndexRef = useRef(3);
 
   /* Cleanup ref for pending canplay listener */
   const canplayCleanupRef = useRef<(() => void) | null>(null);
@@ -322,10 +322,10 @@ export function MusicPlayer() {
   );
 
   /* ================================================================ */
-  /*  Auto-play Phantom ONCE after boot, on first user interaction.     */
-  /*  Chrome blocks non-muted audio autoplay without user activation,  */
-  /*  so we wait for the first pointer/keydown after boot.              */
-  /*  Module-level guard survives StrictMode and route changes.         */
+  /*  Auto-play "What's Going On" ONCE after boot, on first user       */
+  /*  interaction. Chrome blocks non-muted audio autoplay without      */
+  /*  user activation, so we wait for the first pointer/keydown        */
+  /*  after boot. Module-level guard survives StrictMode/route changes. */
   /* ================================================================ */
 
   useEffect(() => {
@@ -335,7 +335,7 @@ export function MusicPlayer() {
     const onInteract = async () => {
       document.removeEventListener("pointerdown", onInteract);
       document.removeEventListener("keydown", onInteract);
-      await loadAndPlay(1, true);
+      await loadAndPlay(3, true);
     };
     document.addEventListener("pointerdown", onInteract);
     document.addEventListener("keydown", onInteract);
