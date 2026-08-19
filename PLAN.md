@@ -8,10 +8,10 @@ Add a `StarTransition` component that renders a fullscreen WebGL canvas with an 
 
 ## Files
 
-| Action | File | Lines (est.) |
-|--------|------|-------------|
-| **Create** | `src/components/transition/StarTransition.tsx` | ~190 |
-| **Modify** | `src/components/transition/AnimatedRoutes.tsx` | +30 lines |
+| Action     | File                                           | Lines (est.) |
+| ---------- | ---------------------------------------------- | ------------ |
+| **Create** | `src/components/transition/StarTransition.tsx` | ~190         |
+| **Modify** | `src/components/transition/AnimatedRoutes.tsx` | +30 lines    |
 
 No other files touched.
 
@@ -23,8 +23,8 @@ No other files touched.
 
 ```ts
 interface StarTransitionProps {
-  active: boolean        // true while the star transition should be visible
-  onComplete: () => void // called when the 750ms cycle finishes
+  active: boolean; // true while the star transition should be visible
+  onComplete: () => void; // called when the 750ms cycle finishes
 }
 ```
 
@@ -33,12 +33,17 @@ The component renders a `<canvas>` and manages its own WebGL context, shader pro
 ### 1.2 Constants (module-level, not exported)
 
 ```ts
-const MENU_PATHS = new Set(['/about', '/projects', '/experience', '/education'])
+const MENU_PATHS = new Set([
+  "/about",
+  "/projects",
+  "/experience",
+  "/education",
+]);
 
-const TOTAL_DURATION = 750   // ms: 600 shader + 150 fade-out
-const FADE_OUT_START = 600   // ms into the cycle when CSS opacity begins fading
-const TIME_SCALE = 5.5       // compresses the 4s shader cycle into ~600ms
-const BG_COLOR = [0.039, 0.039, 0.039] // #0A0A0A
+const TOTAL_DURATION = 750; // ms: 600 shader + 150 fade-out
+const FADE_OUT_START = 600; // ms into the cycle when CSS opacity begins fading
+const TIME_SCALE = 5.5; // compresses the 4s shader cycle into ~600ms
+const BG_COLOR = [0.039, 0.039, 0.039]; // #0A0A0A
 ```
 
 ### 1.3 GLSL — Vertex Shader (trivial fullscreen quad)
@@ -55,12 +60,7 @@ A single triangle-strip covering the clip-space quad `(-1,-1) → (1,1)`. Four v
 Vertex buffer data (created once):
 
 ```ts
-const QUAD = new Float32Array([
-  -1, -1,
-   1, -1,
-  -1,  1,
-   1,  1,
-])
+const QUAD = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
 ```
 
 ### 1.4 GLSL — Fragment Shader (recolored)
@@ -128,27 +128,31 @@ Managed by a `requestAnimationFrame` loop stored in `rafRef`. Only runs when `ac
 
 ```ts
 function renderFrame() {
-  if (!activeRef.current || !glRef.current) return
+  if (!activeRef.current || !glRef.current) return;
 
-  const gl = glRef.current
-  const elapsed = performance.now() - startTimeRef.current
-  const t = (elapsed / 1000) * TIME_SCALE  // compressed time in seconds
+  const gl = glRef.current;
+  const elapsed = performance.now() - startTimeRef.current;
+  const t = (elapsed / 1000) * TIME_SCALE; // compressed time in seconds
 
   // Update uniforms
-  gl.uniform1f(uniformsRef.current.iTime, t)
-  gl.uniform2f(uniformsRef.current.iResolution, canvasRef.current!.width, canvasRef.current!.height)
+  gl.uniform1f(uniformsRef.current.iTime, t);
+  gl.uniform2f(
+    uniformsRef.current.iResolution,
+    canvasRef.current!.width,
+    canvasRef.current!.height,
+  );
 
   // Draw
-  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
   // Check if cycle complete
   if (elapsed >= TOTAL_DURATION) {
-    activeRef.current = false
-    onCompleteRef.current()
-    return
+    activeRef.current = false;
+    onCompleteRef.current();
+    return;
   }
 
-  rafRef.current = requestAnimationFrame(renderFrame)
+  rafRef.current = requestAnimationFrame(renderFrame);
 }
 ```
 
@@ -162,24 +166,24 @@ A `useEffect` watches `active`:
 useEffect(() => {
   if (!active) {
     // Ensure loop stops if deactivated mid-cycle
-    activeRef.current = false
-    if (rafRef.current) cancelAnimationFrame(rafRef.current)
-    return
+    activeRef.current = false;
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    return;
   }
 
   // Start the cycle
-  startTimeRef.current = performance.now()
-  activeRef.current = true
-  rafRef.current = requestAnimationFrame(renderFrame)
-}, [active])
+  startTimeRef.current = performance.now();
+  activeRef.current = true;
+  rafRef.current = requestAnimationFrame(renderFrame);
+}, [active]);
 ```
 
 `onComplete` ref is updated on every render so the callback is always fresh:
 
 ```ts
 useEffect(() => {
-  onCompleteRef.current = onComplete
-}, [onComplete])
+  onCompleteRef.current = onComplete;
+}, [onComplete]);
 ```
 
 ### 1.8 CSS Fade-Out
@@ -191,15 +195,18 @@ Implementation via a second `useEffect` that fires when `active` becomes `true`:
 ```ts
 useEffect(() => {
   if (!active) {
-    setOpacity(1)  // reset for next cycle
-    return
+    setOpacity(1); // reset for next cycle
+    return;
   }
-  const fadeTimer = setTimeout(() => setOpacity(0), FADE_OUT_START)
+  const fadeTimer = setTimeout(() => setOpacity(0), FADE_OUT_START);
   const hideTimer = setTimeout(() => {
     // Canvas fully hidden; safe for next transition
-  }, TOTAL_DURATION)
-  return () => { clearTimeout(fadeTimer); clearTimeout(hideTimer) }
-}, [active])
+  }, TOTAL_DURATION);
+  return () => {
+    clearTimeout(fadeTimer);
+    clearTimeout(hideTimer);
+  };
+}, [active]);
 ```
 
 The canvas element:
@@ -211,8 +218,8 @@ The canvas element:
   className="fixed inset-0 z-[95]"
   style={{
     opacity,
-    transition: 'opacity 150ms ease-out',
-    background: '#0A0A0A',
+    transition: "opacity 150ms ease-out",
+    background: "#0A0A0A",
   }}
 />
 ```
@@ -224,14 +231,14 @@ Set `width` and `height` attributes (not CSS) to match `window.innerWidth` and `
 ```ts
 useEffect(() => {
   function resize() {
-    if (!canvasRef.current) return
-    canvasRef.current.width = window.innerWidth
-    canvasRef.current.height = window.innerHeight
+    if (!canvasRef.current) return;
+    canvasRef.current.width = window.innerWidth;
+    canvasRef.current.height = window.innerHeight;
   }
-  resize()
-  window.addEventListener('resize', resize)
-  return () => window.removeEventListener('resize', resize)
-}, [])
+  resize();
+  window.addEventListener("resize", resize);
+  return () => window.removeEventListener("resize", resize);
+}, []);
 ```
 
 ### 1.10 Lifecycle Summary
@@ -253,18 +260,18 @@ active = false
 
 ### 1.11 Full `useRef` Map
 
-| Ref | Type | Purpose |
-|-----|------|---------|
-| `canvasRef` | `HTMLCanvasElement \| null` | DOM element |
-| `glRef` | `WebGLRenderingContext \| null` | WebGL context |
-| `programRef` | `WebGLProgram \| null` | Linked shader program |
-| `uniformsRef` | `{ iTime: WebGLUniformLocation, iResolution: WebGLUniformLocation }` | Uniform locations |
-| `bufferRef` | `WebGLBuffer \| null` | Quad vertex buffer |
-| `attribRef` | `number` | Attribute location |
-| `startTimeRef` | `number` | `performance.now()` at cycle start |
-| `activeRef` | `boolean` | Whether loop is running |
-| `rafRef` | `number \| null` | `requestAnimationFrame` ID |
-| `onCompleteRef` | `() => void` | Latest `onComplete` callback |
+| Ref             | Type                                                                 | Purpose                            |
+| --------------- | -------------------------------------------------------------------- | ---------------------------------- |
+| `canvasRef`     | `HTMLCanvasElement \| null`                                          | DOM element                        |
+| `glRef`         | `WebGLRenderingContext \| null`                                      | WebGL context                      |
+| `programRef`    | `WebGLProgram \| null`                                               | Linked shader program              |
+| `uniformsRef`   | `{ iTime: WebGLUniformLocation, iResolution: WebGLUniformLocation }` | Uniform locations                  |
+| `bufferRef`     | `WebGLBuffer \| null`                                                | Quad vertex buffer                 |
+| `attribRef`     | `number`                                                             | Attribute location                 |
+| `startTimeRef`  | `number`                                                             | `performance.now()` at cycle start |
+| `activeRef`     | `boolean`                                                            | Whether loop is running            |
+| `rafRef`        | `number \| null`                                                     | `requestAnimationFrame` ID         |
+| `onCompleteRef` | `() => void`                                                         | Latest `onComplete` callback       |
 
 ---
 
@@ -273,7 +280,7 @@ active = false
 ### 2.1 New Imports
 
 ```ts
-import { StarTransition } from './StarTransition'
+import { StarTransition } from "./StarTransition";
 ```
 
 No other imports needed — `MENU_PATHS` lives inside `StarTransition.tsx` and is not exported (AnimatedRoutes defines its own local set for detection).
@@ -281,7 +288,12 @@ No other imports needed — `MENU_PATHS` lives inside `StarTransition.tsx` and i
 ### 2.2 New Constants
 
 ```ts
-const MENU_PATHS = new Set(['/about', '/projects', '/experience', '/education'])
+const MENU_PATHS = new Set([
+  "/about",
+  "/projects",
+  "/experience",
+  "/education",
+]);
 ```
 
 Duplicated in both files. `AnimatedRoutes` needs it for detection logic. `StarTransition` has it internally for its own reference (but doesn't actually need it — it's purely driven by `active` prop). We define it only in `AnimatedRoutes` and export nothing from `StarTransition` except the component. `StarTransition` doesn't need the set at all since it's purely prop-driven.
@@ -291,7 +303,7 @@ Duplicated in both files. `AnimatedRoutes` needs it for detection logic. `StarTr
 ### 2.3 New State
 
 ```ts
-const [starActive, setStarActive] = useState(false)
+const [starActive, setStarActive] = useState(false);
 ```
 
 ### 2.4 Detection Logic in `useEffect`
@@ -300,76 +312,76 @@ Inside the existing `useEffect` that watches `location.pathname`, **after the `p
 
 ```ts
 const isInterMenu =
-  MENU_PATHS.has(prevPath.current) && MENU_PATHS.has(location.pathname)
+  MENU_PATHS.has(prevPath.current) && MENU_PATHS.has(location.pathname);
 ```
 
-Wait — `prevPath.current` is updated *before* this check on line 34. We need to capture it first:
+Wait — `prevPath.current` is updated _before_ this check on line 34. We need to capture it first:
 
 ```ts
 useEffect(() => {
-  if (prevPath.current === location.pathname) return
-  const from = prevPath.current
-  prevPath.current = location.pathname
+  if (prevPath.current === location.pathname) return;
+  const from = prevPath.current;
+  prevPath.current = location.pathname;
 
   if (reduced) {
-    progress.set(0)
-    return
+    progress.set(0);
+    return;
   }
 
   // Inter-menu detection
-  const isInterMenu = MENU_PATHS.has(from) && MENU_PATHS.has(location.pathname)
+  const isInterMenu = MENU_PATHS.has(from) && MENU_PATHS.has(location.pathname);
   if (isInterMenu) {
-    setStarActive(true)
+    setStarActive(true);
   }
 
-  const cover = animate(progress, 1, { duration: 0.42, ease: EASE })
+  const cover = animate(progress, 1, { duration: 0.42, ease: EASE });
   const revealTimer = setTimeout(() => {
-    animate(progress, 0, { duration: 0.55, ease: EASE })
-  }, 470)
+    animate(progress, 0, { duration: 0.55, ease: EASE });
+  }, 470);
   return () => {
-    cover.stop()
-    clearTimeout(revealTimer)
-  }
-}, [location.pathname, progress, reduced])
+    cover.stop();
+    clearTimeout(revealTimer);
+  };
+}, [location.pathname, progress, reduced]);
 ```
 
-**Important:** The `prevPath.current` ref is updated *after* capturing `from` but *before* the `reduced` early return. This is safe because the `reduced` path doesn't reference `from`.
+**Important:** The `prevPath.current` ref is updated _after_ capturing `from` but _before_ the `reduced` early return. This is safe because the `reduced` path doesn't reference `from`.
 
-Actually, looking at the existing code more carefully: the early return on line 34 (`if (prevPath.current === location.pathname) return`) runs *before* the assignment. The assignment `prevPath.current = location.pathname` happens on line 34 in the original. We need to restructure slightly:
+Actually, looking at the existing code more carefully: the early return on line 34 (`if (prevPath.current === location.pathname) return`) runs _before_ the assignment. The assignment `prevPath.current = location.pathname` happens on line 34 in the original. We need to restructure slightly:
 
 ```ts
 useEffect(() => {
-  if (prevPath.current === location.pathname) return
-  const from = prevPath.current       // capture BEFORE update
-  prevPath.current = location.pathname // update
+  if (prevPath.current === location.pathname) return;
+  const from = prevPath.current; // capture BEFORE update
+  prevPath.current = location.pathname; // update
 
   if (reduced) {
-    progress.set(0)
-    return
+    progress.set(0);
+    return;
   }
 
-  const isInterMenu = MENU_PATHS.has(from) && MENU_PATHS.has(location.pathname)
+  const isInterMenu = MENU_PATHS.has(from) && MENU_PATHS.has(location.pathname);
   if (isInterMenu) {
-    setStarActive(true)
+    setStarActive(true);
   }
 
-  const cover = animate(progress, 1, { duration: 0.42, ease: EASE })
+  const cover = animate(progress, 1, { duration: 0.42, ease: EASE });
   const revealTimer = setTimeout(() => {
-    animate(progress, 0, { duration: 0.55, ease: EASE })
-  }, 470)
+    animate(progress, 0, { duration: 0.55, ease: EASE });
+  }, 470);
   return () => {
-    cover.stop()
-    clearTimeout(revealTimer)
-  }
-}, [location.pathname, progress, reduced])
+    cover.stop();
+    clearTimeout(revealTimer);
+  };
+}, [location.pathname, progress, reduced]);
 ```
 
 ### 2.5 StarTransition `onComplete` Handler
 
 ```ts
 const handleStarComplete = useCallback(() => {
-  setStarActive(false)
-}, [])
+  setStarActive(false);
+}, []);
 ```
 
 Import `useCallback` alongside `useEffect, useRef`.
@@ -378,7 +390,7 @@ Import `useCallback` alongside `useEffect, useRef`.
 
 ```tsx
 if (reduced) {
-  return <>{routes}</>
+  return <>{routes}</>;
 }
 
 return (
@@ -389,7 +401,7 @@ return (
     <Sweep progress={progress} />
     <StarTransition active={starActive} onComplete={handleStarComplete} />
   </>
-)
+);
 ```
 
 The `StarTransition` is **always mounted** (after the `reduced` guard). It just sits invisible (`opacity: 1` but no rAF loop) until `active` goes `true`.
@@ -397,58 +409,63 @@ The `StarTransition` is **always mounted** (after the `reduced` guard). It just 
 ### 2.7 Full Modified `AnimatedRoutes.tsx`
 
 ```tsx
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { Route, Routes, useLocation } from 'react-router-dom'
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Route, Routes, useLocation } from "react-router-dom";
 import {
   AnimatePresence,
   animate,
   useMotionValue,
   useReducedMotion,
-} from 'motion/react'
-import { Sweep } from '../primitives/Sweep'
-import { StarTransition } from './StarTransition'
-import { Home } from '../../pages/Home'
-import { About } from '../../pages/About'
-import { Projects } from '../../pages/Projects'
-import { Experience } from '../../pages/Experience'
-import { Education } from '../../pages/Education'
-import { ProjectDetail } from '../../pages/ProjectDetail'
-import { NotFound } from '../../pages/NotFound'
+} from "motion/react";
+import { Sweep } from "../primitives/Sweep";
+import { StarTransition } from "./StarTransition";
+import { Home } from "../../pages/Home";
+import { About } from "../../pages/About";
+import { Projects } from "../../pages/Projects";
+import { Experience } from "../../pages/Experience";
+import { Education } from "../../pages/Education";
+import { ProjectDetail } from "../../pages/ProjectDetail";
+import { NotFound } from "../../pages/NotFound";
 
-const EASE: [number, number, number, number] = [0.76, 0, 0.24, 1]
-const MENU_PATHS = new Set(['/about', '/projects', '/experience', '/education'])
+const EASE: [number, number, number, number] = [0.76, 0, 0.24, 1];
+const MENU_PATHS = new Set([
+  "/about",
+  "/projects",
+  "/experience",
+  "/education",
+]);
 
 export function AnimatedRoutes() {
-  const location = useLocation()
-  const reduced = useReducedMotion()
-  const progress = useMotionValue(0)
-  const prevPath = useRef(location.pathname)
-  const [starActive, setStarActive] = useState(false)
+  const location = useLocation();
+  const reduced = useReducedMotion();
+  const progress = useMotionValue(0);
+  const prevPath = useRef(location.pathname);
+  const [starActive, setStarActive] = useState(false);
 
   const handleStarComplete = useCallback(() => {
-    setStarActive(false)
-  }, [])
+    setStarActive(false);
+  }, []);
 
   useEffect(() => {
-    if (prevPath.current === location.pathname) return
-    const from = prevPath.current
-    prevPath.current = location.pathname
+    if (prevPath.current === location.pathname) return;
+    const from = prevPath.current;
+    prevPath.current = location.pathname;
     if (reduced) {
-      progress.set(0)
-      return
+      progress.set(0);
+      return;
     }
     if (MENU_PATHS.has(from) && MENU_PATHS.has(location.pathname)) {
-      setStarActive(true)
+      setStarActive(true);
     }
-    const cover = animate(progress, 1, { duration: 0.42, ease: EASE })
+    const cover = animate(progress, 1, { duration: 0.42, ease: EASE });
     const revealTimer = setTimeout(() => {
-      animate(progress, 0, { duration: 0.55, ease: EASE })
-    }, 470)
+      animate(progress, 0, { duration: 0.55, ease: EASE });
+    }, 470);
     return () => {
-      cover.stop()
-      clearTimeout(revealTimer)
-    }
-  }, [location.pathname, progress, reduced])
+      cover.stop();
+      clearTimeout(revealTimer);
+    };
+  }, [location.pathname, progress, reduced]);
 
   const routes = (
     <Routes location={location} key={location.pathname}>
@@ -461,10 +478,10 @@ export function AnimatedRoutes() {
       <Route path="/404" element={<NotFound />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
-  )
+  );
 
   if (reduced) {
-    return <>{routes}</>
+    return <>{routes}</>;
   }
 
   return (
@@ -475,7 +492,7 @@ export function AnimatedRoutes() {
       <Sweep progress={progress} />
       <StarTransition active={starActive} onComplete={handleStarComplete} />
     </>
-  )
+  );
 }
 ```
 
@@ -487,7 +504,7 @@ export function AnimatedRoutes() {
 
 **Problem:** User clicks two menu links within 750ms. `starActive` is already `true` when the second transition fires.
 
-**Solution:** The second route change sets `starActive = true` again (no-op if already true) and the shader loop keeps running. The `onComplete` callback fires for the *first* cycle, setting `active = false`, which would kill the loop mid-second-transition.
+**Solution:** The second route change sets `starActive = true` again (no-op if already true) and the shader loop keeps running. The `onComplete` callback fires for the _first_ cycle, setting `active = false`, which would kill the loop mid-second-transition.
 
 **Fix:** Do NOT reset `starActive` to `false` inside `onComplete` if a new route change happened during the cycle. Instead:
 
@@ -512,13 +529,13 @@ setStarActive(true)
 ```ts
 // StarTransition
 useEffect(() => {
-  genOnStartRef.current = generation
+  genOnStartRef.current = generation;
   // ... start loop
-}, [active, generation])
+}, [active, generation]);
 
 // In renderFrame, on completion:
 if (genOnStartRef.current === generation) {
-  onCompleteRef.current()
+  onCompleteRef.current();
 }
 ```
 
@@ -536,11 +553,11 @@ When the tab is hidden, `requestAnimationFrame` stops firing. When the tab comes
 
 ```ts
 // In renderFrame:
-if (document.visibilityState === 'hidden') {
+if (document.visibilityState === "hidden") {
   // Tab was backgrounded; reset start time on return
-  startTimeRef.current = performance.now()
-  rafRef.current = requestAnimationFrame(renderFrame)
-  return
+  startTimeRef.current = performance.now();
+  rafRef.current = requestAnimationFrame(renderFrame);
+  return;
 }
 ```
 
@@ -560,12 +577,12 @@ When `starActive` goes `false` (via `onComplete`), the `useEffect` watching `act
 
 ## 4. Z-Index Verification
 
-| Layer | z-index | Notes |
-|-------|---------|-------|
-| Sweep | 90 | Existing, unchanged |
-| **Star canvas** | **95** | **New** — between Sweep and Grain |
-| Grain | 115 | Existing, unchanged |
-| Cursor | 119-120 | Existing |
+| Layer           | z-index | Notes                             |
+| --------------- | ------- | --------------------------------- |
+| Sweep           | 90      | Existing, unchanged               |
+| **Star canvas** | **95**  | **New** — between Sweep and Grain |
+| Grain           | 115     | Existing, unchanged               |
+| Cursor          | 119-120 | Existing                          |
 
 The opaque star canvas (background `#0A0A0A`) covers the Sweep at z-90. Grain at z-115 renders on top of the star canvas — this is fine; the grain is a subtle overlay and adds texture to the star shader output.
 

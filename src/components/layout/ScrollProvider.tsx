@@ -1,9 +1,9 @@
-import { useReducedMotion } from 'motion/react'
-import { ReactLenis } from 'lenis/react'
-import type { ReactNode } from 'react'
+import { useReducedMotion } from "motion/react";
+import { ReactLenis } from "lenis/react";
+import type { ReactNode } from "react";
 
 interface ScrollProviderProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 /**
@@ -11,10 +11,10 @@ interface ScrollProviderProps {
  * se omite por completo y el navegador usa el scroll nativo.
  */
 export function ScrollProvider({ children }: ScrollProviderProps) {
-  const reduced = useReducedMotion()
+  const reduced = useReducedMotion();
 
   if (reduced) {
-    return <>{children}</>
+    return <>{children}</>;
   }
 
   return (
@@ -28,5 +28,5 @@ export function ScrollProvider({ children }: ScrollProviderProps) {
     >
       {children}
     </ReactLenis>
-  )
+  );
 }

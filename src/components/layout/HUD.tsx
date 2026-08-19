@@ -1,5 +1,5 @@
-import { Link, useLocation } from 'react-router-dom'
-import { profile } from '../../data/profile'
+import { Link, useLocation } from "react-router-dom";
+import { profile } from "../../data/profile";
 
 /**
  * HUD persistente del sistema: franja superior fija con la identidad de
@@ -9,11 +9,11 @@ import { profile } from '../../data/profile'
  * pantalla trae su propia topbar (hazard stripe + labels de sistema).
  */
 export function HUD() {
-  const location = useLocation()
+  const location = useLocation();
 
-  if (location.pathname === '/') return null
+  if (location.pathname === "/") return null;
 
-  const year = new Date().getFullYear()
+  const year = new Date().getFullYear();
 
   return (
     <div className="fixed inset-x-0 top-0 z-50 border-b border-paper/10 bg-bg-hero text-paper">
@@ -41,5 +41,5 @@ export function HUD() {
         </span>
       </div>
     </div>
-  )
+  );
 }

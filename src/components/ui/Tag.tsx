@@ -1,35 +1,35 @@
-import type { ReactNode } from 'react'
+import type { ReactNode } from "react";
 
-const CLIP = '[clip-path:polygon(8px_0,100%_0,calc(100%_-_8px)_100%,0_100%)]'
+const CLIP = "[clip-path:polygon(8px_0,100%_0,calc(100%_-_8px)_100%,0_100%)]";
 
 interface TagProps {
-  children: ReactNode
+  children: ReactNode;
   /** Relleno del sello: rojo, oscuro o claro. El amarillo queda reservado a la estrella. */
-  tone?: 'red' | 'dark' | 'light'
-  size?: 'sm' | 'md' | 'lg'
+  tone?: "red" | "dark" | "light";
+  size?: "sm" | "md" | "lg";
   /** Fuente del texto del sello: P5 Menu (por defecto), P5 Hatty (pagina de
       Habilidades) o 'sans' (informacion legible en Space Grotesk). */
-  font?: 'p5-menu' | 'hatty' | 'sans'
-  className?: string
+  font?: "p5-menu" | "hatty" | "sans";
+  className?: string;
 }
 
 const toneClass = {
-  red: 'bg-accent text-paper',
-  dark: 'bg-ink text-paper border border-paper/25',
-  light: 'bg-paper text-ink',
-} as const
+  red: "bg-accent text-paper",
+  dark: "bg-ink text-paper border border-paper/25",
+  light: "bg-paper text-ink",
+} as const;
 
 const sizeClass = {
-  sm: 'px-3 py-1.5 text-xs',
-  md: 'px-3.5 py-1.5 text-base',
-  lg: 'px-4 py-2 text-sm sm:text-lg md:text-xl xl:text-2xl',
-} as const
+  sm: "px-3 py-1.5 text-xs",
+  md: "px-3.5 py-1.5 text-base",
+  lg: "px-4 py-2 text-sm sm:text-lg md:text-xl xl:text-2xl",
+} as const;
 
 const fontClass = {
-  'p5-menu': 'font-p5-menu uppercase tracking-[0.08em]',
-  hatty: 'font-hatty uppercase tracking-[0.08em]',
-  sans: 'font-sans',
-} as const
+  "p5-menu": "font-p5-menu uppercase tracking-[0.08em]",
+  hatty: "font-hatty uppercase tracking-[0.08em]",
+  sans: "font-sans",
+} as const;
 
 /**
  * Sello/tag angular recortado (viñeta de comic) con sombra de offset dura.
@@ -37,11 +37,17 @@ const fontClass = {
  * Stats. La sombra se aplica con drop-shadow en el contenedor (sigue el clip
  * recortado) en offsets enteros de 3px para que no se vea borrosa ni doblada.
  */
-export function Tag({ children, tone = 'red', size = 'md', font = 'p5-menu', className = '' }: TagProps) {
+export function Tag({
+  children,
+  tone = "red",
+  size = "md",
+  font = "p5-menu",
+  className = "",
+}: TagProps) {
   return (
     <span
       className={`relative inline-flex ${className}`}
-      style={{ filter: 'drop-shadow(3px 3px 0 rgba(0, 0, 0, 0.9))' }}
+      style={{ filter: "drop-shadow(3px 3px 0 rgba(0, 0, 0, 0.9))" }}
     >
       <span
         className={`relative inline-flex items-center gap-2 ${CLIP} ${toneClass[tone]} ${sizeClass[size]} ${fontClass[font]} leading-none`}
@@ -49,5 +55,5 @@ export function Tag({ children, tone = 'red', size = 'md', font = 'p5-menu', cla
         {children}
       </span>
     </span>
-  )
+  );
 }

@@ -4,7 +4,13 @@
  * solid accent red fill. Used where the arrow was purely decorative
  * (not an actual navigation link).
  */
-export function DiamondMarker({ className = '', size = 7 }: { className?: string; size?: number }) {
+export function DiamondMarker({
+  className = "",
+  size = 7,
+}: {
+  className?: string;
+  size?: number;
+}) {
   return (
     <span
       aria-hidden="true"
@@ -12,8 +18,8 @@ export function DiamondMarker({ className = '', size = 7 }: { className?: string
       style={{
         width: size,
         height: size,
-        transform: 'rotate(45deg)',
+        transform: "rotate(45deg)",
       }}
     />
-  )
+  );
 }

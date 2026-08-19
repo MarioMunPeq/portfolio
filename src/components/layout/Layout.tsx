@@ -1,28 +1,28 @@
-import type { ReactNode } from 'react'
-import { useLocation } from 'react-router-dom'
-import { HUD } from './HUD'
-import { TopBar } from '../ui/TopBar'
-import { BottomBar } from '../ui/BottomBar'
-import { Cursor } from './Cursor'
-import { LoadScreen } from '../overlay/LoadScreen'
-import { Grain } from '../primitives/Grain'
+import type { ReactNode } from "react";
+import { useLocation } from "react-router-dom";
+import { HUD } from "./HUD";
+import { TopBar } from "../ui/TopBar";
+import { BottomBar } from "../ui/BottomBar";
+import { Cursor } from "./Cursor";
+import { LoadScreen } from "../overlay/LoadScreen";
+import { Grain } from "../primitives/Grain";
 
 interface LayoutProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 const CONTEXT: Record<string, string> = {
-  '/about': 'PERFIL',
-  '/projects': 'INVENTARIO',
-  '/experience': 'PROGRESO',
-  '/education': 'FORMACIoN',
-  '/404': 'ERROR 404',
-}
+  "/about": "PERFIL",
+  "/projects": "INVENTARIO",
+  "/experience": "PROGRESO",
+  "/education": "FORMACIoN",
+  "/404": "ERROR 404",
+};
 
 const contextFor = (path: string) => {
-  if (path.startsWith('/proyectos/')) return 'INVENTARIO'
-  return CONTEXT[path] ?? 'SISTEMA'
-}
+  if (path.startsWith("/proyectos/")) return "INVENTARIO";
+  return CONTEXT[path] ?? "SISTEMA";
+};
 
 /**
  * Marco de las pantallas: TopBar unificada en todas las pantallas internas
@@ -32,8 +32,8 @@ const contextFor = (path: string) => {
  * el grano y el cursor viven por encima de todo.
  */
 export function Layout({ children }: LayoutProps) {
-  const { pathname } = useLocation()
-  const showTopBar = pathname !== '/' && pathname !== '/experience'
+  const { pathname } = useLocation();
+  const showTopBar = pathname !== "/" && pathname !== "/experience";
 
   return (
     <div className="min-h-dvh bg-bg-hero text-paper">
@@ -44,12 +44,12 @@ export function Layout({ children }: LayoutProps) {
         Saltar al contenido
       </a>
       <LoadScreen />
-      {pathname === '/experience' ? <HUD /> : null}
+      {pathname === "/experience" ? <HUD /> : null}
       {showTopBar && <TopBar context={contextFor(pathname)} />}
       <BottomBar />
       <Grain />
       <Cursor />
       <main id="main">{children}</main>
     </div>
-  )
+  );
 }

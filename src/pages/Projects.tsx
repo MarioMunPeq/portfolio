@@ -1,10 +1,10 @@
-import { useState } from 'react'
-import { Screen } from '../components/transition/Screen'
-import { ProjectPreview } from '../components/projects/ProjectPreview'
-import { ProjectInventory } from '../components/projects/ProjectInventory'
-import { SectionTitle } from '../components/ui/SectionTitle'
-import { projects } from '../data/projects'
-import type { Project } from '../data/projects'
+import { useState } from "react";
+import { Screen } from "../components/transition/Screen";
+import { ProjectPreview } from "../components/projects/ProjectPreview";
+import { ProjectInventory } from "../components/projects/ProjectInventory";
+import { SectionTitle } from "../components/ui/SectionTitle";
+import { projects } from "../data/projects";
+import type { Project } from "../data/projects";
 
 /**
  * Capa grafica de fondo del inventario: estrellas de contorno por toda la
@@ -27,18 +27,21 @@ function ProjectsGraphicLayer() {
       <span
         className="absolute -left-16 top-[10%] h-[120%] w-[65%] opacity-[0.12]"
         style={{
-          backgroundImage: 'url(/portfolio/images/background/starbackground.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          transform: 'rotate(-3deg)',
-          maskImage: 'linear-gradient(135deg, transparent 0%, black 30%, black 70%, transparent 100%)',
-          WebkitMaskImage: 'linear-gradient(135deg, transparent 0%, black 30%, black 70%, transparent 100%)',
+          backgroundImage:
+            "url(/portfolio/images/background/starbackground.png)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          transform: "rotate(-3deg)",
+          maskImage:
+            "linear-gradient(135deg, transparent 0%, black 30%, black 70%, transparent 100%)",
+          WebkitMaskImage:
+            "linear-gradient(135deg, transparent 0%, black 30%, black 70%, transparent 100%)",
         }}
       />
 
       <span
         className="absolute right-[-3rem] top-[3%] -rotate-6 select-none font-display uppercase leading-none text-outline-faint opacity-25"
-        style={{ fontSize: 'clamp(6rem, 13vw, 12rem)' }}
+        style={{ fontSize: "clamp(6rem, 13vw, 12rem)" }}
       >
         Inventario
       </span>
@@ -48,7 +51,7 @@ function ProjectsGraphicLayer() {
 
       <span className="absolute inset-0 bg-scanlines" />
     </div>
-  )
+  );
 }
 
 /**
@@ -59,7 +62,7 @@ function ProjectsGraphicLayer() {
  * selecciona, clic abre la ficha (/proyectos/:slug).
  */
 export function Projects() {
-  const [selected, setSelected] = useState<Project>(projects[0])
+  const [selected, setSelected] = useState<Project>(projects[0]);
 
   return (
     <Screen className="min-h-dvh bg-bg-hero text-paper">
@@ -67,7 +70,11 @@ export function Projects() {
         <ProjectsGraphicLayer />
 
         <div className="relative z-10 flex min-h-dvh flex-col px-6 pb-24 pt-24 md:px-10 lg:px-14">
-          <SectionTitle label="Inventario de proyectos" title="INVENTARIO" persona />
+          <SectionTitle
+            label="Inventario de proyectos"
+            title="INVENTARIO"
+            persona
+          />
 
           <div className="grid flex-1 items-center gap-x-10 py-8 lg:grid-cols-[1.06fr_1fr] xl:gap-x-16 xl:py-10">
             <ProjectPreview project={selected} />
@@ -80,5 +87,5 @@ export function Projects() {
         </div>
       </section>
     </Screen>
-  )
+  );
 }

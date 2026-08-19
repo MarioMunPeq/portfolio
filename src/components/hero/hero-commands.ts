@@ -1,19 +1,19 @@
-import { NAV_ITEMS } from '../navigation/nav-items'
-import type { HeroIcon } from './CommandNavItem'
+import { NAV_ITEMS } from "../navigation/nav-items";
+import type { HeroIcon } from "./CommandNavItem";
 
 export interface HeroCommand {
-  id: string
-  icon: HeroIcon
-  label: string
-  sub: string
-  path: string
+  id: string;
+  icon: HeroIcon;
+  label: string;
+  sub: string;
+  path: string;
 }
 
 const byId = (id: string) => {
-  const item = NAV_ITEMS.find((entry) => entry.id === id)
-  if (!item) throw new Error(`HeroCommand: ruta de nav "${id}" no encontrada`)
-  return item.path
-}
+  const item = NAV_ITEMS.find((entry) => entry.id === id);
+  if (!item) throw new Error(`HeroCommand: ruta de nav "${id}" no encontrada`);
+  return item.path;
+};
 
 /**
  * Comandos del menu principal — etiqueta grande de "sistema" (contexto de
@@ -22,31 +22,31 @@ const byId = (id: string) => {
  */
 export const HERO_COMMANDS: HeroCommand[] = [
   {
-    id: 'sobre-mi',
-    icon: 'triangle',
-    label: 'perfil',
-    sub: 'Sobre mi',
-    path: byId('sobre-mi'),
+    id: "sobre-mi",
+    icon: "triangle",
+    label: "perfil",
+    sub: "Sobre mi",
+    path: byId("sobre-mi"),
   },
   {
-    id: 'proyectos',
-    icon: 'square',
-    label: 'inventario',
-    sub: 'Proyectos',
-    path: byId('proyectos'),
+    id: "proyectos",
+    icon: "square",
+    label: "inventario",
+    sub: "Proyectos",
+    path: byId("proyectos"),
   },
   {
-    id: 'experiencia',
-    icon: 'circle',
-    label: 'progreso',
-    sub: 'Experiencia',
-    path: byId('experiencia'),
+    id: "experiencia",
+    icon: "circle",
+    label: "progreso",
+    sub: "Experiencia",
+    path: byId("experiencia"),
   },
   {
-    id: 'formacion',
-    icon: 'cross',
-    label: 'habilidades',
-    sub: 'Formacion',
-    path: byId('formacion'),
+    id: "formacion",
+    icon: "cross",
+    label: "habilidades",
+    sub: "Formacion",
+    path: byId("formacion"),
   },
-]
+];

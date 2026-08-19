@@ -1,8 +1,8 @@
-import { profile } from '../../data/profile'
-import { MusicPlayer } from '../audio/MusicPlayer'
+import { profile } from "../../data/profile";
+import { MusicPlayer } from "../audio/MusicPlayer";
 
 const linkClass =
-  'inline-flex items-center gap-1.5 text-label uppercase tracking-[0.2em] text-paper/50 transition-colors hover:text-accent'
+  "inline-flex items-center gap-1.5 text-label uppercase tracking-[0.2em] text-paper/50 transition-colors hover:text-accent";
 
 /**
  * Footer global de sistema: la misma barra en todas las pantallas —
@@ -23,7 +23,10 @@ export function BottomBar() {
               data-cursor="contact"
               className={linkClass}
             >
-              <span aria-hidden="true" className="h-1.5 w-1.5 rotate-45 bg-accent" />
+              <span
+                aria-hidden="true"
+                className="h-1.5 w-1.5 rotate-45 bg-accent"
+              />
               {profile.links.github.label}
             </a>
           )}
@@ -35,12 +38,15 @@ export function BottomBar() {
               data-cursor="contact"
               className={linkClass}
             >
-              <span aria-hidden="true" className="h-1.5 w-1.5 rotate-45 bg-accent" />
+              <span
+                aria-hidden="true"
+                className="h-1.5 w-1.5 rotate-45 bg-accent"
+              />
               {profile.links.linkedin.label}
             </a>
           )}
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -9,5 +9,5 @@ export function Grain() {
       aria-hidden="true"
       className="pointer-events-none fixed inset-0 z-[115] bg-noise opacity-[0.05]"
     />
-  )
+  );
 }

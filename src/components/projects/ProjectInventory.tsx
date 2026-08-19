@@ -1,11 +1,11 @@
-import { useRef, type KeyboardEvent } from 'react'
-import type { Project } from '../../data/projects'
-import { NavRow } from '../ui/NavRow'
+import { useRef, type KeyboardEvent } from "react";
+import type { Project } from "../../data/projects";
+import { NavRow } from "../ui/NavRow";
 
 interface ProjectInventoryProps {
-  projects: Project[]
-  selected: Project
-  onSelect: (project: Project) => void
+  projects: Project[];
+  selected: Project;
+  onSelect: (project: Project) => void;
 }
 
 /**
@@ -19,21 +19,21 @@ export function ProjectInventory({
   selected,
   onSelect,
 }: ProjectInventoryProps) {
-  const itemRefs = useRef<Array<HTMLAnchorElement | null>>([])
+  const itemRefs = useRef<Array<HTMLAnchorElement | null>>([]);
 
   const setItemRef = (index: number) => (el: HTMLAnchorElement | null) => {
-    itemRefs.current[index] = el
-  }
+    itemRefs.current[index] = el;
+  };
 
   const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
-    if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return
-    const index = projects.findIndex((p) => p.slug === selected.slug)
-    const direction = event.key === 'ArrowDown' ? 1 : -1
-    const next = (index + direction + projects.length) % projects.length
-    event.preventDefault()
-    onSelect(projects[next])
-    itemRefs.current[next]?.focus()
-  }
+    if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+    const index = projects.findIndex((p) => p.slug === selected.slug);
+    const direction = event.key === "ArrowDown" ? 1 : -1;
+    const next = (index + direction + projects.length) % projects.length;
+    event.preventDefault();
+    onSelect(projects[next]);
+    itemRefs.current[next]?.focus();
+  };
 
   return (
     <nav aria-label="Inventario de proyectos" className="relative">
@@ -50,5 +50,5 @@ export function ProjectInventory({
         ))}
       </ol>
     </nav>
-  )
+  );
 }

@@ -1,23 +1,23 @@
-import { useReducedMotion } from 'motion/react'
-import { Reveal } from '../components/primitives/Reveal'
-import { Screen } from '../components/transition/Screen'
-import { DiamondMarker } from '../components/shared/DiamondMarker'
-import { Annotation } from '../components/primitives/Annotation'
-import { SectionTitle } from '../components/ui/SectionTitle'
-import { Tag } from '../components/ui/Tag'
-import { StatTag } from '../components/ui/StatTag'
-import { SocialStar } from '../components/social-star/SocialStar'
-import { SkillMenuSection } from '../components/skill-menu/SkillMenuSection'
-import { profile } from '../data/profile'
+import { useReducedMotion } from "motion/react";
+import { Reveal } from "../components/primitives/Reveal";
+import { Screen } from "../components/transition/Screen";
+import { DiamondMarker } from "../components/shared/DiamondMarker";
+import { Annotation } from "../components/primitives/Annotation";
+import { SectionTitle } from "../components/ui/SectionTitle";
+import { Tag } from "../components/ui/Tag";
+import { StatTag } from "../components/ui/StatTag";
+import { SocialStar } from "../components/social-star/SocialStar";
+import { SkillMenuSection } from "../components/skill-menu/SkillMenuSection";
+import { profile } from "../data/profile";
 
 // Nombre en tres bloques (mismo tratamiento tipografico que el hero).
-const nameParts = profile.name.trim().split(/\s+/)
-const nameLine1 = nameParts[0] ?? ''
-const nameLine2 = nameParts[1] ?? ''
-const nameLine3 = nameParts.slice(2).join(' ')
+const nameParts = profile.name.trim().split(/\s+/);
+const nameLine1 = nameParts[0] ?? "";
+const nameLine2 = nameParts[1] ?? "";
+const nameLine3 = nameParts.slice(2).join(" ");
 
-const OUTLINE_BLACK = `-2px -2px 0 var(--color-bg-hero), 2px -2px 0 var(--color-bg-hero), -2px 2px 0 var(--color-bg-hero), 2px 2px 0 var(--color-bg-hero), -3px -3px 0 var(--color-bg-hero), 3px 3px 0 var(--color-bg-hero)`
-const OUTLINE_RED = `-2px -2px 0 var(--color-accent), 2px -2px 0 var(--color-accent), -2px 2px 0 var(--color-accent), 2px 2px 0 var(--color-accent), -3px -3px 0 var(--color-accent), 3px 3px 0 var(--color-accent)`
+const OUTLINE_BLACK = `-2px -2px 0 var(--color-bg-hero), 2px -2px 0 var(--color-bg-hero), -2px 2px 0 var(--color-bg-hero), 2px 2px 0 var(--color-bg-hero), -3px -3px 0 var(--color-bg-hero), 3px 3px 0 var(--color-bg-hero)`;
+const OUTLINE_RED = `-2px -2px 0 var(--color-accent), 2px -2px 0 var(--color-accent), -2px 2px 0 var(--color-accent), 2px 2px 0 var(--color-accent), -3px -3px 0 var(--color-accent), 3px 3px 0 var(--color-accent)`;
 
 // Atributos sociales del personaje (Social Stats de P5). Cada atributo tiene
 // su propio valor (1-5) que decide cuanto se extiende su punta en la estrella
@@ -27,12 +27,12 @@ const OUTLINE_RED = `-2px -2px 0 var(--color-accent), 2px -2px 0 var(--color-acc
 // unicode-range de P5 Menu/Expose los cae al fallback del stack. Valores
 // aproximados y honestos, sin presentarse como datos objetivos.
 const STATS = [
-  { label: 'PROGRAMACIoN', value: 4, descriptor: 'DESARROLLO' },
-  { label: 'CREATIVIDAD', value: 3, descriptor: 'DISEÑO' },
-  { label: 'CARISMA', value: 3, descriptor: 'SOCIAL' },
-  { label: 'CURIOSIDAD', value: 5, descriptor: 'INVESTIGACIoN' },
-  { label: 'RESOLUCIoN', value: 4, descriptor: 'LoGICA' },
-] as const
+  { label: "PROGRAMACIoN", value: 4, descriptor: "DESARROLLO" },
+  { label: "CREATIVIDAD", value: 3, descriptor: "DISEÑO" },
+  { label: "CARISMA", value: 3, descriptor: "SOCIAL" },
+  { label: "CURIOSIDAD", value: 5, descriptor: "INVESTIGACIoN" },
+  { label: "RESOLUCIoN", value: 4, descriptor: "LoGICA" },
+] as const;
 
 // Detalle animado junto al dato "Permiso de conducir": motion graphic corto al
 // estilo de una tarjeta de menu de Persona 5. El coche entra con un "snap" y
@@ -45,9 +45,9 @@ const STATS = [
 // muescas y giran solo durante las fases de movimiento. Con reduced-motion
 // las capas de efectos no se dibujan y el coche queda estatico y perfectamente
 // visible.
-function DrivingCar({ className = '' }: { className?: string }) {
-  const reduceMotion = useReducedMotion()
-  const fx = reduceMotion ? 'hidden' : 'block'
+function DrivingCar({ className = "" }: { className?: string }) {
+  const reduceMotion = useReducedMotion();
+  const fx = reduceMotion ? "hidden" : "block";
 
   return (
     <span
@@ -62,29 +62,25 @@ function DrivingCar({ className = '' }: { className?: string }) {
         className={`absolute bottom-1 left-0 h-[6px] w-full ${fx}`}
         style={{
           backgroundImage:
-            'repeating-linear-gradient(90deg, var(--color-paper) 0, var(--color-paper) 12px, transparent 12px, transparent 28px)',
-          backgroundSize: '28px 6px',
+            "repeating-linear-gradient(90deg, var(--color-paper) 0, var(--color-paper) 12px, transparent 12px, transparent 28px)",
+          backgroundSize: "28px 6px",
           opacity: 0.15,
-          animation: reduceMotion ? 'none' : 'var(--animate-car-road-markings)',
+          animation: reduceMotion ? "none" : "var(--animate-car-road-markings)",
         }}
       />
 
       {/* Grupo del coche — cruza la pantalla de izquierda a derecha */}
       <span
         className={`absolute bottom-3 left-0 ${
-          reduceMotion ? '' : 'animate-car-cross'
+          reduceMotion ? "" : "animate-car-cross"
         }`}
       >
         {/* Suspension: micro-rebote vertical */}
-        <span
-          className={`block ${
-            reduceMotion ? '' : 'animate-car-bounce'
-          }`}
-        >
+        <span className={`block ${reduceMotion ? "" : "animate-car-bounce"}`}>
           {/* Tilt + estela + SVG */}
           <span
             className={`flex items-end ${
-              reduceMotion ? '' : 'animate-car-tilt'
+              reduceMotion ? "" : "animate-car-tilt"
             }`}
           >
             {/* Estela de velocidad: 4 lineas graficas escalonadas */}
@@ -95,40 +91,40 @@ function DrivingCar({ className = '' }: { className?: string }) {
               <span
                 className="block h-[2px] w-28 bg-accent/60"
                 style={{
-                  transform: 'skewX(-18deg)',
+                  transform: "skewX(-18deg)",
                   animation: reduceMotion
-                    ? 'none'
-                    : 'car-trail-drift 2.8s ease-in-out infinite alternate',
+                    ? "none"
+                    : "car-trail-drift 2.8s ease-in-out infinite alternate",
                 }}
               />
               {/* Linea 2: media, semi-opaca */}
               <span
                 className="block h-[1.5px] w-20 bg-paper/30"
                 style={{
-                  transform: 'skewX(-22deg)',
+                  transform: "skewX(-22deg)",
                   animation: reduceMotion
-                    ? 'none'
-                    : 'car-trail-drift 3.2s ease-in-out 0.4s infinite alternate-reverse',
+                    ? "none"
+                    : "car-trail-drift 3.2s ease-in-out 0.4s infinite alternate-reverse",
                 }}
               />
               {/* Linea 3: corta, tenue */}
               <span
                 className="block h-[1.5px] w-14 bg-accent/35"
                 style={{
-                  transform: 'skewX(-16deg)',
+                  transform: "skewX(-16deg)",
                   animation: reduceMotion
-                    ? 'none'
-                    : 'car-trail-drift 2.5s ease-in-out 0.8s infinite alternate',
+                    ? "none"
+                    : "car-trail-drift 2.5s ease-in-out 0.8s infinite alternate",
                 }}
               />
               {/* Linea 4: muy corta, fantasma */}
               <span
                 className="block h-[1px] w-8 bg-paper/20"
                 style={{
-                  transform: 'skewX(-24deg)',
+                  transform: "skewX(-24deg)",
                   animation: reduceMotion
-                    ? 'none'
-                    : 'car-trail-drift 3.6s ease-in-out 0.2s infinite alternate-reverse',
+                    ? "none"
+                    : "car-trail-drift 3.6s ease-in-out 0.2s infinite alternate-reverse",
                 }}
               />
             </span>
@@ -157,7 +153,7 @@ function DrivingCar({ className = '' }: { className?: string }) {
         </span>
       </span>
     </span>
-  )
+  );
 }
 
 // Posiciones fijas de las etiquetas en las esquinas, fuera del area de la
@@ -168,16 +164,19 @@ const LABEL_POSITIONS = [
   { left: 92, top: 90 },
   { left: 6, top: 90 },
   { left: 8, top: 28 },
-]
-const LABEL_ROTATIONS = [-1, -3, 3, -2, 1]
+];
+const LABEL_ROTATIONS = [-1, -3, 3, -2, 1];
 
 /** Hueco del retrato recortado en angulo. Sin avatar → placeholder. */
 function PortraitSlot() {
-  const { avatar } = profile.about
-  const CUTOUT = '[clip-path:polygon(10%_0,100%_0,100%_82%,86%_100%,0_100%,0_14%)]'
+  const { avatar } = profile.about;
+  const CUTOUT =
+    "[clip-path:polygon(10%_0,100%_0,100%_82%,86%_100%,0_100%,0_14%)]";
   return (
     <div className={`${CUTOUT} bg-paper p-[3px]`}>
-      <div className={`${CUTOUT} aspect-[3/4] overflow-hidden bg-bg-content-alt`}>
+      <div
+        className={`${CUTOUT} aspect-[3/4] overflow-hidden bg-bg-content-alt`}
+      >
         {avatar ? (
           <img
             src={avatar.src}
@@ -217,7 +216,7 @@ function PortraitSlot() {
         )}
       </div>
     </div>
-  )
+  );
 }
 
 function StatStar() {
@@ -227,7 +226,7 @@ function StatStar() {
         <SocialStar className="absolute inset-0 h-full w-full [transform:rotate(2deg)]" />
 
         {STATS.map(({ label, value, descriptor }, i) => {
-          const pos = LABEL_POSITIONS[i]
+          const pos = LABEL_POSITIONS[i];
           return (
             <div
               key={label}
@@ -240,21 +239,24 @@ function StatStar() {
             >
               <StatTag label={label} rank={value} descriptor={descriptor} />
             </div>
-          )
+          );
         })}
       </div>
     </div>
-  )
+  );
 }
 
 export function About() {
-  const { about, hero, branding } = profile
+  const { about, hero, branding } = profile;
 
   return (
     <Screen className="min-h-dvh bg-bg-hero text-paper">
       <section className="relative overflow-hidden px-6 pb-28 pt-16 md:px-12 lg:px-16 md:pt-20">
         {/* Fondo: estrellas de contorno sutiles (mismo patron que el inventario) */}
-        <span aria-hidden="true" className="pointer-events-none absolute inset-0 bg-stars opacity-70" />
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-stars opacity-70"
+        />
 
         {/* Starbackground: textura atmosferica sutil detras de la composicion.
             Sesgada a la derecha (zona de estadisticas), con mascara que
@@ -264,11 +266,14 @@ export function About() {
           aria-hidden="true"
           className="pointer-events-none absolute -right-20 top-0 h-full w-[75%] opacity-[0.14]"
           style={{
-            backgroundImage: 'url(/portfolio/images/background/starbackground.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            maskImage: 'linear-gradient(to right, transparent 0%, black 30%, black 100%)',
-            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 30%, black 100%)',
+            backgroundImage:
+              "url(/portfolio/images/background/starbackground.png)",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            maskImage:
+              "linear-gradient(to right, transparent 0%, black 30%, black 100%)",
+            WebkitMaskImage:
+              "linear-gradient(to right, transparent 0%, black 30%, black 100%)",
           }}
         />
 
@@ -276,7 +281,7 @@ export function About() {
         <span
           aria-hidden="true"
           className="pointer-events-none absolute right-0 top-2 z-0 -rotate-6 select-none font-p5-menu uppercase leading-none text-outline-faint opacity-55"
-          style={{ fontSize: 'clamp(7rem, 15vw, 14rem)' }}
+          style={{ fontSize: "clamp(7rem, 15vw, 14rem)" }}
         >
           PERFIL
         </span>
@@ -313,11 +318,14 @@ export function About() {
                 <div className="relative z-20 -mt-14 pl-2 lg:-mt-20 lg:pl-4">
                   <h1
                     className="font-display uppercase leading-[0.95]"
-                    style={{ fontSize: 'clamp(2.6rem, 5vw, 4.5rem)' }}
+                    style={{ fontSize: "clamp(2.6rem, 5vw, 4.5rem)" }}
                   >
                     <span
                       className="block"
-                      style={{ textShadow: OUTLINE_BLACK, transform: 'rotate(-1.5deg)' }}
+                      style={{
+                        textShadow: OUTLINE_BLACK,
+                        transform: "rotate(-1.5deg)",
+                      }}
                     >
                       {nameLine1}
                     </span>
@@ -325,7 +333,7 @@ export function About() {
                       className="block"
                       style={{
                         textShadow: OUTLINE_RED,
-                        transform: 'rotate(1.2deg) translateX(22px)',
+                        transform: "rotate(1.2deg) translateX(22px)",
                         marginTop: 4,
                       }}
                     >
@@ -334,7 +342,7 @@ export function About() {
                     <span className="block" style={{ marginTop: 8 }}>
                       <span
                         className="inline-block bg-accent px-5 pb-[5px] pt-[3px] text-ink [clip-path:polygon(0_0,100%_0,96%_100%,4%_100%)]"
-                        style={{ transform: 'skew(-6deg) rotate(-1deg)' }}
+                        style={{ transform: "skew(-6deg) rotate(-1deg)" }}
                       >
                         {nameLine3}
                       </span>
@@ -344,7 +352,9 @@ export function About() {
 
                 {/* Pegatina de rol + credencial (DAM vive aqui, no en el footer) */}
                 <div className="relative z-30 mt-4 flex flex-wrap items-center justify-end gap-2 pr-2">
-                  <Tag font="sans" className="rotate-1">{hero.eyebrow}</Tag>
+                  <Tag font="sans" className="rotate-1">
+                    {hero.eyebrow}
+                  </Tag>
                   <Tag font="sans" tone="dark" className="rotate-1">
                     {hero.credentialLine}
                   </Tag>
@@ -363,7 +373,10 @@ export function About() {
               />
               <Reveal delay={0.1}>
                 <div className="relative">
-                  <Tag font="sans" className="absolute right-2 top-0 z-10 -rotate-3">
+                  <Tag
+                    font="sans"
+                    className="absolute right-2 top-0 z-10 -rotate-3"
+                  >
                     Estadisticas sociales
                   </Tag>
                   <StatStar />
@@ -405,5 +418,5 @@ export function About() {
         </Reveal>
       </section>
     </Screen>
-  )
+  );
 }

@@ -1,20 +1,20 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
-import { TRACKS, DEFAULT_VOLUME } from '../../data/music'
-import { useBooted } from '../../lib/boot'
+import { useState, useEffect, useRef, useCallback } from "react";
+import { TRACKS, DEFAULT_VOLUME } from "../../data/music";
+import { useBooted } from "../../lib/boot";
 
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                            */
 /* ------------------------------------------------------------------ */
 
 function formatTime(s: number): string {
-  if (!isFinite(s) || s < 0 || s !== s) return '0:00'
-  const m = Math.floor(s / 60)
-  const sec = Math.floor(s % 60)
-  return `${m}:${sec.toString().padStart(2, '0')}`
+  if (!isFinite(s) || s < 0 || s !== s) return "0:00";
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return `${m}:${sec.toString().padStart(2, "0")}`;
 }
 
 function trackUrl(file: string): string {
-  return `${import.meta.env.BASE_URL}audio/${encodeURIComponent(file)}`
+  return `${import.meta.env.BASE_URL}audio/${encodeURIComponent(file)}`;
 }
 
 /* ------------------------------------------------------------------ */
@@ -22,53 +22,63 @@ function trackUrl(file: string): string {
 /*  and component unmount/remount. Module-level, not a useRef.         */
 /* ------------------------------------------------------------------ */
 
-let sessionDispatched = false
+let sessionDispatched = false;
 
 /* ------------------------------------------------------------------ */
 /*  Track Selector                                                     */
 /* ------------------------------------------------------------------ */
 
 interface SelectorProps {
-  current: number
-  onSelect: (i: number) => void
-  onClose: () => void
+  current: number;
+  onSelect: (i: number) => void;
+  onClose: () => void;
 }
 
 function TrackSelector({ current, onSelect, onClose }: SelectorProps) {
-  const ref = useRef<HTMLDivElement>(null)
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const onMouse = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) onClose()
-    }
+      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
+    };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    document.addEventListener('mousedown', onMouse)
-    document.addEventListener('keydown', onKey)
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("mousedown", onMouse);
+    document.addEventListener("keydown", onKey);
     return () => {
-      document.removeEventListener('mousedown', onMouse)
-      document.removeEventListener('keydown', onKey)
-    }
-  }, [onClose])
+      document.removeEventListener("mousedown", onMouse);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [onClose]);
 
   return (
-    <div ref={ref} className="bgm-selector" role="listbox" aria-label="Select BGM">
+    <div
+      ref={ref}
+      className="bgm-selector"
+      role="listbox"
+      aria-label="Select BGM"
+    >
       {TRACKS.map((t, i) => (
         <button
           key={t.file}
           role="option"
           aria-selected={i === current}
-          className={`bgm-selector__item${i === current ? ' bgm-selector__item--active' : ''}`}
-          onClick={() => { onSelect(i); onClose() }}
+          className={`bgm-selector__item${i === current ? " bgm-selector__item--active" : ""}`}
+          onClick={() => {
+            onSelect(i);
+            onClose();
+          }}
         >
-          <span className="bgm-selector__num">{String(i + 1).padStart(2, '0')}</span>
+          <span className="bgm-selector__num">
+            {String(i + 1).padStart(2, "0")}
+          </span>
           <span className="bgm-selector__title">{t.title}</span>
           {i === current && <span className="bgm-selector__now">▶</span>}
         </button>
       ))}
     </div>
-  )
+  );
 }
 
 /* ------------------------------------------------------------------ */
@@ -76,52 +86,52 @@ function TrackSelector({ current, onSelect, onClose }: SelectorProps) {
 /* ------------------------------------------------------------------ */
 
 function Visualizer({ analyser }: { analyser: AnalyserNode | null }) {
-  const barsRef = useRef<HTMLSpanElement[]>([])
-  const rafRef = useRef(0)
+  const barsRef = useRef<HTMLSpanElement[]>([]);
+  const rafRef = useRef(0);
   const reducedMotion = useRef(
-    typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-  ).current
+    typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  ).current;
 
   useEffect(() => {
-    if (!analyser || reducedMotion) return
-    const bufLen = analyser.frequencyBinCount
-    const data = new Uint8Array(bufLen)
+    if (!analyser || reducedMotion) return;
+    const bufLen = analyser.frequencyBinCount;
+    const data = new Uint8Array(bufLen);
 
     const tick = () => {
-      analyser.getByteFrequencyData(data)
+      analyser.getByteFrequencyData(data);
       const bands = [
         Math.floor(bufLen * 0.04),
-        Math.floor(bufLen * 0.10),
+        Math.floor(bufLen * 0.1),
         Math.floor(bufLen * 0.18),
-        Math.floor(bufLen * 0.30),
+        Math.floor(bufLen * 0.3),
         Math.floor(bufLen * 0.45),
-        Math.floor(bufLen * 0.60),
-      ]
+        Math.floor(bufLen * 0.6),
+      ];
       for (let i = 0; i < 6; i++) {
-        const el = barsRef.current[i]
-        if (!el) continue
-        const start = Math.max(0, bands[i] - 2)
-        const end = Math.min(bufLen - 1, bands[i] + 2)
-        let sum = 0
-        for (let j = start; j <= end; j++) sum += data[j]
-        const avg = sum / (end - start + 1)
-        const h = 3 + (avg / 255) * 15
-        el.style.height = `${h}px`
+        const el = barsRef.current[i];
+        if (!el) continue;
+        const start = Math.max(0, bands[i] - 2);
+        const end = Math.min(bufLen - 1, bands[i] + 2);
+        let sum = 0;
+        for (let j = start; j <= end; j++) sum += data[j];
+        const avg = sum / (end - start + 1);
+        const h = 3 + (avg / 255) * 15;
+        el.style.height = `${h}px`;
       }
-      rafRef.current = requestAnimationFrame(tick)
-    }
-    rafRef.current = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(rafRef.current)
-  }, [analyser, reducedMotion])
+      rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [analyser, reducedMotion]);
 
   useEffect(() => {
-    if (analyser && !reducedMotion) return
+    if (analyser && !reducedMotion) return;
     for (let i = 0; i < 6; i++) {
-      const el = barsRef.current[i]
-      if (el) el.style.height = '3px'
+      const el = barsRef.current[i];
+      if (el) el.style.height = "3px";
     }
-  }, [analyser, reducedMotion])
+  }, [analyser, reducedMotion]);
 
   return (
     <div className="bgm-viz" aria-hidden="true">
@@ -129,11 +139,13 @@ function Visualizer({ analyser }: { analyser: AnalyserNode | null }) {
         <span
           key={i}
           className="bgm-viz__bar"
-          ref={(el) => { barsRef.current[i] = el! }}
+          ref={(el) => {
+            barsRef.current[i] = el!;
+          }}
         />
       ))}
     </div>
-  )
+  );
 }
 
 /* ------------------------------------------------------------------ */
@@ -141,39 +153,39 @@ function Visualizer({ analyser }: { analyser: AnalyserNode | null }) {
 /* ------------------------------------------------------------------ */
 
 export function MusicPlayer() {
-  const booted = useBooted()
+  const booted = useBooted();
 
-  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   /* Web Audio API — created lazily on first user gesture to avoid
      React StrictMode double-mount destroying createMediaElementSource */
-  const ctxRef = useRef<AudioContext | null>(null)
-  const sourceRef = useRef<MediaElementAudioSourceNode | null>(null)
-  const [analyser, setAnalyser] = useState<AnalyserNode | null>(null)
+  const ctxRef = useRef<AudioContext | null>(null);
+  const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
+  const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
 
   /* Imperative UI refs */
-  const progressFillRef = useRef<HTMLDivElement>(null)
-  const timeLabelRef = useRef<HTMLSpanElement>(null)
-  const volFillRef = useRef<HTMLDivElement>(null)
+  const progressFillRef = useRef<HTMLDivElement>(null);
+  const timeLabelRef = useRef<HTMLSpanElement>(null);
+  const volFillRef = useRef<HTMLDivElement>(null);
 
   /* Reactive state */
-  const [trackIndex, setTrackIndex] = useState(1)
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [volume, setVolume] = useState(DEFAULT_VOLUME)
-  const [muted, setMuted] = useState(false)
-  const [expanded, setExpanded] = useState(false)
-  const [duration, setDuration] = useState(0)
-  const [selectorOpen, setSelectorOpen] = useState(false)
-  const [_autoplayBlocked, setAutoplayBlocked] = useState(false)
+  const [trackIndex, setTrackIndex] = useState(1);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [volume, setVolume] = useState(DEFAULT_VOLUME);
+  const [muted, setMuted] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [duration, setDuration] = useState(0);
+  const [selectorOpen, setSelectorOpen] = useState(false);
+  const [_autoplayBlocked, setAutoplayBlocked] = useState(false);
 
   /* Ref mirrors (avoid stale closures) */
-  const isPlayingRef = useRef(false)
-  const volumeRef = useRef(DEFAULT_VOLUME)
-  const mutedRef = useRef(false)
-  const trackIndexRef = useRef(1)
+  const isPlayingRef = useRef(false);
+  const volumeRef = useRef(DEFAULT_VOLUME);
+  const mutedRef = useRef(false);
+  const trackIndexRef = useRef(1);
 
   /* Cleanup ref for pending canplay listener */
-  const canplayCleanupRef = useRef<(() => void) | null>(null)
+  const canplayCleanupRef = useRef<(() => void) | null>(null);
 
   /* ================================================================ */
   /*  AudioContext + Web Audio graph (created lazily on first gesture)  */
@@ -181,125 +193,136 @@ export function MusicPlayer() {
 
   const ensureAudioGraph = useCallback(async () => {
     if (ctxRef.current) {
-      if (ctxRef.current.state === 'suspended') {
-        try { await ctxRef.current.resume() } catch { /* ignore */ }
+      if (ctxRef.current.state === "suspended") {
+        try {
+          await ctxRef.current.resume();
+        } catch {
+          /* ignore */
+        }
       }
-      return
+      return;
     }
 
-    const a = audioRef.current
-    if (!a) return
+    const a = audioRef.current;
+    if (!a) return;
 
     try {
-      const ctx = new AudioContext()
-      const src = ctx.createMediaElementSource(a)
-      const analyserNode = ctx.createAnalyser()
-      analyserNode.fftSize = 128
-      analyserNode.smoothingTimeConstant = 0.6
-      src.connect(analyserNode)
-      analyserNode.connect(ctx.destination)
-      ctxRef.current = ctx
-      sourceRef.current = src
-      setAnalyser(analyserNode)
-      if (ctx.state === 'suspended') {
-        try { await ctx.resume() } catch { /* ignore */ }
+      const ctx = new AudioContext();
+      const src = ctx.createMediaElementSource(a);
+      const analyserNode = ctx.createAnalyser();
+      analyserNode.fftSize = 128;
+      analyserNode.smoothingTimeConstant = 0.6;
+      src.connect(analyserNode);
+      analyserNode.connect(ctx.destination);
+      ctxRef.current = ctx;
+      sourceRef.current = src;
+      setAnalyser(analyserNode);
+      if (ctx.state === "suspended") {
+        try {
+          await ctx.resume();
+        } catch {
+          /* ignore */
+        }
       }
     } catch (err) {
-      console.warn('[BGM] Web Audio init failed:', err)
+      console.warn("[BGM] Web Audio init failed:", err);
     }
-  }, [])
+  }, []);
 
   /* ================================================================ */
   /*  Audio event handlers                                             */
   /* ================================================================ */
 
   useEffect(() => {
-    const a = audioRef.current
-    if (!a) return
+    const a = audioRef.current;
+    if (!a) return;
 
-    const onMeta = () => setDuration(a.duration)
+    const onMeta = () => setDuration(a.duration);
     const onTime = () => {
       if (progressFillRef.current && isFinite(a.duration) && a.duration > 0) {
-        progressFillRef.current.style.width =
-          `${(a.currentTime / a.duration) * 100}%`
+        progressFillRef.current.style.width = `${(a.currentTime / a.duration) * 100}%`;
       }
       if (timeLabelRef.current) {
-        timeLabelRef.current.textContent = formatTime(a.currentTime)
+        timeLabelRef.current.textContent = formatTime(a.currentTime);
       }
-    }
+    };
     const onEnd = () => {
-      const next = (trackIndexRef.current + 1) % TRACKS.length
-      loadAndPlay(next, true)
-    }
+      const next = (trackIndexRef.current + 1) % TRACKS.length;
+      loadAndPlay(next, true);
+    };
     const onErr = (e: Event) => {
-      console.warn('[BGM] Audio error:', (e.target as HTMLAudioElement)?.error)
-    }
+      console.warn("[BGM] Audio error:", (e.target as HTMLAudioElement)?.error);
+    };
 
-    a.addEventListener('loadedmetadata', onMeta)
-    a.addEventListener('timeupdate', onTime)
-    a.addEventListener('ended', onEnd)
-    a.addEventListener('error', onErr)
+    a.addEventListener("loadedmetadata", onMeta);
+    a.addEventListener("timeupdate", onTime);
+    a.addEventListener("ended", onEnd);
+    a.addEventListener("error", onErr);
 
     return () => {
-      a.removeEventListener('loadedmetadata', onMeta)
-      a.removeEventListener('timeupdate', onTime)
-      a.removeEventListener('ended', onEnd)
-      a.removeEventListener('error', onErr)
-    }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+      a.removeEventListener("loadedmetadata", onMeta);
+      a.removeEventListener("timeupdate", onTime);
+      a.removeEventListener("ended", onEnd);
+      a.removeEventListener("error", onErr);
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   /* ================================================================ */
   /*  Core: load a track and optionally auto-play                      */
   /* ================================================================ */
 
-  const loadAndPlay = useCallback((index: number, shouldPlay: boolean) => {
-    const a = audioRef.current
-    if (!a) return
-    const prevVol = volumeRef.current
-    const wasMuted = mutedRef.current
+  const loadAndPlay = useCallback(
+    (index: number, shouldPlay: boolean) => {
+      const a = audioRef.current;
+      if (!a) return;
+      const prevVol = volumeRef.current;
+      const wasMuted = mutedRef.current;
 
-    a.pause()
+      a.pause();
 
-    /* Clean up any pending canplay from a previous loadAndPlay call */
-    if (canplayCleanupRef.current) {
-      canplayCleanupRef.current()
-      canplayCleanupRef.current = null
-    }
+      /* Clean up any pending canplay from a previous loadAndPlay call */
+      if (canplayCleanupRef.current) {
+        canplayCleanupRef.current();
+        canplayCleanupRef.current = null;
+      }
 
-    a.src = trackUrl(TRACKS[index].file)
-    a.load()
+      a.src = trackUrl(TRACKS[index].file);
+      a.load();
 
-    trackIndexRef.current = index
-    setTrackIndex(index)
-    setDuration(0)
-    if (progressFillRef.current) progressFillRef.current.style.width = '0%'
-    if (timeLabelRef.current) timeLabelRef.current.textContent = '0:00'
+      trackIndexRef.current = index;
+      setTrackIndex(index);
+      setDuration(0);
+      if (progressFillRef.current) progressFillRef.current.style.width = "0%";
+      if (timeLabelRef.current) timeLabelRef.current.textContent = "0:00";
 
-    const onReady = async () => {
-      canplayCleanupRef.current = null
-      a.removeEventListener('canplay', onReady)
-      a.volume = wasMuted ? 0 : prevVol
-      if (shouldPlay) {
-        await ensureAudioGraph()
-        const ctxOk = !ctxRef.current || ctxRef.current.state === 'running'
-        if (ctxOk) {
-          try {
-            await a.play()
-            setIsPlaying(true)
-            isPlayingRef.current = true
-            setAutoplayBlocked(false)
-          } catch (err) {
-            console.warn('[BGM] Auto-play blocked:', err)
-            setAutoplayBlocked(true)
-            setIsPlaying(false)
-            isPlayingRef.current = false
+      const onReady = async () => {
+        canplayCleanupRef.current = null;
+        a.removeEventListener("canplay", onReady);
+        a.volume = wasMuted ? 0 : prevVol;
+        if (shouldPlay) {
+          await ensureAudioGraph();
+          const ctxOk = !ctxRef.current || ctxRef.current.state === "running";
+          if (ctxOk) {
+            try {
+              await a.play();
+              setIsPlaying(true);
+              isPlayingRef.current = true;
+              setAutoplayBlocked(false);
+            } catch (err) {
+              console.warn("[BGM] Auto-play blocked:", err);
+              setAutoplayBlocked(true);
+              setIsPlaying(false);
+              isPlayingRef.current = false;
+            }
           }
         }
-      }
-    }
-    canplayCleanupRef.current = () => a.removeEventListener('canplay', onReady)
-    a.addEventListener('canplay', onReady)
-  }, [ensureAudioGraph])
+      };
+      canplayCleanupRef.current = () =>
+        a.removeEventListener("canplay", onReady);
+      a.addEventListener("canplay", onReady);
+    },
+    [ensureAudioGraph],
+  );
 
   /* ================================================================ */
   /*  Auto-play Phantom ONCE after boot, on first user interaction.     */
@@ -309,98 +332,104 @@ export function MusicPlayer() {
   /* ================================================================ */
 
   useEffect(() => {
-    if (sessionDispatched || !booted) return
-    sessionDispatched = true
+    if (sessionDispatched || !booted) return;
+    sessionDispatched = true;
 
     const onInteract = async () => {
-      document.removeEventListener('pointerdown', onInteract)
-      document.removeEventListener('keydown', onInteract)
-      await loadAndPlay(1, true)
-    }
-    document.addEventListener('pointerdown', onInteract)
-    document.addEventListener('keydown', onInteract)
-  }, [booted, loadAndPlay])
+      document.removeEventListener("pointerdown", onInteract);
+      document.removeEventListener("keydown", onInteract);
+      await loadAndPlay(1, true);
+    };
+    document.addEventListener("pointerdown", onInteract);
+    document.addEventListener("keydown", onInteract);
+  }, [booted, loadAndPlay]);
 
   /* ================================================================ */
   /*  Controls                                                         */
   /* ================================================================ */
 
   const togglePlay = useCallback(async () => {
-    await ensureAudioGraph()
-    const a = audioRef.current
-    if (!a) return
+    await ensureAudioGraph();
+    const a = audioRef.current;
+    if (!a) return;
 
     if (isPlayingRef.current) {
-      a.pause()
-      setIsPlaying(false)
-      isPlayingRef.current = false
+      a.pause();
+      setIsPlaying(false);
+      isPlayingRef.current = false;
     } else {
       try {
-        await a.play()
-        setIsPlaying(true)
-        isPlayingRef.current = true
-        setAutoplayBlocked(false)
+        await a.play();
+        setIsPlaying(true);
+        isPlayingRef.current = true;
+        setAutoplayBlocked(false);
       } catch (err) {
-        console.warn('[BGM] Play blocked:', err)
+        console.warn("[BGM] Play blocked:", err);
       }
     }
-  }, [ensureAudioGraph])
+  }, [ensureAudioGraph]);
 
   const nextTrack = useCallback(async () => {
-    await ensureAudioGraph()
-    loadAndPlay((trackIndexRef.current + 1) % TRACKS.length, isPlayingRef.current)
-  }, [loadAndPlay, ensureAudioGraph])
+    await ensureAudioGraph();
+    loadAndPlay(
+      (trackIndexRef.current + 1) % TRACKS.length,
+      isPlayingRef.current,
+    );
+  }, [loadAndPlay, ensureAudioGraph]);
 
   const prevTrack = useCallback(async () => {
-    await ensureAudioGraph()
+    await ensureAudioGraph();
     loadAndPlay(
       (trackIndexRef.current - 1 + TRACKS.length) % TRACKS.length,
       isPlayingRef.current,
-    )
-  }, [loadAndPlay, ensureAudioGraph])
+    );
+  }, [loadAndPlay, ensureAudioGraph]);
 
-  const selectTrack = useCallback(async (i: number) => {
-    await ensureAudioGraph()
-    loadAndPlay(i, true)
-  }, [loadAndPlay, ensureAudioGraph])
+  const selectTrack = useCallback(
+    async (i: number) => {
+      await ensureAudioGraph();
+      loadAndPlay(i, true);
+    },
+    [loadAndPlay, ensureAudioGraph],
+  );
 
   const toggleMute = useCallback(() => {
-    const a = audioRef.current
-    if (!a) return
+    const a = audioRef.current;
+    if (!a) return;
     if (mutedRef.current) {
-      a.muted = false
-      mutedRef.current = false
-      setMuted(false)
+      a.muted = false;
+      mutedRef.current = false;
+      setMuted(false);
     } else {
-      a.muted = true
-      mutedRef.current = true
-      setMuted(true)
+      a.muted = true;
+      mutedRef.current = true;
+      setMuted(true);
     }
-  }, [])
+  }, []);
 
   const seek = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const a = audioRef.current
-    if (!a || !isFinite(a.duration) || a.duration <= 0) return
-    const rect = e.currentTarget.getBoundingClientRect()
-    const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
-    a.currentTime = pct * a.duration
+    const a = audioRef.current;
+    if (!a || !isFinite(a.duration) || a.duration <= 0) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    a.currentTime = pct * a.duration;
     /* Immediate visual feedback */
     if (progressFillRef.current) {
-      progressFillRef.current.style.width = `${pct * 100}%`
+      progressFillRef.current.style.width = `${pct * 100}%`;
     }
     if (timeLabelRef.current) {
-      timeLabelRef.current.textContent = formatTime(pct * a.duration)
+      timeLabelRef.current.textContent = formatTime(pct * a.duration);
     }
-  }, [])
+  }, []);
 
   const changeVolume = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect()
-    const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
-    volumeRef.current = pct
-    setVolume(pct)
-    const a = audioRef.current
-    if (a && !mutedRef.current) a.volume = pct
-  }, [])
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    volumeRef.current = pct;
+    setVolume(pct);
+    const a = audioRef.current;
+    if (a && !mutedRef.current) a.volume = pct;
+  }, []);
 
   /* ================================================================ */
   /*  Keyboard shortcuts                                               */
@@ -408,22 +437,22 @@ export function MusicPlayer() {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      const tag = (e.target as HTMLElement).tagName
-      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
-      if (e.key === ' ' || e.code === 'Space') {
-        e.preventDefault()
-        togglePlay()
-      } else if (e.key === 'ArrowRight') {
-        e.preventDefault()
-        nextTrack()
-      } else if (e.key === 'ArrowLeft') {
-        e.preventDefault()
-        prevTrack()
+      const tag = (e.target as HTMLElement).tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      if (e.key === " " || e.code === "Space") {
+        e.preventDefault();
+        togglePlay();
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        nextTrack();
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        prevTrack();
       }
-    }
-    document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
-  }, [togglePlay, nextTrack, prevTrack])
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [togglePlay, nextTrack, prevTrack]);
 
   /* ================================================================ */
   /*  Volume fill bar imperative update                                */
@@ -431,15 +460,15 @@ export function MusicPlayer() {
 
   useEffect(() => {
     if (volFillRef.current) {
-      volFillRef.current.style.width = `${(muted ? 0 : volume) * 100}%`
+      volFillRef.current.style.width = `${(muted ? 0 : volume) * 100}%`;
     }
-  }, [volume, muted])
+  }, [volume, muted]);
 
   /* ================================================================ */
   /*  Render                                                           */
   /* ================================================================ */
 
-  const t = TRACKS[trackIndex]
+  const t = TRACKS[trackIndex];
 
   return (
     <>
@@ -454,29 +483,48 @@ export function MusicPlayer() {
           tabIndex={0}
           aria-expanded={expanded}
           aria-label={`BGM: ${t.title}`}
-          onKeyDown={(e) => { if (e.key === 'Enter') setExpanded((v) => !v) }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") setExpanded((v) => !v);
+          }}
         >
           <span className="bgm-bar__label">BGM</span>
           <span className="bgm-bar__sep" />
           <span
             className="bgm-bar__track"
-            onClick={(e) => { e.stopPropagation(); setSelectorOpen((v) => !v) }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectorOpen((v) => !v);
+            }}
             role="button"
             tabIndex={0}
-            onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); setSelectorOpen((v) => !v) } }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.stopPropagation();
+                setSelectorOpen((v) => !v);
+              }
+            }}
           >
-            {String(trackIndex + 1).padStart(2, '0')} / {String(TRACKS.length).padStart(2, '0')}
+            {String(trackIndex + 1).padStart(2, "0")} /{" "}
+            {String(TRACKS.length).padStart(2, "0")}
           </span>
           <span className="bgm-bar__title">{t.title}</span>
           <span
             className="bgm-bar__play"
-            onClick={(e) => { e.stopPropagation(); togglePlay() }}
+            onClick={(e) => {
+              e.stopPropagation();
+              togglePlay();
+            }}
             role="button"
             tabIndex={0}
-            aria-label={isPlaying ? 'Pause' : 'Play'}
-            onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); togglePlay() } }}
+            aria-label={isPlaying ? "Pause" : "Play"}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.stopPropagation();
+                togglePlay();
+              }
+            }}
           >
-            {isPlaying ? '❚❚' : '▶'}
+            {isPlaying ? "❚❚" : "▶"}
           </span>
           <Visualizer analyser={analyser} />
         </div>
@@ -492,9 +540,12 @@ export function MusicPlayer() {
                 role="button"
                 tabIndex={0}
                 onClick={() => setSelectorOpen((v) => !v)}
-                onKeyDown={(e) => { if (e.key === 'Enter') setSelectorOpen((v) => !v) }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") setSelectorOpen((v) => !v);
+                }}
               >
-                {String(trackIndex + 1).padStart(2, '0')} / {String(TRACKS.length).padStart(2, '0')}
+                {String(trackIndex + 1).padStart(2, "0")} /{" "}
+                {String(TRACKS.length).padStart(2, "0")}
               </span>
             </div>
 
@@ -505,19 +556,29 @@ export function MusicPlayer() {
 
             {/* Transport controls */}
             <div className="bgm-panel__controls">
-              <button className="bgm-ctrl" onClick={prevTrack} aria-label="Previous track">
+              <button
+                className="bgm-ctrl"
+                onClick={prevTrack}
+                aria-label="Previous track"
+              >
                 <span className="bgm-ctrl__icon">◀</span>
                 <span className="bgm-ctrl__label">PREV</span>
               </button>
               <button
                 className="bgm-ctrl bgm-ctrl--play"
                 onClick={togglePlay}
-                aria-label={isPlaying ? 'Pause' : 'Play'}
+                aria-label={isPlaying ? "Pause" : "Play"}
               >
-                <span className="bgm-ctrl__icon">{isPlaying ? '❚❚' : '▶'}</span>
-                <span className="bgm-ctrl__label">{isPlaying ? 'PAUSE' : 'PLAY'}</span>
+                <span className="bgm-ctrl__icon">{isPlaying ? "❚❚" : "▶"}</span>
+                <span className="bgm-ctrl__label">
+                  {isPlaying ? "PAUSE" : "PLAY"}
+                </span>
               </button>
-              <button className="bgm-ctrl" onClick={nextTrack} aria-label="Next track">
+              <button
+                className="bgm-ctrl"
+                onClick={nextTrack}
+                aria-label="Next track"
+              >
                 <span className="bgm-ctrl__icon">▶</span>
                 <span className="bgm-ctrl__label">NEXT</span>
               </button>
@@ -534,10 +595,12 @@ export function MusicPlayer() {
                 aria-valuemax={100}
                 tabIndex={0}
                 onKeyDown={(e) => {
-                  const a = audioRef.current
-                  if (!a || !isFinite(a.duration)) return
-                  if (e.key === 'ArrowRight') a.currentTime = Math.min(a.duration, a.currentTime + 5)
-                  if (e.key === 'ArrowLeft') a.currentTime = Math.max(0, a.currentTime - 5)
+                  const a = audioRef.current;
+                  if (!a || !isFinite(a.duration)) return;
+                  if (e.key === "ArrowRight")
+                    a.currentTime = Math.min(a.duration, a.currentTime + 5);
+                  if (e.key === "ArrowLeft")
+                    a.currentTime = Math.max(0, a.currentTime - 5);
                 }}
               >
                 <div className="bgm-progress__track" />
@@ -551,8 +614,12 @@ export function MusicPlayer() {
 
             {/* Volume */}
             <div className="bgm-vol">
-              <button className="bgm-vol__btn" onClick={toggleMute} aria-label={muted ? 'Unmute' : 'Mute'}>
-                {muted ? '🔇' : '🔊'}
+              <button
+                className="bgm-vol__btn"
+                onClick={toggleMute}
+                aria-label={muted ? "Unmute" : "Mute"}
+              >
+                {muted ? "🔇" : "🔊"}
               </button>
               <div
                 className="bgm-vol__track"
@@ -564,24 +631,26 @@ export function MusicPlayer() {
                 aria-valuenow={muted ? 0 : Math.round(volume * 100)}
                 tabIndex={0}
                 onKeyDown={(e) => {
-                  const step = 0.05
-                  if (e.key === 'ArrowRight') {
-                    volumeRef.current = Math.min(1, volumeRef.current + step)
-                    setVolume(volumeRef.current)
-                    const a = audioRef.current
-                    if (a && !mutedRef.current) a.volume = volumeRef.current
+                  const step = 0.05;
+                  if (e.key === "ArrowRight") {
+                    volumeRef.current = Math.min(1, volumeRef.current + step);
+                    setVolume(volumeRef.current);
+                    const a = audioRef.current;
+                    if (a && !mutedRef.current) a.volume = volumeRef.current;
                   }
-                  if (e.key === 'ArrowLeft') {
-                    volumeRef.current = Math.max(0, volumeRef.current - step)
-                    setVolume(volumeRef.current)
-                    const a = audioRef.current
-                    if (a && !mutedRef.current) a.volume = volumeRef.current
+                  if (e.key === "ArrowLeft") {
+                    volumeRef.current = Math.max(0, volumeRef.current - step);
+                    setVolume(volumeRef.current);
+                    const a = audioRef.current;
+                    if (a && !mutedRef.current) a.volume = volumeRef.current;
                   }
                 }}
               >
                 <div ref={volFillRef} className="bgm-vol__fill" />
               </div>
-              <span className="bgm-vol__pct">{muted ? '0' : Math.round(volume * 100)}%</span>
+              <span className="bgm-vol__pct">
+                {muted ? "0" : Math.round(volume * 100)}%
+              </span>
             </div>
 
             {/* Visualizer */}
@@ -591,9 +660,13 @@ export function MusicPlayer() {
 
         {/* ── Track selector dropdown ── */}
         {selectorOpen && (
-          <TrackSelector current={trackIndex} onSelect={selectTrack} onClose={() => setSelectorOpen(false)} />
+          <TrackSelector
+            current={trackIndex}
+            onSelect={selectTrack}
+            onClose={() => setSelectorOpen(false)}
+          />
         )}
       </div>
     </>
-  )
+  );
 }

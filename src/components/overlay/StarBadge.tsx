@@ -1,12 +1,12 @@
-import { forwardRef } from 'react'
+import { forwardRef } from "react";
 
-export type StarBadgeState = 'empty' | 'full'
+export type StarBadgeState = "empty" | "full";
 
 interface StarBadgeProps {
   /** Estado de completado de la categoria. */
-  state?: StarBadgeState
+  state?: StarBadgeState;
   /** Nombre de la categoria (accesibilidad). */
-  label: string
+  label: string;
 }
 
 /**
@@ -16,7 +16,7 @@ interface StarBadgeProps {
  * el CSS de tokens.css con una transicion limpia, sin estados intermedios.
  */
 export const StarBadge = forwardRef<HTMLDivElement, StarBadgeProps>(
-  function StarBadge({ state = 'empty', label }, ref) {
+  function StarBadge({ state = "empty", label }, ref) {
     return (
       <div
         ref={ref}
@@ -36,6 +36,6 @@ export const StarBadge = forwardRef<HTMLDivElement, StarBadgeProps>(
           />
         </svg>
       </div>
-    )
+    );
   },
-)
+);

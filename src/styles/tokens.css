@@ -14,7 +14,8 @@
    ============================================================ */
 @font-face {
   font-family: "P5 Menu";
-  src: url("/portfolio/fonts/Persona5MenuFontPrototype-Regular.ttf") format("truetype");
+  src: url("/portfolio/fonts/Persona5MenuFontPrototype-Regular.ttf")
+    format("truetype");
   font-display: swap;
   unicode-range: U+0000-007F;
 }
@@ -44,7 +45,8 @@
    Variable font con peso ajustable. */
 @font-face {
   font-family: "Libre Baskerville";
-  src: url("/portfolio/fonts/LibreBaskerville-VariableFont_wght.ttf") format("truetype");
+  src: url("/portfolio/fonts/LibreBaskerville-VariableFont_wght.ttf")
+    format("truetype");
   font-display: swap;
 }
 
@@ -79,21 +81,30 @@
 /* Trama de puntos: rojo con puntos papel (firma visual del sistema) */
 @utility bg-halftone-red {
   background-color: var(--color-accent);
-  background-image: radial-gradient(rgba(245, 245, 240, 0.85) 1.4px, transparent 1.4px);
+  background-image: radial-gradient(
+    rgba(245, 245, 240, 0.85) 1.4px,
+    transparent 1.4px
+  );
   background-size: 12px 12px;
 }
 
 /* Trama de puntos: tinta con puntos papel tenues */
 @utility bg-halftone-ink {
   background-color: var(--color-ink);
-  background-image: radial-gradient(rgba(245, 245, 240, 0.14) 1.4px, transparent 1.4px);
+  background-image: radial-gradient(
+    rgba(245, 245, 240, 0.14) 1.4px,
+    transparent 1.4px
+  );
   background-size: 12px 12px;
 }
 
 /* Trama de puntos: papel con puntos tinta (negro sobre blanco) */
 @utility bg-halftone-paper {
   background-color: var(--color-paper);
-  background-image: radial-gradient(rgba(10, 10, 10, 0.85) 1.4px, transparent 1.4px);
+  background-image: radial-gradient(
+    rgba(10, 10, 10, 0.85) 1.4px,
+    transparent 1.4px
+  );
   background-size: 12px 12px;
 }
 
@@ -146,7 +157,10 @@
 
 /* Puntos halftone tenues (gris sobre negro, fondo del hero) */
 @utility bg-halftone-dots {
-  background-image: radial-gradient(var(--color-bg-content-alt) 1px, transparent 1px);
+  background-image: radial-gradient(
+    var(--color-bg-content-alt) 1px,
+    transparent 1px
+  );
   background-size: 6px 6px;
 }
 
@@ -162,7 +176,6 @@
 @utility bg-stars-charcoal {
   background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'240'%20height%3D'240'%20viewBox%3D'0%200%20240%20240'%3E%3Cpolygon%20points%3D'38.0%2C33.0%2040.4%2C38.7%2046.6%2C39.2%2041.9%2C43.3%2043.3%2C49.3%2038.0%2C46.0%2032.7%2C49.3%2034.1%2C43.3%2029.4%2C39.2%2035.6%2C38.7'%20fill%3D'none'%20stroke%3D'rgba(135%2C135%2C135%2C0.28)'%20stroke-width%3D'1.5'%2F%3E%3Cpolygon%20points%3D'152.0%2C15.0%20155.4%2C23.3%20164.4%2C24.0%20157.6%2C29.8%20159.6%2C38.5%20152.0%2C33.9%20144.4%2C38.5%20146.4%2C29.8%20139.6%2C24.0%20148.6%2C23.3'%20fill%3D'none'%20stroke%3D'rgba(135%2C135%2C135%2C0.28)'%20stroke-width%3D'1.5'%2F%3E%3Cpolygon%20points%3D'212.0%2C85.0%20213.9%2C89.5%20218.7%2C89.8%20215.0%2C93.0%20216.1%2C97.7%20212.0%2C95.2%20207.9%2C97.7%20209.0%2C93.0%20205.3%2C89.8%20210.1%2C89.5'%20fill%3D'none'%20stroke%3D'rgba(80%2C80%2C80%2C0.5)'%20stroke-width%3D'1.5'%2F%3E%3Cpolygon%20points%3D'28.0%2C153.0%2032.0%2C162.5%2042.3%2C163.4%2034.4%2C170.1%2036.8%2C180.1%2028.0%2C174.8%2019.2%2C180.1%2021.6%2C170.1%2013.7%2C163.4%2024.0%2C162.5'%20fill%3D'none'%20stroke%3D'rgba(135%2C135%2C135%2C0.28)'%20stroke-width%3D'1.5'%2F%3E%3Cpolygon%20points%3D'118.0%2C122.0%20119.6%2C125.8%20123.7%2C126.1%20120.6%2C128.8%20121.5%2C132.9%20118.0%2C130.7%20114.5%2C132.9%20115.4%2C128.8%20112.3%2C126.1%20116.4%2C125.8'%20fill%3D'none'%20stroke%3D'rgba(135%2C135%2C135%2C0.28)'%20stroke-width%3D'1.5'%2F%3E%3Cpolygon%20points%3D'192.0%2C186.0%20194.6%2C192.4%20201.5%2C192.9%20196.3%2C197.4%20197.9%2C204.1%20192.0%2C200.5%20186.1%2C204.1%20187.7%2C197.4%20182.5%2C192.9%20189.4%2C192.4'%20fill%3D'none'%20stroke%3D'rgba(135%2C135%2C135%2C0.28)'%20stroke-width%3D'1.5'%2F%3E%3Cpolygon%20points%3D'78.0%2C214.0%2080.1%2C219.1%2085.6%2C219.5%2081.4%2C223.1%2082.7%2C228.5%2078.0%2C225.6%2073.3%2C228.5%2074.6%2C223.1%2070.4%2C219.5%2075.9%2C219.1'%20fill%3D'none'%20stroke%3D'rgba(135%2C135%2C135%2C0.28)'%20stroke-width%3D'1.5'%2F%3E%3Cpolygon%20points%3D'110.0%2C205.0%20111.3%2C208.2%20114.8%2C208.5%20112.1%2C210.7%20112.9%2C214.0%20110.0%2C212.3%20107.1%2C214.0%20107.9%2C210.7%20105.2%2C208.5%20108.7%2C208.2'%20fill%3D'none'%20stroke%3D'rgba(80%2C80%2C80%2C0.5)'%20stroke-width%3D'1.5'%2F%3E%3Cpolygon%20points%3D'210.0%2C172.0%20211.6%2C175.8%20215.7%2C176.1%20212.6%2C178.8%20213.5%2C182.9%20210.0%2C180.7%20206.5%2C182.9%20207.4%2C178.8%20204.3%2C176.1%20208.4%2C175.8'%20fill%3D'none'%20stroke%3D'rgba(135%2C135%2C135%2C0.28)'%20stroke-width%3D'1.5'%2F%3E%3C%2Fsvg%3E");
 }
-
 
 /* Ruido de imprenta (SVG feTurbulence, tileable y ligero) */
 @utility bg-noise {
@@ -264,7 +277,8 @@
 
 /* Hover del li: snap agresivo en la direccion chaos */
 .hero-command-item:has(.metro-menu-btn:hover) {
-  transform: translateX(calc(var(--off, 0px) - 8px)) rotate(calc(var(--rot, 0deg) * 1.5));
+  transform: translateX(calc(var(--off, 0px) - 8px))
+    rotate(calc(var(--rot, 0deg) * 1.5));
 }
 
 .hero-cmd {
@@ -290,7 +304,9 @@
   inset: 2px;
   background-color: var(--color-bg-hero);
   clip-path: polygon(0 18%, 5% 0, 93% 0, 100% 50%, 93% 100%, 5% 100%, 0 82%);
-  transition: inset 0.08s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.08s;
+  transition:
+    inset 0.08s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.08s;
 }
 
 /* El contenido debe quedar por encima del track (ambos comparten caja). */
@@ -358,7 +374,7 @@
    Red slash — linea diagonal roja que cruza el boton en hover
    ============================================================ */
 .hero-cmd::after {
-  content: '';
+  content: "";
   position: absolute;
   top: -20%;
   left: -20%;
@@ -415,15 +431,17 @@
   opacity: 0;
   transform-origin: 50% 50%;
   transform: scale(0.6);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
 }
 
-.star-badge[data-state='full'] .star-fill {
+.star-badge[data-state="full"] .star-fill {
   opacity: 1;
   transform: scale(1.15);
 }
 
-.star-badge[data-state='full'] .star-outline {
+.star-badge[data-state="full"] .star-outline {
   stroke: var(--color-gold);
 }
 
@@ -555,7 +573,9 @@
   }
   50% {
     filter: brightness(1.3);
-    box-shadow: 0 0 10px rgba(230, 0, 18, 0.5), 0 0 22px rgba(230, 0, 18, 0.25);
+    box-shadow:
+      0 0 10px rgba(230, 0, 18, 0.5),
+      0 0 22px rgba(230, 0, 18, 0.25);
   }
 }
 
@@ -616,11 +636,25 @@
   position: relative;
   padding: 2px;
   background: rgba(230, 0, 18, 0.4);
-  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+  clip-path: polygon(
+    0 0,
+    calc(100% - 16px) 0,
+    100% 16px,
+    100% 100%,
+    16px 100%,
+    0 calc(100% - 16px)
+  );
 }
 
 .load-panel-inner {
-  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+  clip-path: polygon(
+    0 0,
+    calc(100% - 14px) 0,
+    100% 14px,
+    100% 100%,
+    14px 100%,
+    0 calc(100% - 14px)
+  );
   background: rgba(10, 10, 10, 0.66);
 }
 
@@ -760,7 +794,8 @@
 
 .proj-row:hover,
 .proj-row:focus-visible {
-  transform: translateX(calc(var(--proj-off, 0px) - 8px)) rotate(var(--proj-rot, 0deg));
+  transform: translateX(calc(var(--proj-off, 0px) - 8px))
+    rotate(var(--proj-rot, 0deg));
 }
 
 /* Marcador angular del indicador de scroll */
@@ -1040,7 +1075,9 @@ html.lenis body {
     0 10px 25px rgba(0, 0, 0, 0.55),
     0 2px 4px rgba(0, 0, 0, 0.4);
   transform: rotate(-2deg);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
   cursor: default;
   position: relative;
 }
@@ -1075,8 +1112,11 @@ html.lenis body {
   content: "";
   position: absolute;
   inset: 0;
-  background-image:
-    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.015) 0 2px, transparent 2px 6px);
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.015) 0 2px,
+    transparent 2px 6px
+  );
   pointer-events: none;
   z-index: 1;
 }
@@ -1181,7 +1221,12 @@ html.lenis body {
 .sdeck__cat-divider-line {
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(245, 245, 240, 0.12), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(245, 245, 240, 0.12),
+    transparent
+  );
 }
 
 .sdeck__cat-divider-diamond {
@@ -1562,7 +1607,8 @@ html.lenis body {
 
 .skill-line-draw {
   stroke-dasharray: 1;
-  animation: skill-line-draw 0.6s cubic-bezier(0.76, 0, 0.24, 1) var(--skill-line-d, 0s) both;
+  animation: skill-line-draw 0.6s cubic-bezier(0.76, 0, 0.24, 1)
+    var(--skill-line-d, 0s) both;
 }
 
 /* ============================================================
@@ -1571,12 +1617,24 @@ html.lenis body {
 
 /* Node selection: hard-cut glitch flash (no easing, persona 5 cuts) */
 @keyframes node-glitch-flash {
-  0%   { filter: brightness(1); }
-  20%  { filter: brightness(3) contrast(1.5); }
-  40%  { filter: brightness(0.3) hue-rotate(5deg); }
-  60%  { filter: brightness(2.5); }
-  80%  { filter: brightness(0.8); }
-  100% { filter: brightness(1); }
+  0% {
+    filter: brightness(1);
+  }
+  20% {
+    filter: brightness(3) contrast(1.5);
+  }
+  40% {
+    filter: brightness(0.3) hue-rotate(5deg);
+  }
+  60% {
+    filter: brightness(2.5);
+  }
+  80% {
+    filter: brightness(0.8);
+  }
+  100% {
+    filter: brightness(1);
+  }
 }
 
 .node-glitch-flash {
@@ -1585,9 +1643,17 @@ html.lenis body {
 
 /* Diamond indicator snaps into place on selected node */
 @keyframes node-diamond-enter {
-  from { transform: rotate(0deg) scale(0); opacity: 0; }
-  50%  { transform: rotate(180deg) scale(1.3); }
-  to   { transform: rotate(360deg) scale(1); opacity: 1; }
+  from {
+    transform: rotate(0deg) scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: rotate(180deg) scale(1.3);
+  }
+  to {
+    transform: rotate(360deg) scale(1);
+    opacity: 1;
+  }
 }
 
 .node-diamond-enter {
@@ -1596,9 +1662,18 @@ html.lenis body {
 
 /* Node sequential entry: flash-in one by one (system boot feel) */
 @keyframes node-enter-flash {
-  0%   { opacity: 0; filter: brightness(4); }
-  50%  { opacity: 1; filter: brightness(1.8); }
-  100% { opacity: 1; filter: brightness(1); }
+  0% {
+    opacity: 0;
+    filter: brightness(4);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(1.8);
+  }
+  100% {
+    opacity: 1;
+    filter: brightness(1);
+  }
 }
 
 .node-enter-flash {
@@ -1607,8 +1682,13 @@ html.lenis body {
 
 /* Halo breathing for angular nodes */
 @keyframes node-halo-breathe {
-  0%, 100% { opacity: 0.25; }
-  50%      { opacity: 0.6; }
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.6;
+  }
 }
 
 .node-halo {
@@ -1625,32 +1705,56 @@ html.lenis body {
 
 /* Locked node: hard shake on hover */
 @keyframes locked-shake {
-  0%, 100% { transform: translateX(0); }
-  25%      { transform: translateX(-2px); }
-  75%      { transform: translateX(2px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-2px);
+  }
+  75% {
+    transform: translateX(2px);
+  }
 }
 
 /* Locked node: static noise flicker */
 @keyframes locked-static {
-  0%, 100% { opacity: 0.03; }
-  50%      { opacity: 0.09; }
+  0%,
+  100% {
+    opacity: 0.03;
+  }
+  50% {
+    opacity: 0.09;
+  }
 }
 
 /* Angular connector line draw */
 @keyframes connector-draw {
-  from { stroke-dashoffset: 1; }
-  to   { stroke-dashoffset: 0; }
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
 .connector-draw {
   stroke-dasharray: 1;
-  animation: connector-draw 0.5s cubic-bezier(0.76, 0, 0.24, 1) var(--connector-delay, 0s) both;
+  animation: connector-draw 0.5s cubic-bezier(0.76, 0, 0.24, 1)
+    var(--connector-delay, 0s) both;
 }
 
 /* Cursor diamond pulse */
 @keyframes cursor-diamond-pulse {
-  0%, 100% { opacity: 0.45; transform: translate(-50%, -50%) rotate(45deg) scale(1); }
-  50%      { opacity: 0.75; transform: translate(-50%, -50%) rotate(45deg) scale(1.12); }
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: translate(-50%, -50%) rotate(45deg) scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: translate(-50%, -50%) rotate(45deg) scale(1.12);
+  }
 }
 
 /* ================================================================
@@ -1670,8 +1774,14 @@ html.lenis body {
 }
 
 @keyframes bgm-snap-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ================================================================
@@ -1743,7 +1853,9 @@ html.lenis body {
   font-size: 11px;
   cursor: pointer;
   opacity: 0.55;
-  transition: opacity 0.1s, color 0.1s;
+  transition:
+    opacity 0.1s,
+    color 0.1s;
   padding: 2px 4px;
 }
 
@@ -1769,14 +1881,21 @@ html.lenis body {
   background: rgba(8, 8, 8, 0.97);
   border: 1px solid rgba(245, 245, 240, 0.06);
   border-bottom: none;
-  clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%, 0 10px);
+  clip-path: polygon(
+    10px 0,
+    calc(100% - 10px) 0,
+    100% 10px,
+    100% 100%,
+    0 100%,
+    0 10px
+  );
   animation: bgm-panel-in 0.18s cubic-bezier(0.22, 1, 0.36, 1) both;
   z-index: 10;
 }
 
 /* Subtle bridge connecting panel to bottom bar */
 .bgm-panel::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -11px;
   left: 0;
@@ -1788,11 +1907,25 @@ html.lenis body {
 @keyframes bgm-panel-in {
   from {
     opacity: 0;
-    clip-path: polygon(10px 100%, calc(100% - 10px) 100%, 100% 100%, 100% 100%, 0 100%, 0 100%);
+    clip-path: polygon(
+      10px 100%,
+      calc(100% - 10px) 100%,
+      100% 100%,
+      100% 100%,
+      0 100%,
+      0 100%
+    );
   }
   to {
     opacity: 1;
-    clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%, 0 10px);
+    clip-path: polygon(
+      10px 0,
+      calc(100% - 10px) 0,
+      100% 10px,
+      100% 100%,
+      0 100%,
+      0 10px
+    );
   }
 }
 
@@ -1821,7 +1954,9 @@ html.lenis body {
   color: var(--color-paper);
   opacity: 0.45;
   cursor: pointer;
-  transition: opacity 0.12s, color 0.12s;
+  transition:
+    opacity 0.12s,
+    color 0.12s;
 }
 
 .bgm-panel__counter:hover {
@@ -1862,8 +1997,19 @@ html.lenis body {
   border: none;
   color: var(--color-paper);
   cursor: pointer;
-  clip-path: polygon(4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px), 0 4px);
-  transition: background 0.08s, transform 0.08s;
+  clip-path: polygon(
+    4px 0,
+    calc(100% - 4px) 0,
+    100% 4px,
+    100% calc(100% - 4px),
+    calc(100% - 4px) 100%,
+    4px 100%,
+    0 calc(100% - 4px),
+    0 4px
+  );
+  transition:
+    background 0.08s,
+    transform 0.08s;
 }
 
 .bgm-ctrl:hover {
@@ -2041,14 +2187,27 @@ html.lenis body {
   max-width: calc(100vw - 2rem);
   background: rgba(8, 8, 8, 0.98);
   border: 1px solid rgba(245, 245, 240, 0.06);
-  clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%, 0 8px);
+  clip-path: polygon(
+    8px 0,
+    calc(100% - 8px) 0,
+    100% 8px,
+    100% 100%,
+    0 100%,
+    0 8px
+  );
   animation: bgm-selector-in 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
   z-index: 20;
 }
 
 @keyframes bgm-selector-in {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .bgm-selector__item {

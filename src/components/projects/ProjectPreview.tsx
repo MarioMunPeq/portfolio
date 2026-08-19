@@ -1,5 +1,5 @@
-import type { Project } from '../../data/projects'
-import { PreviewBox } from '../ui/PreviewBox'
+import type { Project } from "../../data/projects";
+import { PreviewBox } from "../ui/PreviewBox";
 
 /**
  * Panel de captura del inventario: la gran imagen del proyecto en el
@@ -8,7 +8,7 @@ import { PreviewBox } from '../ui/PreviewBox'
  * unificado de "Captura pendiente" vive dentro de PreviewBox.
  */
 export function ProjectPreview({ project }: { project: Project }) {
-  const image = project.images?.[0] ?? null
+  const image = project.images?.[0] ?? null;
 
   return (
     <div className="relative w-full max-w-[42rem]">
@@ -68,8 +68,8 @@ export function ProjectPreview({ project }: { project: Project }) {
           <h2
             className="font-expose uppercase leading-[0.95] text-paper"
             style={{
-              fontSize: 'clamp(2rem, 3.4vw, 3.25rem)',
-              textShadow: '4px 4px 0 var(--color-accent-deep)',
+              fontSize: "clamp(2rem, 3.4vw, 3.25rem)",
+              textShadow: "4px 4px 0 var(--color-accent-deep)",
             }}
           >
             {project.name}
@@ -83,5 +83,5 @@ export function ProjectPreview({ project }: { project: Project }) {
         </span>
       </div>
     </div>
-  )
+  );
 }

@@ -1,142 +1,150 @@
 export interface ProfileLink {
-  label: string
-  url: string
+  label: string;
+  url: string;
 }
 
 export interface SpokenLanguage {
-  name: string
-  level: string
+  name: string;
+  level: string;
   /** Nota opcional (certificados oficiales). */
-  note?: string
+  note?: string;
 }
 
 export interface ProfileSkills {
   /** Lenguajes de programacion. */
-  programming: string[]
+  programming: string[];
   /** Tecnologias y herramientas. */
-  technologies: string[]
+  technologies: string[];
   /** Inteligencia artificial y datos. */
-  aiData: string[]
+  aiData: string[];
   /** Otras herramientas. */
-  other: string[]
+  other: string[];
 }
 
 export interface Profile {
-  name: string
-  alias: string
-  role: string
-  roleFull: string
-  location: string
+  name: string;
+  alias: string;
+  role: string;
+  roleFull: string;
+  location: string;
   /** Frase corta del hero. */
-  tagline: string
+  tagline: string;
   /** Textos tipograficos del hero. */
   hero: {
     /** Primer bloque del nombre (solido). */
-    nameFirst: string
+    nameFirst: string;
     /** Segundo bloque del nombre (contorno). */
-    nameLast: string
+    nameLast: string;
     /** Eyebrow rojo con prefijo ◄ bajo el titulo. */
-    eyebrow: string
+    eyebrow: string;
     /** Region corta mostrada en la franja superior. */
-    region: string
+    region: string;
     /** Palabra gigante de fondo del hero (agua de marca). */
-    ghost: string
+    ghost: string;
     /** Linea principal del bloque derecho. */
-    roleLine: string
+    roleLine: string;
     /** Linea secundaria del bloque derecho. */
-    credentialLine: string
+    credentialLine: string;
     /** Coordenadas decorativas del bloque derecho. */
-    coordinates: string
-  }
+    coordinates: string;
+  };
   /** Textos de marca reutilizados en overlays (LoadScreen, hero). */
   branding: {
     /** Etiqueta tipo "Sistema personal". */
-    system: string
+    system: string;
     /** "CV viviente". */
-    cvViviente: string
+    cvViviente: string;
     /** "Cargando". */
-    loading: string
+    loading: string;
     /** Version mostrada en la franja superior del menu. */
-    version: string
-  }
+    version: string;
+  };
   /** Enlaces de contacto. url null = sin enlace disponible. */
   links: {
-    github: ProfileLink | null
-    linkedin: ProfileLink | null
-  }
+    github: ProfileLink | null;
+    linkedin: ProfileLink | null;
+  };
   about: {
     /** Parrafos de la seccion "Sobre mi". */
-    paragraphs: string[]
+    paragraphs: string[];
     /** Bio corta de la pantalla de personaje (Perfil). */
-    bio: string
+    bio: string;
     /** areas de interes. */
-    interests: string[]
+    interests: string[];
     /** Habilidades tecnicas por categorias. */
-    skills: ProfileSkills
+    skills: ProfileSkills;
     /** Idiomas hablados. */
-    languages: SpokenLanguage[]
+    languages: SpokenLanguage[];
     /** Otros datos (permiso de conducir…). */
-    license: string
+    license: string;
     /** Foto/avatar. null = usar placeholder visual. */
-    avatar: { src: string; alt: string } | null
-  }
+    avatar: { src: string; alt: string } | null;
+  };
 }
 
 export const profile: Profile = {
-  name: 'Mario Muñoz Pequeño',
-  alias: 'Mario Muñoz Pequeño',
-  role: 'SOFTWARE DEVELOPER',
-  roleFull: 'Desarrollador de aplicaciones',
-  location: 'Valladolid, España',
+  name: "Mario Muñoz Pequeño",
+  alias: "Mario Muñoz Pequeño",
+  role: "SOFTWARE DEVELOPER",
+  roleFull: "Desarrollador de aplicaciones",
+  location: "Valladolid, España",
   tagline:
-    'Desarrollador de aplicaciones con interes en inteligencia artificial, automatizacion y desarrollo.',
+    "Desarrollador de aplicaciones con interes en inteligencia artificial, automatizacion y desarrollo.",
   hero: {
-    nameFirst: 'Mario',
-    nameLast: 'Muñoz Pequeño',
-    eyebrow: 'Desarrollador de aplicaciones',
-    region: 'Valladolid · Es',
-    ghost: 'Menu',
-    roleLine: 'Software Developer',
-    credentialLine: 'F.P. Grado Superior — DAM',
-    coordinates: '41.6523° N, 4.7245° O',
+    nameFirst: "Mario",
+    nameLast: "Muñoz Pequeño",
+    eyebrow: "Desarrollador de aplicaciones",
+    region: "Valladolid · Es",
+    ghost: "Menu",
+    roleLine: "Software Developer",
+    credentialLine: "F.P. Grado Superior — DAM",
+    coordinates: "41.6523° N, 4.7245° O",
   },
   branding: {
-    system: 'Menu principal',
-    cvViviente: 'CV Viviente',
-    loading: 'Cargando',
-    version: 'v.2026',
+    system: "Menu principal",
+    cvViviente: "CV Viviente",
+    loading: "Cargando",
+    version: "v.2026",
   },
   links: {
-    github: { label: 'GitHub', url: 'https://github.com/MarioMunPeq' },
+    github: { label: "GitHub", url: "https://github.com/MarioMunPeq" },
     linkedin: {
-      label: 'LinkedIn',
-      url: 'https://www.linkedin.com/in/mario-mu%C3%B1oz-peque%C3%B1o/',
+      label: "LinkedIn",
+      url: "https://www.linkedin.com/in/mario-mu%C3%B1oz-peque%C3%B1o/",
     },
   },
   about: {
     paragraphs: [
-      'Desarrollador de aplicaciones con interes en inteligencia artificial, automatizacion y desarrollo. Disfruto creando soluciones que resuelvan problemas reales y aprendiendo nuevas tecnologias mediante proyectos practicos.',
+      "Desarrollador de aplicaciones con interes en inteligencia artificial, automatizacion y desarrollo. Disfruto creando soluciones que resuelvan problemas reales y aprendiendo nuevas tecnologias mediante proyectos practicos.",
     ],
-    bio: 'Desarrollador de aplicaciones con interes en inteligencia artificial, automatizacion y desarrollo. Disfruto creando soluciones que resuelvan problemas reales y aprendiendo nuevas tecnologias mediante proyectos practicos.',
-    interests: ['Inteligencia Artificial', 'Backend', 'Automatizacion', 'Videojuegos'],
+    bio: "Desarrollador de aplicaciones con interes en inteligencia artificial, automatizacion y desarrollo. Disfruto creando soluciones que resuelvan problemas reales y aprendiendo nuevas tecnologias mediante proyectos practicos.",
+    interests: [
+      "Inteligencia Artificial",
+      "Backend",
+      "Automatizacion",
+      "Videojuegos",
+    ],
     skills: {
-      programming: ['Java', 'Python', 'Kotlin', 'C#', 'SQL', 'HTML/CSS'],
+      programming: ["Java", "Python", "Kotlin", "C#", "SQL", "HTML/CSS"],
       technologies: [
-        'Git/GitHub',
-        'Liferay',
-        'Odoo',
-        'Power Platform',
-        'Android Studio',
-        'Unity/Godot',
+        "Git/GitHub",
+        "Liferay",
+        "Odoo",
+        "Power Platform",
+        "Android Studio",
+        "Unity/Godot",
       ],
-      aiData: ['Scikit-learn', 'Pandas', 'PyTorch'],
-      other: ['Office', 'Figma', 'Firebase'],
+      aiData: ["Scikit-learn", "Pandas", "PyTorch"],
+      other: ["Office", "Figma", "Firebase"],
     },
     languages: [
-      { name: 'Castellano', level: 'Nativo' },
-      { name: 'Ingles', level: 'B2', note: 'Certificado (Oxford, Trinity)' },
+      { name: "Castellano", level: "Nativo" },
+      { name: "Ingles", level: "B2", note: "Certificado (Oxford, Trinity)" },
     ],
-    license: 'Permiso de conducir B',
-    avatar: { src: '/portfolio/images/retrato.png', alt: 'Retrato de Mario Muñoz Pequeño' },
+    license: "Permiso de conducir B",
+    avatar: {
+      src: "/portfolio/images/retrato.png",
+      alt: "Retrato de Mario Muñoz Pequeño",
+    },
   },
-}
+};

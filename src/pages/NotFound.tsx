@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import { Screen } from '../components/transition/Screen'
+import { Link } from "react-router-dom";
+import { Screen } from "../components/transition/Screen";
 
 export function NotFound() {
   return (
@@ -22,5 +22,5 @@ export function NotFound() {
         </Link>
       </section>
     </Screen>
-  )
+  );
 }

@@ -14,11 +14,11 @@
  */
 
 /** Formatos admitidos, en orden de prioridad. */
-const LOGO_EXTENSIONS = ['png', 'webp'] as const
+const LOGO_EXTENSIONS = ["png", "webp"] as const;
 
 /** Sufijos legales comunes que se ignoran al generar el slug. */
 const LEGAL_SUFFIX =
-  /^(.*?)(?:\s*,\s*|\s+)(?:s\.l\.?u?\.?|s\.a\.?u?\.?|s\.r\.l\.?|s\.p\.a\.?|ltd\.?|inc\.?|llc\.?|gmbh)$/i
+  /^(.*?)(?:\s*,\s*|\s+)(?:s\.l\.?u?\.?|s\.a\.?u?\.?|s\.r\.l\.?|s\.p\.a\.?|ltd\.?|inc\.?|llc\.?|gmbh)$/i;
 
 /**
  * Normaliza el nombre de la empresa a un slug de archivo tolerante:
@@ -26,14 +26,14 @@ const LEGAL_SUFFIX =
  * · "Diputacion de Valladolid" → "diputacion-de-valladolid".
  */
 export function companyToSlug(company: string): string {
-  const base = company.match(LEGAL_SUFFIX)?.[1] ?? company.split(',')[0]
+  const base = company.match(LEGAL_SUFFIX)?.[1] ?? company.split(",")[0];
   return base
     .trim()
     .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
 /**
@@ -42,8 +42,8 @@ export function companyToSlug(company: string): string {
  * proyecto (import.meta.env.BASE_URL) y public/images/experience/.
  */
 export function companyLogoCandidates(company: string): string[] {
-  const slug = companyToSlug(company)
+  const slug = companyToSlug(company);
   return LOGO_EXTENSIONS.map(
     (ext) => `${import.meta.env.BASE_URL}images/experience/${slug}.${ext}`,
-  )
+  );
 }

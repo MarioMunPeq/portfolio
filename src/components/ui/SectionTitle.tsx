@@ -1,16 +1,16 @@
-import type { ReactNode } from 'react'
-import { DiamondMarker } from '../shared/DiamondMarker'
+import type { ReactNode } from "react";
+import { DiamondMarker } from "../shared/DiamondMarker";
 
 interface SectionTitleProps {
-  title: ReactNode
+  title: ReactNode;
   /** Etiqueta pequeña con marcador angular bajo la que va el titulo. */
-  label?: string
+  label?: string;
   /** Fuente Persona 5 (ransom-note) para el titulo. */
-  persona?: boolean
+  persona?: boolean;
   /** Fuente de la etiqueta: P5 Hatty (por defecto, legible como microcopy) o
       Expose (solo contextos grandes donde la fuente display se puede leer). */
-  labelFont?: 'hatty' | 'expose'
-  className?: string
+  labelFont?: "hatty" | "expose";
+  className?: string;
 }
 
 /**
@@ -19,13 +19,21 @@ interface SectionTitleProps {
  * pequeña usa P5 Hatty por defecto — el mismo microcopy que el resto del
  * sitio — para que nunca se imprima una fuente display a tamaño ilegible.
  */
-export function SectionTitle({ title, label, persona = false, labelFont = 'hatty', className = '' }: SectionTitleProps) {
+export function SectionTitle({
+  title,
+  label,
+  persona = false,
+  labelFont = "hatty",
+  className = "",
+}: SectionTitleProps) {
   return (
     <header className={`relative ${className}`}>
       {label ? (
-        <p className={`flex items-center gap-2.5 text-caption font-medium uppercase tracking-[0.22em] text-accent ${
-          labelFont === 'expose' ? 'font-expose' : 'font-hatty'
-        }`}>
+        <p
+          className={`flex items-center gap-2.5 text-caption font-medium uppercase tracking-[0.22em] text-accent ${
+            labelFont === "expose" ? "font-expose" : "font-hatty"
+          }`}
+        >
           <DiamondMarker size={8} />
           {label}
         </p>
@@ -33,11 +41,11 @@ export function SectionTitle({ title, label, persona = false, labelFont = 'hatty
 
       <h1
         className={`mt-3 uppercase leading-[0.95] text-paper ${
-          persona ? 'font-p5-menu' : 'font-display'
+          persona ? "font-p5-menu" : "font-display"
         }`}
         style={{
-          fontSize: 'clamp(2.75rem, 6.5vw, 5.5rem)',
-          textShadow: '4px 4px 0 var(--color-accent-deep)',
+          fontSize: "clamp(2.75rem, 6.5vw, 5.5rem)",
+          textShadow: "4px 4px 0 var(--color-accent-deep)",
         }}
       >
         {title}
@@ -48,5 +56,5 @@ export function SectionTitle({ title, label, persona = false, labelFont = 'hatty
         <span className="block h-3 w-3 rotate-45 bg-gold" />
       </span>
     </header>
-  )
+  );
 }

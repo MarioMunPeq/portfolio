@@ -1,9 +1,9 @@
-import { profile } from '../../data/profile'
-import { Wordmark } from './Wordmark'
+import { profile } from "../../data/profile";
+import { Wordmark } from "./Wordmark";
 
 interface TopBarProps {
   /** Etiqueta de contexto de la pantalla actual (PERFIL, INVENTARIO…). */
-  context: string
+  context: string;
 }
 
 /**
@@ -24,10 +24,10 @@ export function TopBar({ context }: TopBarProps) {
           </span>
 
           <span className="text-label font-medium uppercase tracking-[0.25em] text-paper/70">
-            {profile.branding.system.split(' ')[0]} {profile.branding.version}
+            {profile.branding.system.split(" ")[0]} {profile.branding.version}
           </span>
         </div>
       </div>
     </div>
-  )
+  );
 }

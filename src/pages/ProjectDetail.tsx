@@ -1,83 +1,139 @@
-import { useState } from 'react'
-import { Link, Navigate, useParams } from 'react-router-dom'
-import { Reveal } from '../components/primitives/Reveal'
-import { Screen } from '../components/transition/Screen'
-import { DiamondMarker } from '../components/shared/DiamondMarker'
-import { PreviewBox } from '../components/ui/PreviewBox'
-import { Lightbox } from '../components/ui/Lightbox'
-import { projects } from '../data/projects'
-import type { ProjectScreenshot } from '../data/projects'
+import { useState } from "react";
+import { Link, Navigate, useParams } from "react-router-dom";
+import { Reveal } from "../components/primitives/Reveal";
+import { Screen } from "../components/transition/Screen";
+import { DiamondMarker } from "../components/shared/DiamondMarker";
+import { PreviewBox } from "../components/ui/PreviewBox";
+import { Lightbox } from "../components/ui/Lightbox";
+import { projects } from "../data/projects";
+import type { ProjectScreenshot } from "../data/projects";
 
 /* ── Font Awesome icons ── */
-import { faReact, faNodeJs, faPython, faAndroid, faGitAlt, faJs, faCss3 } from '@fortawesome/free-brands-svg-icons'
-import { faDatabase, faBrain, faCode, faServer, faBolt, faGears, faGem, faCubes, faTerminal, faFlask, faCloudArrowUp, faMobileScreen, faBookOpen, faSearch, faLink, faUser, faShieldHalved, faRoute, faDiceD20, faThumbTack, faStar, faGraduationCap, faBook, faPuzzlePiece } from '@fortawesome/free-solid-svg-icons'
+import {
+  faReact,
+  faNodeJs,
+  faPython,
+  faAndroid,
+  faGitAlt,
+  faJs,
+  faCss3,
+} from "@fortawesome/free-brands-svg-icons";
+import {
+  faDatabase,
+  faBrain,
+  faCode,
+  faServer,
+  faBolt,
+  faGears,
+  faGem,
+  faCubes,
+  faTerminal,
+  faFlask,
+  faCloudArrowUp,
+  faMobileScreen,
+  faBookOpen,
+  faSearch,
+  faLink,
+  faUser,
+  faShieldHalved,
+  faRoute,
+  faDiceD20,
+  faThumbTack,
+  faStar,
+  faGraduationCap,
+  faBook,
+  faPuzzlePiece,
+} from "@fortawesome/free-solid-svg-icons";
 
 /* ── Clip-paths reused from the site's visual system ── */
-const TAG_CLIP = 'polygon(0 0, calc(100% - 1rem) 0, 100% 1rem, 100% 100%, 0 100%)'
+const TAG_CLIP =
+  "polygon(0 0, calc(100% - 1rem) 0, 100% 1rem, 100% 100%, 0 100%)";
 
-const STACK_CLIP = 'polygon(0 0, 100% 0, 100% calc(100% - 1rem), calc(100% - 1rem) 100%, 0 100%)'
+const STACK_CLIP =
+  "polygon(0 0, 100% 0, 100% calc(100% - 1rem), calc(100% - 1rem) 100%, 0 100%)";
 
-const SUMMARY_CLIP = 'polygon(0 0, calc(100% - 1.5rem) 0, 100% 1.5rem, 100% 100%, 0 100%)'
+const SUMMARY_CLIP =
+  "polygon(0 0, calc(100% - 1.5rem) 0, 100% 1.5rem, 100% 100%, 0 100%)";
 
-const FEATURE_CLIP = 'polygon(0 0, calc(100% - 0.8rem) 0, 100% 0.8rem, 100% 100%, 0 100%)'
+const FEATURE_CLIP =
+  "polygon(0 0, calc(100% - 0.8rem) 0, 100% 0.8rem, 100% 100%, 0 100%)";
 
-const ROTATIONS = ['-1.8deg', '1.2deg', '-0.8deg', '1.6deg', '-0.4deg', '0.7deg']
+const ROTATIONS = [
+  "-1.8deg",
+  "1.2deg",
+  "-0.8deg",
+  "1.6deg",
+  "-0.4deg",
+  "0.7deg",
+];
 
-const GALLERY_ROTATIONS = ['-2deg', '1.5deg', '-1deg', '2deg', '-1.5deg']
+const GALLERY_ROTATIONS = ["-2deg", "1.5deg", "-1deg", "2deg", "-1.5deg"];
 
 /* ── Tech icon + role mapping ── */
-type TechRole = 'FRONTEND' | 'BACKEND' | 'DATABASE' | 'ORM' | 'LENGUAJE' | 'AI/ML' | 'MOVIL' | 'HERRAMIENTA' | 'ROUTING' | 'STATE' | 'PWA' | 'BAAS'
+type TechRole =
+  | "FRONTEND"
+  | "BACKEND"
+  | "DATABASE"
+  | "ORM"
+  | "LENGUAJE"
+  | "AI/ML"
+  | "MOVIL"
+  | "HERRAMIENTA"
+  | "ROUTING"
+  | "STATE"
+  | "PWA"
+  | "BAAS";
 
 interface TechMeta {
-  icon: typeof faCode
-  role: TechRole
+  icon: typeof faCode;
+  role: TechRole;
 }
 
 const TECH_META: Record<string, TechMeta> = {
-  React:          { icon: faReact,     role: 'FRONTEND' },
-  'Node.js':      { icon: faNodeJs,    role: 'BACKEND' },
-  PostgreSQL:     { icon: faDatabase,  role: 'DATABASE' },
-  Prisma:         { icon: faGem,       role: 'ORM' },
-  TypeScript:     { icon: faCode,      role: 'LENGUAJE' },
-  'Tailwind CSS': { icon: faCss3,      role: 'FRONTEND' },
-  Vite:           { icon: faBolt,      role: 'HERRAMIENTA' },
-  Python:         { icon: faPython,    role: 'LENGUAJE' },
-  'scikit-learn': { icon: faBrain,     role: 'AI/ML' },
-  FastAPI:        { icon: faBolt,      role: 'BACKEND' },
-  Android:        { icon: faAndroid,   role: 'MOVIL' },
-  'HTML/CSS':     { icon: faJs,        role: 'FRONTEND' },
-  'Git/GitHub':   { icon: faGitAlt,    role: 'HERRAMIENTA' },
-  Liferay:        { icon: faServer,    role: 'BACKEND' },
-  Odoo:           { icon: faGears,     role: 'BACKEND' },
-  'Power Platform': { icon: faCubes,   role: 'HERRAMIENTA' },
-  'Android Studio': { icon: faTerminal, role: 'HERRAMIENTA' },
-  Unity:          { icon: faCubes,     role: 'HERRAMIENTA' },
-  Godot:          { icon: faCubes,     role: 'HERRAMIENTA' },
-  Firebase:       { icon: faFlask,     role: 'BAAS' },
-  'React Router':  { icon: faRoute,    role: 'ROUTING' },
-  Zustand:        { icon: faDatabase,  role: 'STATE' },
-  PWA:            { icon: faMobileScreen, role: 'PWA' },
-}
+  React: { icon: faReact, role: "FRONTEND" },
+  "Node.js": { icon: faNodeJs, role: "BACKEND" },
+  PostgreSQL: { icon: faDatabase, role: "DATABASE" },
+  Prisma: { icon: faGem, role: "ORM" },
+  TypeScript: { icon: faCode, role: "LENGUAJE" },
+  "Tailwind CSS": { icon: faCss3, role: "FRONTEND" },
+  Vite: { icon: faBolt, role: "HERRAMIENTA" },
+  Python: { icon: faPython, role: "LENGUAJE" },
+  "scikit-learn": { icon: faBrain, role: "AI/ML" },
+  FastAPI: { icon: faBolt, role: "BACKEND" },
+  Android: { icon: faAndroid, role: "MOVIL" },
+  "HTML/CSS": { icon: faJs, role: "FRONTEND" },
+  "Git/GitHub": { icon: faGitAlt, role: "HERRAMIENTA" },
+  Liferay: { icon: faServer, role: "BACKEND" },
+  Odoo: { icon: faGears, role: "BACKEND" },
+  "Power Platform": { icon: faCubes, role: "HERRAMIENTA" },
+  "Android Studio": { icon: faTerminal, role: "HERRAMIENTA" },
+  Unity: { icon: faCubes, role: "HERRAMIENTA" },
+  Godot: { icon: faCubes, role: "HERRAMIENTA" },
+  Firebase: { icon: faFlask, role: "BAAS" },
+  "React Router": { icon: faRoute, role: "ROUTING" },
+  Zustand: { icon: faDatabase, role: "STATE" },
+  PWA: { icon: faMobileScreen, role: "PWA" },
+};
 
 function getTechMeta(tech: string): TechMeta {
-  return TECH_META[tech] ?? { icon: faCode, role: 'HERRAMIENTA' }
+  return TECH_META[tech] ?? { icon: faCode, role: "HERRAMIENTA" };
 }
 
 /* ── Feature icon mapping ── */
 const FEATURE_ICONS: Record<string, typeof faCode> = {
-  'Búsqueda instantánea': faSearch,
-  'Compendio sin conexión': faBookOpen,
-  'Relaciones entre entidades': faLink,
-  'Gestión de personajes': faUser,
-  'Seguimiento de combate': faShieldHalved,
-  'Tirada de dados': faDiceD20,
-  'Marcadores de sesión': faThumbTack,
-  'Favoritos y recientes': faStar,
-  'Modo principiante': faGraduationCap,
-  'Referencia de reglas': faBook,
-  'Copia de seguridad en la nube': faCloudArrowUp,
-  'Aplicación web progresiva': faMobileScreen,
-}
+  "Búsqueda instantánea": faSearch,
+  "Compendio sin conexión": faBookOpen,
+  "Relaciones entre entidades": faLink,
+  "Gestión de personajes": faUser,
+  "Seguimiento de combate": faShieldHalved,
+  "Tirada de dados": faDiceD20,
+  "Marcadores de sesión": faThumbTack,
+  "Favoritos y recientes": faStar,
+  "Modo principiante": faGraduationCap,
+  "Referencia de reglas": faBook,
+  "Copia de seguridad en la nube": faCloudArrowUp,
+  "Aplicación web progresiva": faMobileScreen,
+};
 
 /* ── Section header — condensed/stencil style ── */
 function SectionHead({ label }: { label: string }) {
@@ -88,7 +144,7 @@ function SectionHead({ label }: { label: string }) {
         {label}
       </h2>
     </div>
-  )
+  );
 }
 
 /* ── Gallery image with angular frame + hard shadow ── */
@@ -98,12 +154,18 @@ function GalleryImage({
   index,
   onOpen,
 }: {
-  screenshot: ProjectScreenshot
-  rotation: string
-  index: number
-  onOpen: () => void
+  screenshot: ProjectScreenshot;
+  rotation: string;
+  index: number;
+  onOpen: () => void;
 }) {
-  const offsets = ['md:ml-[4%]', 'md:ml-[8%]', 'md:ml-[2%]', 'md:ml-[10%]', 'md:ml-[6%]']
+  const offsets = [
+    "md:ml-[4%]",
+    "md:ml-[8%]",
+    "md:ml-[2%]",
+    "md:ml-[10%]",
+    "md:ml-[6%]",
+  ];
   return (
     <div
       className={`group/gal relative cursor-pointer ${offsets[index % offsets.length]}`}
@@ -115,37 +177,54 @@ function GalleryImage({
         className="absolute inset-0 bg-black"
         style={{
           clipPath: STACK_CLIP,
-          transform: 'translate(8px, 8px)',
+          transform: "translate(8px, 8px)",
         }}
       />
       <div
         className="relative border-2 border-paper/20 bg-bg-content-alt transition-colors duration-200 group-hover/gal:border-accent/60"
         style={{ clipPath: STACK_CLIP }}
       >
-        <PreviewBox src={screenshot.src} alt={screenshot.alt} caption={screenshot.caption} className="relative">
-          <span aria-hidden="true" className="absolute inset-0 bg-halftone-red/5" />
+        <PreviewBox
+          src={screenshot.src}
+          alt={screenshot.alt}
+          caption={screenshot.caption}
+          className="relative"
+        >
+          <span
+            aria-hidden="true"
+            className="absolute inset-0 bg-halftone-red/5"
+          />
         </PreviewBox>
         <span
           aria-hidden="true"
           className="pointer-events-none absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center border border-paper/30 bg-black/60 text-paper/50 opacity-0 transition-opacity duration-200 group-hover/gal:opacity-100"
-          style={{ clipPath: 'polygon(0 0, calc(100% - 0.35rem) 0, 100% 0.35rem, 100% 100%, 0.35rem 100%, 0 calc(100% - 0.35rem))' }}
+          style={{
+            clipPath:
+              "polygon(0 0, calc(100% - 0.35rem) 0, 100% 0.35rem, 100% 100%, 0.35rem 100%, 0 calc(100% - 0.35rem))",
+          }}
         >
-          <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg
+            viewBox="0 0 24 24"
+            className="h-3.5 w-3.5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <circle cx="11" cy="11" r="8" />
             <path d="M21 21l-4.35-4.35M11 8v6M8 11h6" />
           </svg>
         </span>
       </div>
     </div>
-  )
+  );
 }
 
 /* ── Tech card — mini skill-deck card with icon + role ── */
 function StackCard({ tech, index }: { tech: string; index: number }) {
-  const rotation = ROTATIONS[index % ROTATIONS.length]
-  const { icon, role } = getTechMeta(tech)
-  const [viewBoxW, viewBoxH] = [icon.icon[0], icon.icon[1]]
-  const pathData = icon.icon[4]
+  const rotation = ROTATIONS[index % ROTATIONS.length];
+  const { icon, role } = getTechMeta(tech);
+  const [viewBoxW, viewBoxH] = [icon.icon[0], icon.icon[1]];
+  const pathData = icon.icon[4];
 
   return (
     <div
@@ -157,7 +236,7 @@ function StackCard({ tech, index }: { tech: string; index: number }) {
         className="absolute inset-0 bg-black"
         style={{
           clipPath: TAG_CLIP,
-          transform: 'translate(4px, 4px)',
+          transform: "translate(4px, 4px)",
         }}
       />
       <div
@@ -178,9 +257,11 @@ function StackCard({ tech, index }: { tech: string; index: number }) {
           aria-hidden="true"
           className="relative h-5 w-5 shrink-0 fill-paper transition-colors duration-200"
         >
-          {Array.isArray(pathData)
-            ? pathData.map((d) => <path key={d} d={d} />)
-            : <path d={pathData} />}
+          {Array.isArray(pathData) ? (
+            pathData.map((d) => <path key={d} d={d} />)
+          ) : (
+            <path d={pathData} />
+          )}
         </svg>
         <div className="relative flex flex-col">
           <span className="text-body font-semibold leading-tight text-paper transition-colors duration-200 group-hover/card:text-accent">
@@ -192,14 +273,22 @@ function StackCard({ tech, index }: { tech: string; index: number }) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 /* ── Feature card ── */
-function FeatureCard({ name, description, index }: { name: string; description: string; index: number }) {
-  const icon = FEATURE_ICONS[name] ?? faPuzzlePiece
-  const [viewBoxW, viewBoxH] = [icon.icon[0], icon.icon[1]]
-  const pathData = icon.icon[4]
+function FeatureCard({
+  name,
+  description,
+  index,
+}: {
+  name: string;
+  description: string;
+  index: number;
+}) {
+  const icon = FEATURE_ICONS[name] ?? faPuzzlePiece;
+  const [viewBoxW, viewBoxH] = [icon.icon[0], icon.icon[1]];
+  const pathData = icon.icon[4];
 
   return (
     <Reveal delay={0.05 + index * 0.04} y={12}>
@@ -217,9 +306,11 @@ function FeatureCard({ name, description, index }: { name: string; description: 
             aria-hidden="true"
             className="mt-0.5 h-4 w-4 shrink-0 fill-accent/70 transition-colors duration-200 group-hover:fill-accent"
           >
-            {Array.isArray(pathData)
-              ? pathData.map((d) => <path key={d} d={d} />)
-              : <path d={pathData} />}
+            {Array.isArray(pathData) ? (
+              pathData.map((d) => <path key={d} d={d} />)
+            ) : (
+              <path d={pathData} />
+            )}
           </svg>
           <div>
             <h3 className="font-display text-sm font-normal uppercase tracking-[0.12em] text-paper transition-colors group-hover:text-accent">
@@ -232,22 +323,27 @@ function FeatureCard({ name, description, index }: { name: string; description: 
         </div>
       </div>
     </Reveal>
-  )
+  );
 }
 
 /* ── Angular CTA button ── */
-function AngularButton({ children, href, external = false, className = '' }: {
-  children: React.ReactNode
-  href: string
-  external?: boolean
-  className?: string
+function AngularButton({
+  children,
+  href,
+  external = false,
+  className = "",
+}: {
+  children: React.ReactNode;
+  href: string;
+  external?: boolean;
+  className?: string;
 }) {
   return (
     <a
       href={href}
       data-cursor="open"
-      target={external ? '_blank' : undefined}
-      rel={external ? 'noreferrer' : undefined}
+      target={external ? "_blank" : undefined}
+      rel={external ? "noreferrer" : undefined}
       className={`group relative inline-flex items-center justify-center overflow-hidden border-2 border-accent px-6 py-4 font-expose text-base uppercase tracking-[0.1em] text-paper clip-[polygon(0_0,94%_0,100%_100%,6%_100%)] transition-all duration-200 hover:bg-accent hover:text-ink ${className}`}
     >
       <span
@@ -256,7 +352,7 @@ function AngularButton({ children, href, external = false, className = '' }: {
       />
       <span className="relative">{children}</span>
     </a>
-  )
+  );
 }
 
 /* ── Prev / Next navigation ── */
@@ -264,12 +360,12 @@ function PrevNextNav({
   prev,
   next,
 }: {
-  prev: { slug: string; name: string } | null
-  next: { slug: string; name: string } | null
+  prev: { slug: string; name: string } | null;
+  next: { slug: string; name: string } | null;
 }) {
-  const linkClass = `group relative flex flex-col gap-2 border-2 border-paper/25 bg-bg-content-alt px-6 py-5 transition-all duration-200 hover:border-accent hover:bg-accent hover:text-ink focus-visible:border-accent focus-visible:bg-accent focus-visible:text-ink`
-  const clipLeft = 'polygon(0 0, 100% 0, calc(100% - 1rem) 100%, 0 100%)'
-  const clipRight = 'polygon(0 0, 100% 0, 100% 100%, 1rem 100%)'
+  const linkClass = `group relative flex flex-col gap-2 border-2 border-paper/25 bg-bg-content-alt px-6 py-5 transition-all duration-200 hover:border-accent hover:bg-accent hover:text-ink focus-visible:border-accent focus-visible:bg-accent focus-visible:text-ink`;
+  const clipLeft = "polygon(0 0, 100% 0, calc(100% - 1rem) 100%, 0 100%)";
+  const clipRight = "polygon(0 0, 100% 0, 100% 100%, 1rem 100%)";
 
   return (
     <nav aria-label="Navegacion entre proyectos">
@@ -312,29 +408,32 @@ function PrevNextNav({
         )}
       </div>
     </nav>
-  )
+  );
 }
 
 /* ════════════════════════════════════════════════════════════════
    MAIN TEMPLATE — shared by all four project detail pages
    ════════════════════════════════════════════════════════════════ */
 export function ProjectDetail() {
-  const { slug } = useParams<{ slug: string }>()
-  const project = projects.find((item) => item.slug === slug)
-  const [lightbox, setLightbox] = useState<{ src: string; alt: string } | null>(null)
+  const { slug } = useParams<{ slug: string }>();
+  const project = projects.find((item) => item.slug === slug);
+  const [lightbox, setLightbox] = useState<{ src: string; alt: string } | null>(
+    null,
+  );
 
   if (!project) {
-    return <Navigate to="/404" replace />
+    return <Navigate to="/404" replace />;
   }
 
-  const sectionLabel = 'INVENTARIO'
+  const sectionLabel = "INVENTARIO";
 
-  const currentIndex = projects.findIndex((p) => p.slug === slug)
-  const prevProject = currentIndex > 0 ? projects[currentIndex - 1] : null
-  const nextProject = currentIndex < projects.length - 1 ? projects[currentIndex + 1] : null
+  const currentIndex = projects.findIndex((p) => p.slug === slug);
+  const prevProject = currentIndex > 0 ? projects[currentIndex - 1] : null;
+  const nextProject =
+    currentIndex < projects.length - 1 ? projects[currentIndex + 1] : null;
 
-  const stackCount = project.stack?.length ?? 0
-  const screenshotCount = project.screenshots?.length ?? 0
+  const stackCount = project.stack?.length ?? 0;
+  const screenshotCount = project.screenshots?.length ?? 0;
 
   return (
     <Screen className="min-h-dvh bg-bg-hero text-paper">
@@ -343,9 +442,10 @@ export function ProjectDetail() {
         aria-hidden="true"
         className="pointer-events-none absolute right-0 top-0 h-full w-[40vw] max-w-[600px] hidden lg:block"
         style={{
-          background: 'linear-gradient(90deg, transparent 0%, var(--color-accent) 100%)',
+          background:
+            "linear-gradient(90deg, transparent 0%, var(--color-accent) 100%)",
           opacity: 0.03,
-          clipPath: 'polygon(30% 0, 100% 0, 100% 100%, 0% 100%)',
+          clipPath: "polygon(30% 0, 100% 0, 100% 100%, 0% 100%)",
         }}
       />
       <div
@@ -355,13 +455,15 @@ export function ProjectDetail() {
 
       <section className="relative px-6 py-20 md:px-10 md:py-24 pb-40">
         <div className="mx-auto max-w-[var(--max-w-content)] relative z-10">
-
           {/* ═══ SECTION 1 — HEADER (full-width) ═══ */}
           <div className="relative">
             <span
               aria-hidden="true"
               className="pointer-events-none absolute -right-4 -top-12 select-none font-expose uppercase leading-none text-outline-faint"
-              style={{ fontSize: 'clamp(5rem, 13vw, 9rem)', transform: 'rotate(-4deg)' }}
+              style={{
+                fontSize: "clamp(5rem, 13vw, 9rem)",
+                transform: "rotate(-4deg)",
+              }}
             >
               {project.name}
             </span>
@@ -384,8 +486,8 @@ export function ProjectDetail() {
               <h1
                 className="mt-10 font-expose uppercase leading-[0.95] text-paper"
                 style={{
-                  fontSize: 'clamp(2.75rem, 6.5vw, 5.5rem)',
-                  textShadow: '4px 4px 0 var(--color-accent-deep)',
+                  fontSize: "clamp(2.75rem, 6.5vw, 5.5rem)",
+                  textShadow: "4px 4px 0 var(--color-accent-deep)",
                 }}
               >
                 {project.name}
@@ -413,13 +515,14 @@ export function ProjectDetail() {
               <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 font-sans text-[0.65rem] uppercase tracking-[0.18em] text-paper/30">
                 {project.version && (
                   <span className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rotate-45 bg-paper/40" />
-                    v{project.version}
+                    <span className="h-1.5 w-1.5 rotate-45 bg-paper/40" />v
+                    {project.version}
                   </span>
                 )}
                 <span className="flex items-center gap-2">
                   <span className="h-1.5 w-1.5 rotate-45 bg-accent/60" />
-                  Stack: {stackCount} {stackCount === 1 ? 'tecnologia' : 'tecnologias'}
+                  Stack: {stackCount}{" "}
+                  {stackCount === 1 ? "tecnologia" : "tecnologias"}
                 </span>
                 {screenshotCount > 0 && (
                   <span className="flex items-center gap-2">
@@ -447,7 +550,7 @@ export function ProjectDetail() {
               <Reveal delay={0.12}>
                 <div className="mt-8">
                   <AngularButton href={project.ctaUrl} external>
-                    {project.ctaLabel ?? 'View Live Demo'}
+                    {project.ctaLabel ?? "View Live Demo"}
                   </AngularButton>
                 </div>
               </Reveal>
@@ -456,7 +559,6 @@ export function ProjectDetail() {
 
           {/* ═══ TWO-COLUMN LAYOUT ═══ */}
           <div className="mt-12 grid grid-cols-1 items-start gap-12 lg:mt-16 lg:grid-cols-[1fr_480px] lg:gap-10">
-
             {/* ── LEFT COLUMN ── */}
             <div className="flex flex-col gap-10">
               {/* Summary card */}
@@ -467,7 +569,7 @@ export function ProjectDetail() {
                     className="absolute inset-0 bg-black"
                     style={{
                       clipPath: SUMMARY_CLIP,
-                      transform: 'translate(10px, 10px)',
+                      transform: "translate(10px, 10px)",
                     }}
                   />
                   <div
@@ -500,7 +602,12 @@ export function ProjectDetail() {
                     <SectionHead label="Stack tecnico" />
                     <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
                       {project.stack.map((tech, index) => (
-                        <Reveal key={tech} delay={0.22 + index * 0.06} y={16} amount={0.3}>
+                        <Reveal
+                          key={tech}
+                          delay={0.22 + index * 0.06}
+                          y={16}
+                          amount={0.3}
+                        >
                           <StackCard tech={tech} index={index} />
                         </Reveal>
                       ))}
@@ -518,7 +625,7 @@ export function ProjectDetail() {
                       className="absolute inset-0 bg-black"
                       style={{
                         clipPath: SUMMARY_CLIP,
-                        transform: 'translate(10px, 10px)',
+                        transform: "translate(10px, 10px)",
                       }}
                     />
                     <div
@@ -538,7 +645,10 @@ export function ProjectDetail() {
                         </div>
                         <ul className="mt-4 space-y-3">
                           {project.role.items.map((item, i) => (
-                            <li key={i} className="flex gap-3 text-body leading-relaxed text-ink/70">
+                            <li
+                              key={i}
+                              className="flex gap-3 text-body leading-relaxed text-ink/70"
+                            >
                               <span className="mt-2 h-1.5 w-1.5 shrink-0 rotate-45 bg-accent/60" />
                               <span>{item}</span>
                             </li>
@@ -557,7 +667,12 @@ export function ProjectDetail() {
                     <SectionHead label={project.challenges.title} />
                     <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
                       {project.challenges.items.map((challenge, i) => (
-                        <Reveal key={challenge.label} delay={0.28 + i * 0.04} y={12} amount={0.3}>
+                        <Reveal
+                          key={challenge.label}
+                          delay={0.28 + i * 0.04}
+                          y={12}
+                          amount={0.3}
+                        >
                           <div
                             className="group relative border border-paper/15 bg-bg-content-alt p-4 transition-all duration-200 hover:border-accent/40"
                             style={{ clipPath: FEATURE_CLIP }}
@@ -614,9 +729,16 @@ export function ProjectDetail() {
                       <GalleryImage
                         key={`${screenshot.alt}-${i}`}
                         screenshot={screenshot}
-                        rotation={GALLERY_ROTATIONS[i % GALLERY_ROTATIONS.length]}
+                        rotation={
+                          GALLERY_ROTATIONS[i % GALLERY_ROTATIONS.length]
+                        }
                         index={i}
-                        onOpen={() => setLightbox({ src: screenshot.src ?? '', alt: screenshot.alt })}
+                        onOpen={() =>
+                          setLightbox({
+                            src: screenshot.src ?? "",
+                            alt: screenshot.alt,
+                          })
+                        }
                       />
                     ))}
                   </div>
@@ -651,23 +773,30 @@ export function ProjectDetail() {
                 <SectionHead label={project.conceptBlock.title} />
                 <div className="mt-8 max-w-3xl">
                   {project.conceptBlock.paragraphs.map((p, i) => (
-                    <p key={i} className="text-body leading-relaxed text-paper/70">
+                    <p
+                      key={i}
+                      className="text-body leading-relaxed text-paper/70"
+                    >
                       {p}
                     </p>
                   ))}
-                  {project.conceptBlock.highlights && project.conceptBlock.highlights.length > 0 && (
-                    <div className="mt-8 flex flex-wrap gap-3">
-                      {project.conceptBlock.highlights.map((h) => (
-                        <span
-                          key={h}
-                          className="border border-accent/30 bg-accent/5 px-4 py-2 font-display text-xs font-normal uppercase tracking-[0.15em] text-accent"
-                          style={{ clipPath: 'polygon(0 0, calc(100% - 0.5rem) 0, 100% 0.5rem, 100% 100%, 0.5rem 100%, 0 calc(100% - 0.5rem))' }}
-                        >
-                          {h}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+                  {project.conceptBlock.highlights &&
+                    project.conceptBlock.highlights.length > 0 && (
+                      <div className="mt-8 flex flex-wrap gap-3">
+                        {project.conceptBlock.highlights.map((h) => (
+                          <span
+                            key={h}
+                            className="border border-accent/30 bg-accent/5 px-4 py-2 font-display text-xs font-normal uppercase tracking-[0.15em] text-accent"
+                            style={{
+                              clipPath:
+                                "polygon(0 0, calc(100% - 0.5rem) 0, 100% 0.5rem, 100% 100%, 0.5rem 100%, 0 calc(100% - 0.5rem))",
+                            }}
+                          >
+                            {h}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                 </div>
               </div>
             </Reveal>
@@ -749,7 +878,7 @@ export function ProjectDetail() {
                 {project.ctaUrl && (
                   <div className="mt-8">
                     <AngularButton href={project.ctaUrl} external>
-                      {project.ctaLabel ?? 'View Live Demo'}
+                      {project.ctaLabel ?? "View Live Demo"}
                     </AngularButton>
                   </div>
                 )}
@@ -774,8 +903,12 @@ export function ProjectDetail() {
         </div>
       </section>
       {lightbox && (
-        <Lightbox src={lightbox.src} alt={lightbox.alt} onClose={() => setLightbox(null)} />
+        <Lightbox
+          src={lightbox.src}
+          alt={lightbox.alt}
+          onClose={() => setLightbox(null)}
+        />
       )}
     </Screen>
-  )
+  );
 }

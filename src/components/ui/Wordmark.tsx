@@ -1,21 +1,21 @@
-import { Link } from 'react-router-dom'
-import { profile } from '../../data/profile'
+import { Link } from "react-router-dom";
+import { profile } from "../../data/profile";
 
 /** Monograma derivado del nombre (Mario Muñoz Pequeño → MMP). */
 const INITIALS = profile.name
   .trim()
   .split(/\s+/)
   .slice(0, 3)
-  .map((part) => part.charAt(0) ?? '')
-  .join('')
-  .toUpperCase()
+  .map((part) => part.charAt(0) ?? "")
+  .join("")
+  .toUpperCase();
 
 interface WordmarkProps {
-  className?: string
+  className?: string;
   /** Version estatica (solo menu principal): sin flecha ni enlace, la marca
       se renderiza como etiqueta fija — en Inicio el enlace "volver a inicio"
       seria redundante. */
-  static?: boolean
+  static?: boolean;
 }
 
 /**
@@ -24,7 +24,10 @@ interface WordmarkProps {
  * menu principal; enlaza a la pantalla de inicio (salvo en la variante
  * estatica, que se usa precisamente en la pantalla de inicio).
  */
-export function Wordmark({ className = '', static: isStatic = false }: WordmarkProps) {
+export function Wordmark({
+  className = "",
+  static: isStatic = false,
+}: WordmarkProps) {
   if (isStatic) {
     return (
       <span
@@ -40,7 +43,7 @@ export function Wordmark({ className = '', static: isStatic = false }: WordmarkP
           </span>
         </span>
       </span>
-    )
+    );
   }
 
   return (
@@ -62,5 +65,5 @@ export function Wordmark({ className = '', static: isStatic = false }: WordmarkP
         </span>
       </span>
     </Link>
-  )
+  );
 }

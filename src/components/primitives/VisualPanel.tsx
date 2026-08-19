@@ -1,25 +1,25 @@
-import type { ReactNode } from 'react'
+import type { ReactNode } from "react";
 
 interface VisualPanelProps {
-  children?: ReactNode
+  children?: ReactNode;
   /** Borde y tono base. */
-  tone?: 'ink' | 'paper'
+  tone?: "ink" | "paper";
   /** indice display grande en la esquina superior izquierda. */
-  index?: string
+  index?: string;
   /** Etiqueta pequeña con rayas rojas bajo el panel. */
-  tag?: string
-  className?: string
+  tag?: string;
+  className?: string;
 }
 
 const toneClass = {
-  ink: 'border-ink bg-paper',
-  paper: 'border-paper bg-bg-hero/40',
-} as const
+  ink: "border-ink bg-paper",
+  paper: "border-paper bg-bg-hero/40",
+} as const;
 
 const cornerClass = {
-  ink: 'border-ink',
-  paper: 'border-paper',
-} as const
+  ink: "border-ink",
+  paper: "border-paper",
+} as const;
 
 /**
  * Panel enmarcado tipo "viñeta de comic": borde doble angular con esquinas
@@ -28,10 +28,10 @@ const cornerClass = {
  */
 export function VisualPanel({
   children,
-  tone = 'ink',
+  tone = "ink",
   index,
   tag,
-  className = '',
+  className = "",
 }: VisualPanelProps) {
   return (
     <div className={`relative ${className}`}>
@@ -57,9 +57,9 @@ export function VisualPanel({
           <span
             aria-hidden="true"
             className={`pointer-events-none absolute -top-4 left-2 select-none font-display uppercase leading-none ${
-              tone === 'ink' ? 'text-ink/25' : 'text-paper/25'
+              tone === "ink" ? "text-ink/25" : "text-paper/25"
             }`}
-            style={{ fontSize: 'clamp(2.5rem, 6vw, 4rem)' }}
+            style={{ fontSize: "clamp(2.5rem, 6vw, 4rem)" }}
           >
             {index}
           </span>
@@ -75,5 +75,5 @@ export function VisualPanel({
         </div>
       ) : null}
     </div>
-  )
+  );
 }

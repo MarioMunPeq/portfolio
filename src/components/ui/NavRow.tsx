@@ -1,16 +1,16 @@
-import { Link } from 'react-router-dom'
-import { useReducedMotion } from 'motion/react'
+import { Link } from "react-router-dom";
+import { useReducedMotion } from "motion/react";
 
 interface NavRowProps {
   /** Nombre visible de la fila (uno solo). */
-  label: string
-  path: string
+  label: string;
+  path: string;
   /** Fila seleccionada: colision de vigas cian/rojo + jitter continuo. */
-  active?: boolean
-  onSelect?: () => void
-  setItemRef?: (el: HTMLAnchorElement | null) => void
+  active?: boolean;
+  onSelect?: () => void;
+  setItemRef?: (el: HTMLAnchorElement | null) => void;
   /** Etiqueta de accion que aparece en hover/foco. */
-  tag?: string
+  tag?: string;
 }
 
 /**
@@ -26,9 +26,9 @@ export function NavRow({
   active = false,
   onSelect,
   setItemRef,
-  tag = 'SELECCIONAR',
+  tag = "SELECCIONAR",
 }: NavRowProps) {
-  const reduced = useReducedMotion()
+  const reduced = useReducedMotion();
 
   return (
     <li className="proj-item">
@@ -36,20 +36,20 @@ export function NavRow({
         to={path}
         ref={setItemRef}
         data-cursor="project"
-        aria-current={active ? 'true' : undefined}
+        aria-current={active ? "true" : undefined}
         onMouseEnter={onSelect}
         onFocus={onSelect}
         className={`proj-row group relative flex items-center gap-3 py-3 pl-4 pr-3 md:gap-4 md:py-4 ${
-          active ? 'is-selected' : ''
-        } ${active && !reduced ? 'is-glitching' : ''}`}
+          active ? "is-selected" : ""
+        } ${active && !reduced ? "is-glitching" : ""}`}
       >
         <span
           className={`proj-row-name relative z-10 font-expose uppercase leading-none transition-colors duration-200 ${
             active
-              ? 'text-paper'
-              : 'text-outline-mid group-hover:text-outline group-focus-visible:text-outline'
+              ? "text-paper"
+              : "text-outline-mid group-hover:text-outline group-focus-visible:text-outline"
           }`}
-          style={{ fontSize: 'clamp(1.5rem, 3.2vw, 2.75rem)' }}
+          style={{ fontSize: "clamp(1.5rem, 3.2vw, 2.75rem)" }}
         >
           {label}
         </span>
@@ -78,8 +78,8 @@ export function NavRow({
         <span
           className={`relative z-10 ml-auto flex items-center gap-2 text-label uppercase tracking-[0.2em] transition-all duration-200 ${
             active
-              ? 'text-paper'
-              : 'text-paper/60 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100'
+              ? "text-paper"
+              : "text-paper/60 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100"
           }`}
         >
           {tag}
@@ -87,5 +87,5 @@ export function NavRow({
         </span>
       </Link>
     </li>
-  )
+  );
 }

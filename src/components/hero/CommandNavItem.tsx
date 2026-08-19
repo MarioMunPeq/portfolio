@@ -1,25 +1,25 @@
-import { useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { transitionBus } from '../transition/transition-bus'
+import { useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { transitionBus } from "../transition/transition-bus";
 
-export type HeroIcon = 'triangle' | 'square' | 'circle' | 'cross' | 'asterisk'
+export type HeroIcon = "triangle" | "square" | "circle" | "cross" | "asterisk";
 
 const ICONS: Record<HeroIcon, { glyph: string; colorClass: string }> = {
-  triangle: { glyph: '△', colorClass: 'text-face-tri' },
-  square: { glyph: '□', colorClass: 'text-face-sq' },
-  circle: { glyph: '○', colorClass: 'text-face-cir' },
-  cross: { glyph: '✕', colorClass: 'text-face-cross' },
-  asterisk: { glyph: '※', colorClass: 'text-face-ast' },
-}
+  triangle: { glyph: "△", colorClass: "text-face-tri" },
+  square: { glyph: "□", colorClass: "text-face-sq" },
+  circle: { glyph: "○", colorClass: "text-face-cir" },
+  cross: { glyph: "✕", colorClass: "text-face-cross" },
+  asterisk: { glyph: "※", colorClass: "text-face-ast" },
+};
 
 interface CommandNavItemProps {
-  icon: HeroIcon
-  label: string
-  sub: string
-  path: string
-  rotation?: number
-  offsetX?: number
-  widthPx?: number
+  icon: HeroIcon;
+  label: string;
+  sub: string;
+  path: string;
+  rotation?: number;
+  offsetX?: number;
+  widthPx?: number;
 }
 
 /**
@@ -40,25 +40,25 @@ export function CommandNavItem({
   offsetX = 0,
   widthPx = 380,
 }: CommandNavItemProps) {
-  const { glyph, colorClass } = ICONS[icon]
-  const navigate = useNavigate()
-  const navigating = useRef(false)
+  const { glyph, colorClass } = ICONS[icon];
+  const navigate = useNavigate();
+  const navigating = useRef(false);
 
   const handleNav = async () => {
-    if (navigating.current) return
-    navigating.current = true
-    transitionBus.markExternallyStarted()
-    await transitionBus.playUntilCovered()
-    navigate(path)
-  }
+    if (navigating.current) return;
+    navigating.current = true;
+    transitionBus.markExternallyStarted();
+    await transitionBus.playUntilCovered();
+    navigate(path);
+  };
 
   return (
     <li
       className="hero-command-item"
       style={
         {
-          '--off': `${offsetX}px`,
-          '--rot': `${rotation}deg`,
+          "--off": `${offsetX}px`,
+          "--rot": `${rotation}deg`,
           width: `min(${widthPx}px, 100%)`,
         } as React.CSSProperties
       }
@@ -84,5 +84,5 @@ export function CommandNavItem({
         </span>
       </button>
     </li>
-  )
+  );
 }

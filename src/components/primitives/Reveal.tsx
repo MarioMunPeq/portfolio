@@ -1,17 +1,17 @@
-import { motion, useReducedMotion, type Variants } from 'motion/react'
-import type { ReactNode } from 'react'
+import { motion, useReducedMotion, type Variants } from "motion/react";
+import type { ReactNode } from "react";
 
-const EASE: [number, number, number, number] = [0.76, 0, 0.24, 1]
+const EASE: [number, number, number, number] = [0.76, 0, 0.24, 1];
 
 interface RevealProps {
-  children: ReactNode
+  children: ReactNode;
   /** Desfase de inicio en segundos. */
-  delay?: number
+  delay?: number;
   /** Distancia vertical inicial en px. */
-  y?: number
+  y?: number;
   /** Fraccion del elemento visible que dispara la entrada. */
-  amount?: number
-  className?: string
+  amount?: number;
+  className?: string;
 }
 
 /**
@@ -26,7 +26,7 @@ export function Reveal({
   amount = 0.2,
   className,
 }: RevealProps) {
-  const reduced = useReducedMotion()
+  const reduced = useReducedMotion();
 
   const variants: Variants = {
     hidden: reduced ? { opacity: 1, y: 0 } : { opacity: 0, y },
@@ -35,7 +35,7 @@ export function Reveal({
       y: 0,
       transition: { duration: 0.6, ease: EASE, delay },
     },
-  }
+  };
 
   return (
     <motion.div
@@ -47,5 +47,5 @@ export function Reveal({
     >
       {children}
     </motion.div>
-  )
+  );
 }

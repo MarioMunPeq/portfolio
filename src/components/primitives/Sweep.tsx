@@ -1,25 +1,25 @@
-import { motion, useTransform, type MotionValue } from 'motion/react'
+import { motion, useTransform, type MotionValue } from "motion/react";
 
 interface SweepProps {
   /** 0 = fuera de pantalla · 1 = cubre el viewport. */
-  progress: MotionValue<number>
+  progress: MotionValue<number>;
   /** Si se define, el barrido hace fade a 0 entre fadeOutAt y 1. */
-  fadeOutAt?: number
-  className?: string
+  fadeOutAt?: number;
+  className?: string;
 }
 
 /**
  * Barrido diagonal rojo/negro — elemento firma del proyecto.
  * Dos paneles sesgados que atraviesan la pantalla segun `progress`.
  */
-export function Sweep({ progress, fadeOutAt, className = '' }: SweepProps) {
-  const xRed = useTransform(progress, [0, 1], ['-160vw', '0vw'])
-  const xBlack = useTransform(progress, [0, 1], ['-160vw', '8vw'])
+export function Sweep({ progress, fadeOutAt, className = "" }: SweepProps) {
+  const xRed = useTransform(progress, [0, 1], ["-160vw", "0vw"]);
+  const xBlack = useTransform(progress, [0, 1], ["-160vw", "8vw"]);
   const opacity = useTransform(
     progress,
     fadeOutAt !== undefined ? [fadeOutAt, 1] : [0, 1],
     [1, 0],
-  )
+  );
 
   return (
     <motion.div
@@ -36,5 +36,5 @@ export function Sweep({ progress, fadeOutAt, className = '' }: SweepProps) {
         style={{ x: xBlack, skewX: -10 }}
       />
     </motion.div>
-  )
+  );
 }

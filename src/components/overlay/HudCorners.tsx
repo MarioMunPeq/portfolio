@@ -27,5 +27,5 @@ export function HudCorners() {
         <span className="absolute bottom-0 right-0 h-9 w-[2px] bg-current" />
       </span>
     </div>
-  )
+  );
 }

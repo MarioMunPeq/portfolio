@@ -1,10 +1,10 @@
-const CHARCOAL = '#111111'
-const YELLOW = '#FFD21A'
-const ORANGE = '#F5A900'
-const DARK_ORANGE = '#D98200'
+const CHARCOAL = "#111111";
+const YELLOW = "#FFD21A";
+const ORANGE = "#F5A900";
+const DARK_ORANGE = "#D98200";
 
-const CX = 148
-const CY = 146
+const CX = 148;
+const CY = 146;
 
 /**
  * Estrella facetada estilo Persona 5 Social Stats.
@@ -20,7 +20,7 @@ const CY = 146
  *   4. Facetas naranja oscuro (planos en sombra)
  *   5. Facetas naranja (tonos medios)
  */
-export function SocialStar({ className = '' }: { className?: string }) {
+export function SocialStar({ className = "" }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 300 300"
@@ -47,30 +47,18 @@ export function SocialStar({ className = '' }: { className?: string }) {
       {/* ── 3. Facetas amarillas (planos iluminados, luz superior-izquierda) ── */}
 
       {/* Gran cuadrilatera: cara izquierda del brazo superior + brazo superior-izquierdo */}
-      <polygon
-        points={`150,20 119,108 28,111 ${CX},${CY}`}
-        fill={YELLOW}
-      />
+      <polygon points={`150,20 119,108 28,111 ${CX},${CY}`} fill={YELLOW} />
 
       {/* Brazo superior-derecho, cara superior iluminada */}
-      <polygon
-        points={`274,110 179,110 ${CX},${CY}`}
-        fill={YELLOW}
-      />
+      <polygon points={`274,110 179,110 ${CX},${CY}`} fill={YELLOW} />
 
       {/* ── 4. Facetas naranja oscuro (planos en sombra) ── */}
 
       {/* Brazo superior, cara derecha en sombra */}
-      <polygon
-        points={`150,20 ${CX},${CY} 179,110`}
-        fill={DARK_ORANGE}
-      />
+      <polygon points={`150,20 ${CX},${CY} 179,110`} fill={DARK_ORANGE} />
 
       {/* Brazo superior-derecho, cara inferior en sombra */}
-      <polygon
-        points={`274,110 ${CX},${CY} 200,166`}
-        fill={DARK_ORANGE}
-      />
+      <polygon points={`274,110 ${CX},${CY} 200,166`} fill={DARK_ORANGE} />
 
       {/* Gran cuadrilatera inferior: sombra profunda en brazos inferiores */}
       <polygon
@@ -81,22 +69,13 @@ export function SocialStar({ className = '' }: { className?: string }) {
       {/* ── 5. Facetas naranja (tonos medios) ── */}
 
       {/* Brazo inferior-derecho, cara superior */}
-      <polygon
-        points={`224,252 200,166 ${CX},${CY}`}
-        fill={ORANGE}
-      />
+      <polygon points={`224,252 200,166 ${CX},${CY}`} fill={ORANGE} />
 
       {/* Brazo inferior-izquierdo, cara superior */}
-      <polygon
-        points={`74,255 ${CX},${CY} 102,166`}
-        fill={ORANGE}
-      />
+      <polygon points={`74,255 ${CX},${CY} 102,166`} fill={ORANGE} />
 
       {/* Brazo superior-izquierdo, cara inferior */}
-      <polygon
-        points={`28,111 102,166 ${CX},${CY}`}
-        fill={ORANGE}
-      />
+      <polygon points={`28,111 102,166 ${CX},${CY}`} fill={ORANGE} />
     </svg>
-  )
+  );
 }

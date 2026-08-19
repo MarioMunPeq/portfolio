@@ -10,7 +10,7 @@ import {
   faFire,
   faFile,
   faCloudArrowUp,
-} from '@fortawesome/free-solid-svg-icons'
+} from "@fortawesome/free-solid-svg-icons";
 import {
   faJava,
   faPython,
@@ -19,47 +19,47 @@ import {
   faAndroid,
   faUnity,
   faFigma,
-} from '@fortawesome/free-brands-svg-icons'
-import { Reveal } from '../primitives/Reveal'
-import type { ProfileSkills, SpokenLanguage } from '../../data/profile'
+} from "@fortawesome/free-brands-svg-icons";
+import { Reveal } from "../primitives/Reveal";
+import type { ProfileSkills, SpokenLanguage } from "../../data/profile";
 
 interface Props {
-  skills: ProfileSkills
-  languages: SpokenLanguage[]
-  interests: string[]
+  skills: ProfileSkills;
+  languages: SpokenLanguage[];
+  interests: string[];
 }
 
 interface Category {
-  suit: string
-  label: string
-  items: string[]
+  suit: string;
+  label: string;
+  items: string[];
 }
 
 const ICONS: Record<string, typeof faJava> = {
-  'Java': faJava,
-  'Python': faPython,
-  'Kotlin': faMobileAndroid,
-  'C#': faCode,
-  'SQL': faDatabase,
-  'HTML/CSS': faHtml5,
-  'Git/GitHub': faGitAlt,
-  'Liferay': faServer,
-  'Odoo': faCogs,
-  'Power Platform': faChartArea,
-  'Android Studio': faAndroid,
-  'Unity/Godot': faUnity,
-  'Scikit-learn': faBrain,
-  'Pandas': faTable,
-  'PyTorch': faFire,
-  'Office': faFile,
-  'Figma': faFigma,
-  'Firebase': faCloudArrowUp,
-}
+  Java: faJava,
+  Python: faPython,
+  Kotlin: faMobileAndroid,
+  "C#": faCode,
+  SQL: faDatabase,
+  "HTML/CSS": faHtml5,
+  "Git/GitHub": faGitAlt,
+  Liferay: faServer,
+  Odoo: faCogs,
+  "Power Platform": faChartArea,
+  "Android Studio": faAndroid,
+  "Unity/Godot": faUnity,
+  "Scikit-learn": faBrain,
+  Pandas: faTable,
+  PyTorch: faFire,
+  Office: faFile,
+  Figma: faFigma,
+  Firebase: faCloudArrowUp,
+};
 
 function TechIcon({ name }: { name: string }) {
-  const icon = ICONS[name]
-  if (!icon) return null
-  const path = icon.icon[4]
+  const icon = ICONS[name];
+  if (!icon) return null;
+  const path = icon.icon[4];
   return (
     <svg
       viewBox={`0 0 ${icon.icon[0]} ${icon.icon[1]}`}
@@ -67,18 +67,22 @@ function TechIcon({ name }: { name: string }) {
       className="sdeck__card-icon"
       fill="currentColor"
     >
-      {Array.isArray(path) ? path.map((d) => <path key={d} d={d} />) : <path d={path} />}
+      {Array.isArray(path) ? (
+        path.map((d) => <path key={d} d={d} />)
+      ) : (
+        <path d={path} />
+      )}
     </svg>
-  )
+  );
 }
 
 export function SkillMenuSection({ skills }: Props) {
   const CATEGORIES: Category[] = [
-    { suit: '♦', label: 'PROGRAMMING', items: skills.programming },
-    { suit: '♣', label: 'TECHNOLOGIES', items: skills.technologies },
-    { suit: '♥', label: 'AI & DATA', items: skills.aiData },
-    { suit: '♠', label: 'OTHERS', items: skills.other },
-  ]
+    { suit: "♦", label: "PROGRAMMING", items: skills.programming },
+    { suit: "♣", label: "TECHNOLOGIES", items: skills.technologies },
+    { suit: "♥", label: "AI & DATA", items: skills.aiData },
+    { suit: "♠", label: "OTHERS", items: skills.other },
+  ];
 
   return (
     <Reveal delay={0.16}>
@@ -135,5 +139,5 @@ export function SkillMenuSection({ skills }: Props) {
         ))}
       </div>
     </Reveal>
-  )
+  );
 }

@@ -1,14 +1,14 @@
-import type { ReactNode } from 'react'
+import type { ReactNode } from "react";
 
 interface PreviewBoxProps {
   /** null = captura pendiente: se muestra el manuscrito rojo. */
-  src: string | null
-  alt: string
+  src: string | null;
+  alt: string;
   /** Pie opcional sobre el marco. */
-  caption?: string
+  caption?: string;
   /** Capas decorativas sobre el marco (sombra roja, corchetes, sellos…). */
-  children?: ReactNode
-  className?: string
+  children?: ReactNode;
+  className?: string;
 }
 
 /**
@@ -17,14 +17,24 @@ interface PreviewBoxProps {
  * rojo sobre trama de tinta — sin placeholders crudos. Deduplica el patron
  * de la vista previa del inventario y de la galeria de las fichas.
  */
-export function PreviewBox({ src, alt, caption, children, className = '' }: PreviewBoxProps) {
+export function PreviewBox({
+  src,
+  alt,
+  caption,
+  children,
+  className = "",
+}: PreviewBoxProps) {
   return (
     <figure
       className={`proj-frame relative overflow-hidden border-2 border-paper bg-bg-content-alt ${className}`}
     >
       <div className="relative aspect-[16/10] overflow-hidden">
         {src ? (
-          <img src={src} alt={alt} className="block h-full w-full object-cover" />
+          <img
+            src={src}
+            alt={alt}
+            className="block h-full w-full object-cover"
+          />
         ) : (
           <div
             role="img"
@@ -52,5 +62,5 @@ export function PreviewBox({ src, alt, caption, children, className = '' }: Prev
 
       {children}
     </figure>
-  )
+  );
 }
