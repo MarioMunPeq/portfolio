@@ -12,9 +12,9 @@ const linkClass =
 export function BottomBar() {
   return (
     <div className="fixed inset-x-0 bottom-0 z-50 bg-bg-hero">
-      <div className="flex items-center px-3 py-3 md:px-5">
+      <div className="flex flex-col gap-y-1 px-3 py-2 sm:flex-row sm:items-center sm:gap-y-0 sm:px-5 sm:py-3">
         <MusicPlayer />
-        <div className="ml-auto flex shrink-0 items-center gap-x-4">
+        <div className="flex shrink-0 items-center gap-x-4 sm:ml-auto">
           {profile.links.github && (
             <a
               href={profile.links.github.url}

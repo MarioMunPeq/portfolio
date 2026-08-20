@@ -69,14 +69,14 @@ export function Projects() {
       <section className="relative min-h-dvh overflow-x-hidden">
         <ProjectsGraphicLayer />
 
-        <div className="relative z-10 flex min-h-dvh flex-col px-6 pb-24 pt-24 md:px-10 lg:px-14">
+        <div className="relative z-10 flex min-h-dvh flex-col px-4 pb-24 pt-20 sm:px-6 md:px-10 lg:px-14">
           <SectionTitle
             label="Inventario de proyectos"
             title="INVENTARIO"
             persona
           />
 
-          <div className="grid flex-1 items-center gap-x-10 py-8 lg:grid-cols-[1.06fr_1fr] xl:gap-x-16 xl:py-10">
+          <div className="grid flex-1 items-start gap-y-8 overflow-hidden py-6 sm:py-8 lg:grid-cols-[1.06fr_1fr] lg:items-center lg:gap-x-10 lg:gap-y-0 lg:overflow-visible xl:gap-x-16 xl:py-10">
             <ProjectPreview project={selected} />
             <ProjectInventory
               projects={projects}
