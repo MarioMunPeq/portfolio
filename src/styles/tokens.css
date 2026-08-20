@@ -827,14 +827,14 @@ html.lenis body {
 /* ── Card grid ── */
 .sdeck__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 8px;
   justify-items: center;
 }
 
 @media (min-width: 640px) {
   .sdeck__grid {
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
