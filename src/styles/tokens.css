@@ -1205,10 +1205,20 @@ html.lenis body {
   }
 
   /* Cursor decorativo del sistema: con el cursor custom activo se oculta
-     el nativo (solo punteros finos; coarse/reduced-motion no lo activan). */
-  html[data-cursor-active],
-  html[data-cursor-active] * {
-    cursor: none !important;
+     el nativo. Media query previene cursor:none en tactil por seguridad. */
+  @media (hover: hover) and (pointer: fine) {
+    html[data-cursor-active],
+    html[data-cursor-active] * {
+      cursor: none !important;
+    }
+  }
+
+  /* Seguridad extra: ocultar elementos del cursor en dispositivos tactiles
+     aunque el componente React no se haya desactivado a tiempo. */
+  @media (hover: none) {
+    html[data-cursor-active] [aria-hidden="true"].fixed {
+      display: none !important;
+    }
   }
 }
 
@@ -2038,9 +2048,7 @@ html.lenis body {
 /* ── Multi-point sway keyframes ── */
 @keyframes sakura-fall {
   0% {
-    transform:
-      translate3d(0, -8vh, 0)
-      rotate(0deg);
+    transform: translate3d(0, -8vh, 0) rotate(0deg);
     opacity: 0;
   }
 
@@ -2049,20 +2057,17 @@ html.lenis body {
   }
 
   25% {
-    transform:
-      translate3d(var(--sway1, 10px), 25vh, 0)
+    transform: translate3d(var(--sway1, 10px), 25vh, 0)
       rotate(var(--rot1, 60deg));
   }
 
   50% {
-    transform:
-      translate3d(var(--sway2, -15px), 52vh, 0)
+    transform: translate3d(var(--sway2, -15px), 52vh, 0)
       rotate(var(--rot2, 150deg));
   }
 
   75% {
-    transform:
-      translate3d(var(--sway3, 8px), 78vh, 0)
+    transform: translate3d(var(--sway3, 8px), 78vh, 0)
       rotate(var(--rot3, 250deg));
   }
 
@@ -2071,8 +2076,7 @@ html.lenis body {
   }
 
   100% {
-    transform:
-      translate3d(var(--sway4, -5px), 108vh, 0)
+    transform: translate3d(var(--sway4, -5px), 108vh, 0)
       rotate(var(--rot4, 360deg));
     opacity: 0;
   }

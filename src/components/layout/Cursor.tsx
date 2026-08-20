@@ -116,7 +116,9 @@ export function Cursor() {
 
   useEffect(() => {
     if (reduced) return;
-    if (window.matchMedia("(pointer: coarse)").matches) return;
+
+    const hoverQuery = window.matchMedia("(hover: none)");
+    if (hoverQuery.matches) return;
 
     setEnabled(true);
     document.documentElement.setAttribute("data-cursor-active", "true");
@@ -178,6 +180,18 @@ export function Cursor() {
       setCursor((prev) => (prev.active ? { ...prev, active: false } : prev));
     };
 
+    /* Si el viewport cambia a un layout tactil (rotacion, resize),
+       forzar el apagado completo del cursor custom. */
+    const onHoverChange = (e: MediaQueryListEvent) => {
+      if (e.matches) {
+        setEnabled(false);
+        setCursor({ active: false, label: "", color: "white" });
+        setPressed(false);
+        document.documentElement.removeAttribute("data-cursor-active");
+      }
+    };
+    hoverQuery.addEventListener("change", onHoverChange);
+
     window.addEventListener("resize", onResize);
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseover", onOver);
@@ -187,6 +201,7 @@ export function Cursor() {
     document.addEventListener("mouseleave", onLeave);
 
     return () => {
+      hoverQuery.removeEventListener("change", onHoverChange);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseover", onOver);

@@ -236,10 +236,11 @@ function RoleRibbon({ role }: { role: string }) {
   return (
     <span
       className="mt-5 inline-block bg-white px-3.5 py-1.5 text-label font-bold uppercase tracking-[0.22em] text-black"
-      style={{
-        clipPath:
-          "polygon(0 0, 100% 0, calc(100% - 10px) 100%, 6px 100%)",
-      } as CSSProperties}
+      style={
+        {
+          clipPath: "polygon(0 0, 100% 0, calc(100% - 10px) 100%, 6px 100%)",
+        } as CSSProperties
+      }
     >
       {role}
     </span>
@@ -254,11 +255,12 @@ function TechStamp({ tech }: { tech: string }) {
   return (
     <span
       className="inline-flex items-center border-[1.5px] border-white/30 bg-black px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.15em] text-white/80"
-      style={{
-        clipPath:
-          "polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%)",
-        boxShadow: "2px 2px 0 rgba(0,0,0,0.3)",
-      } as CSSProperties}
+      style={
+        {
+          clipPath: "polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%)",
+          boxShadow: "2px 2px 0 rgba(0,0,0,0.3)",
+        } as CSSProperties
+      }
     >
       <span
         aria-hidden="true"

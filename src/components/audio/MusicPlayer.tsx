@@ -57,7 +57,7 @@ function TrackSelector({ current, onSelect, onClose }: SelectorProps) {
       ref={ref}
       className="bgm-selector"
       role="listbox"
-      aria-label="Select BGM"
+      aria-label="Select track"
     >
       {TRACKS.map((t, i) => (
         <button
@@ -470,7 +470,7 @@ export function MusicPlayer() {
     <>
       <audio ref={audioRef} preload="metadata" />
 
-      <div className="bgm-player" aria-label="BGM Player">
+      <div className="bgm-player" aria-label="Music Player">
         {/* ── Compact bar (always visible inside BottomBar) ── */}
         <div
           className="bgm-bar"
@@ -478,12 +478,12 @@ export function MusicPlayer() {
           role="button"
           tabIndex={0}
           aria-expanded={expanded}
-          aria-label={`BGM: ${t.title}`}
+          aria-label={`Music: ${t.title}`}
           onKeyDown={(e) => {
             if (e.key === "Enter") setExpanded((v) => !v);
           }}
         >
-          <span className="bgm-bar__label">BGM</span>
+          <span className="bgm-bar__label">♫ MUSIC</span>
           <span className="bgm-bar__sep" />
           <span
             className="bgm-bar__track"

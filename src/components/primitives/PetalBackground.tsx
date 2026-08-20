@@ -75,7 +75,7 @@ function generateParticles(): Particle[] {
       left: randRange(rng, -5, 105),
       w: baseW,
       h: baseH,
-      delay: -(randRange(rng, 0, 20)),
+      delay: -randRange(rng, 0, 20),
       duration: randRange(rng, 5, 18),
       sway1: randRange(rng, -30, 30),
       sway2: randRange(rng, -50, 50),
@@ -96,7 +96,7 @@ function generateParticles(): Particle[] {
       type: "flower",
       left: randRange(rng, 2, 98),
       size: randRange(rng, 32, 56),
-      delay: -(randRange(rng, 0, 24)),
+      delay: -randRange(rng, 0, 24),
       duration: randRange(rng, 10, 26),
       sway1: randRange(rng, -40, 40),
       sway2: randRange(rng, -60, 60),
@@ -178,11 +178,26 @@ function FlowerSpan({ p, reduced }: { p: Flower; reduced: boolean }) {
       aria-hidden="true"
     >
       {/* 5 petals arranged radially around center */}
-      <span className="sakura-flower-petal" style={{ transform: "rotate(0deg) translateY(-30%)" }} />
-      <span className="sakura-flower-petal" style={{ transform: "rotate(72deg) translateY(-30%)" }} />
-      <span className="sakura-flower-petal" style={{ transform: "rotate(144deg) translateY(-30%)" }} />
-      <span className="sakura-flower-petal" style={{ transform: "rotate(216deg) translateY(-30%)" }} />
-      <span className="sakura-flower-petal" style={{ transform: "rotate(288deg) translateY(-30%)" }} />
+      <span
+        className="sakura-flower-petal"
+        style={{ transform: "rotate(0deg) translateY(-30%)" }}
+      />
+      <span
+        className="sakura-flower-petal"
+        style={{ transform: "rotate(72deg) translateY(-30%)" }}
+      />
+      <span
+        className="sakura-flower-petal"
+        style={{ transform: "rotate(144deg) translateY(-30%)" }}
+      />
+      <span
+        className="sakura-flower-petal"
+        style={{ transform: "rotate(216deg) translateY(-30%)" }}
+      />
+      <span
+        className="sakura-flower-petal"
+        style={{ transform: "rotate(288deg) translateY(-30%)" }}
+      />
       <span className="sakura-flower-center" />
     </span>
   );
@@ -205,7 +220,7 @@ export function PetalBackground() {
           <PetalSpan key={p.id} p={p} reduced={reduced} />
         ) : (
           <FlowerSpan key={p.id} p={p as Flower} reduced={reduced} />
-        )
+        ),
       )}
     </div>
   );

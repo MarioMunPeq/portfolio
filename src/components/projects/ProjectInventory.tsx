@@ -36,7 +36,10 @@ export function ProjectInventory({
   };
 
   return (
-    <nav aria-label="Inventario de proyectos" className="relative overflow-hidden lg:overflow-visible">
+    <nav
+      aria-label="Inventario de proyectos"
+      className="relative overflow-hidden lg:overflow-visible"
+    >
       <ol className="relative flex flex-col gap-2.5" onKeyDown={onKeyDown}>
         {projects.map((project, index) => (
           <NavRow

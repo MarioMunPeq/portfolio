@@ -506,6 +506,7 @@ function CursorDiamond({
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
+    if (window.matchMedia("(hover: none)").matches) return;
     const enter = () => setVisible(true);
     const leave = () => setVisible(false);
     el.addEventListener("mouseenter", enter);
