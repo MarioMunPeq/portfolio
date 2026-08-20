@@ -25,15 +25,14 @@ const contextFor = (path: string) => {
 };
 
 /**
- * Marco de las pantallas: TopBar unificada en todas las pantallas internas
- * salvo el menu principal (trae su propia topbar) y Experiencia (conserva
- * su diseño rojo de chat y su HUD). El footer global (◆ GITHUB ◆ LINKEDIN)
- * se monta en TODAS las pantallas, incluido el menu principal. El cargador,
- * el grano y el cursor viven por encima de todo.
+ * Marco de las pantallas: TopBar unificada en todas las pantallas
+ * (incluido el menu principal, con Wordmark estatico). Experiencia
+ * conserva su HUD propio. El footer global, el cargador, el grano
+ * y el cursor viven por encima de todo.
  */
 export function Layout({ children }: LayoutProps) {
   const { pathname } = useLocation();
-  const showTopBar = pathname !== "/" && pathname !== "/experience";
+  const showTopBar = pathname !== "/experience";
 
   return (
     <div className="min-h-dvh bg-bg-hero text-paper">
@@ -45,7 +44,9 @@ export function Layout({ children }: LayoutProps) {
       </a>
       <LoadScreen />
       {pathname === "/experience" ? <HUD /> : null}
-      {showTopBar && <TopBar context={contextFor(pathname)} />}
+      {showTopBar && (
+        <TopBar context={contextFor(pathname)} static={pathname === "/"} />
+      )}
       <BottomBar />
       <Grain />
       <Cursor />

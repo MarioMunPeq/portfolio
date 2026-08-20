@@ -1,12 +1,8 @@
 import { useEffect, useState } from "react";
 import { Screen } from "../components/transition/Screen";
-import { SystemLabel } from "../components/shared/SystemLabel";
-import { Wordmark } from "../components/ui/Wordmark";
 import { CommandNavItem } from "../components/hero/CommandNavItem";
 import { HERO_COMMANDS } from "../components/hero/hero-commands";
 import { useBooted } from "../lib/boot";
-
-const SESSION_TIME = new Date().toTimeString().slice(0, 8);
 
 const MENU_CHAOS = [
   { rotation: -2, offsetX: 10, widthPx: 375 },
@@ -74,17 +70,6 @@ export function Home() {
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-[2] bg-scanlines [mix-blend-mode:overlay]"
         />
-
-        {/* Marco superior */}
-        <div className="absolute inset-x-0 top-0 z-40 flex items-center justify-between gap-4 px-6 py-3.5 md:px-10">
-          <Wordmark static />
-          <span className="hidden truncate text-center text-label font-medium uppercase tracking-[0.15em] text-paper/70 sm:block">
-            SESIoN {SESSION_TIME}
-          </span>
-          <SystemLabel className="text-paper/60 tracking-[0.15em]">
-            SISTEMA V.2026
-          </SystemLabel>
-        </div>
 
         {/* Navegacion de comandos — columna izquierda compacta */}
         <nav

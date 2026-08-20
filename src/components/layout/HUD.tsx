@@ -13,6 +13,7 @@ export function HUD() {
 
   if (location.pathname === "/") return null;
 
+  const isExperience = location.pathname === "/experience";
   const year = new Date().getFullYear();
 
   return (
@@ -36,9 +37,11 @@ export function HUD() {
           {profile.location}
         </span>
 
-        <span className="text-label font-medium uppercase tracking-[0.25em] text-paper/70">
-          {year}
-        </span>
+        {!isExperience && (
+          <span className="text-label font-medium uppercase tracking-[0.25em] text-paper/70">
+            {year}
+          </span>
+        )}
       </div>
     </div>
   );

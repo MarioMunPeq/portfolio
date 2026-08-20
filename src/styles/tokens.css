@@ -1953,8 +1953,98 @@ html.lenis body {
 }
 
 /* ================================================================
-   END MUSIC PLAYER
-   ================================================================ */
+    END MUSIC PLAYER
+    ================================================================ */
+
+/* ================================================================
+    SAKURA — global atmospheric layer (cherry blossom petals + flowers)
+    ================================================================ */
+
+.sakura-bg {
+  z-index: 0;
+}
+
+/* ── Individual petal silhouette ── */
+.sakura-petal {
+  background-color: #ff688d;
+  clip-path: ellipse(40% 50% at 50% 50%);
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+}
+
+/* ── Flower group: positioned container for 5 radial petals ── */
+.sakura-flower-group {
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+}
+
+.sakura-flower-petal {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 40%;
+  height: 50%;
+  margin-left: -20%;
+  margin-top: -25%;
+  background-color: #ff688d;
+  clip-path: ellipse(45% 50% at 50% 50%);
+  transform-origin: 50% 100%;
+}
+
+.sakura-flower-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 18%;
+  height: 18%;
+  margin-left: -9%;
+  margin-top: -9%;
+  border-radius: 50%;
+  background-color: #d4527a;
+}
+
+/* ── Multi-point sway keyframes ── */
+@keyframes sakura-fall {
+  0% {
+    transform:
+      translate3d(0, -8vh, 0)
+      rotate(0deg);
+    opacity: 0;
+  }
+
+  8% {
+    opacity: var(--petal-opacity, 0.5);
+  }
+
+  25% {
+    transform:
+      translate3d(var(--sway1, 10px), 25vh, 0)
+      rotate(var(--rot1, 60deg));
+  }
+
+  50% {
+    transform:
+      translate3d(var(--sway2, -15px), 52vh, 0)
+      rotate(var(--rot2, 150deg));
+  }
+
+  75% {
+    transform:
+      translate3d(var(--sway3, 8px), 78vh, 0)
+      rotate(var(--rot3, 250deg));
+  }
+
+  85% {
+    opacity: var(--petal-opacity, 0.5);
+  }
+
+  100% {
+    transform:
+      translate3d(var(--sway4, -5px), 108vh, 0)
+      rotate(var(--rot4, 360deg));
+    opacity: 0;
+  }
+}
 
 /* --- Reduced motion: eliminar movimiento no esencial (spec §9) --- */
 @media (prefers-reduced-motion: reduce) {

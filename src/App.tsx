@@ -3,6 +3,7 @@ import { TransitionRoutes } from "./components/transition/TransitionRoutes";
 import { VideoTransition } from "./components/transition/VideoTransition";
 import { Layout } from "./components/layout/Layout";
 import { ScrollProvider } from "./components/layout/ScrollProvider";
+import { PetalBackground } from "./components/primitives/PetalBackground";
 import { Home } from "./pages/Home";
 import { About } from "./pages/About";
 import { Projects } from "./pages/Projects";
@@ -24,6 +25,7 @@ function App() {
   return (
     <BrowserRouter basename={APP_BASE}>
       <ScrollProvider>
+        <PetalBackground />
         <Layout>
           <TransitionRoutes>
             <Route path="/" element={<Home />} />
