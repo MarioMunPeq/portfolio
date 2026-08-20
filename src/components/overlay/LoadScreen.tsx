@@ -109,11 +109,11 @@ export function LoadScreen() {
     [0.16, 0.2, 0.46, 0.5],
     [0, 0.55, 0.55, 0],
   );
+  const [glowOpacity, setGlowOpacity] = useState(0.65);
   const glowCombinedOpacity = useTransform(maskOpacity, (o) => o * glowOpacity);
 
   const impactFired = useRef(false);
   const exitStarted = useRef(false);
-  const [glowOpacity, setGlowOpacity] = useState(0.65);
 
   /* Layered glow breathing — subtle 3s cycle. */
   useEffect(() => {
