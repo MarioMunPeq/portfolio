@@ -29,29 +29,29 @@ interface CardLayout {
 }
 const LAYOUTS: CardLayout[] = [
   {
-    wrap: "lg:mr-auto lg:ml-[4%]",
-    maxW: "lg:max-w-[44%]",
+    wrap: "ml-[5%] mr-auto sm:ml-[8%] lg:mr-auto lg:ml-[4%]",
+    maxW: "max-w-[72%] sm:max-w-[68%] lg:max-w-[44%]",
     rot: "-rotate-[1.2deg]",
     sx: 10,
     sy: 12,
   },
   {
-    wrap: "lg:ml-auto lg:mr-[5%]",
-    maxW: "lg:max-w-[42%]",
+    wrap: "mr-[5%] ml-auto sm:mr-[8%] lg:ml-auto lg:mr-[5%]",
+    maxW: "max-w-[72%] sm:max-w-[68%] lg:max-w-[42%]",
     rot: "rotate-[0.9deg]",
     sx: 10,
     sy: 14,
   },
   {
-    wrap: "lg:mr-auto lg:ml-[10%]",
-    maxW: "lg:max-w-[42%]",
+    wrap: "ml-[5%] mr-auto sm:ml-[8%] lg:mr-auto lg:ml-[10%]",
+    maxW: "max-w-[72%] sm:max-w-[68%] lg:max-w-[42%]",
     rot: "-rotate-[0.7deg]",
     sx: 9,
     sy: 12,
   },
   {
-    wrap: "lg:ml-auto lg:mr-[4%]",
-    maxW: "lg:max-w-[45%]",
+    wrap: "mr-[5%] ml-auto sm:mr-[8%] lg:ml-auto lg:mr-[4%]",
+    maxW: "max-w-[72%] sm:max-w-[68%] lg:max-w-[45%]",
     rot: "rotate-[1.1deg]",
     sx: 10,
     sy: 12,
@@ -63,11 +63,14 @@ interface Connector {
   ang: number;
   leftPct: number;
   shiftPx: number;
+  // Mobile connector
+  mShiftPx: number;
+  mAng: number;
 }
 const CONNECTORS: Connector[] = [
-  { ang: 26, leftPct: 44.5, shiftPx: 34 },
-  { ang: -26, leftPct: 56, shiftPx: 34 },
-  { ang: 26, leftPct: 48, shiftPx: 34 },
+  { ang: 26, leftPct: 44.5, shiftPx: 34, mShiftPx: 4, mAng: 22 },
+  { ang: -26, leftPct: 56, shiftPx: 34, mShiftPx: -4, mAng: -22 },
+  { ang: 26, leftPct: 48, shiftPx: 34, mShiftPx: 4, mAng: 22 },
 ];
 
 /* ================================================================
@@ -387,9 +390,24 @@ function MessageBlock({
     <div className="group">
       {/* Conector angular entre mensajes */}
       {conn && (
-        <div className="relative h-24 md:h-56" aria-hidden="true">
+        <div className="relative h-14 md:h-56" aria-hidden="true">
+          {/* Mobile connector — near-center, small skew */}
           <div
-            className="absolute z-10 bg-black"
+            className="absolute z-10 bg-black md:hidden"
+            style={
+              {
+                top: "-3rem",
+                left: `calc(50% - ${conn.mShiftPx}px)`,
+                width: "clamp(1rem, 3vw, 1.75rem)",
+                height: "calc(100% + 6rem)",
+                transform: `skewX(${conn.mAng}deg)`,
+                transformOrigin: "top left",
+              } as CSSProperties
+            }
+          />
+          {/* Desktop connector — original positioning, hidden on mobile */}
+          <div
+            className="absolute z-10 hidden bg-black md:block"
             style={
               {
                 top: "-4rem",
