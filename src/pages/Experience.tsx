@@ -2,6 +2,7 @@ import { motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
 import type { CSSProperties } from "react";
 import { Screen } from "../components/transition/Screen";
+import { PetalBackground } from "../components/primitives/PetalBackground";
 import { experience } from "../data/experience";
 import type { ExperienceEntry } from "../data/experience";
 import { companyLogoCandidates } from "../lib/company-logo";
@@ -471,6 +472,7 @@ function MessageBlock({
 export function Experience() {
   return (
     <Screen className="min-h-dvh bg-[#B80404] text-white">
+      <PetalBackground />
       <section className="relative min-h-dvh overflow-x-clip pt-11 md:pt-12">
         <BackgroundDecorations />
         <PageTitleBar />

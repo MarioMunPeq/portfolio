@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { useLocation } from "react-router-dom";
-import { HUD } from "./HUD";
 import { TopBar } from "../ui/TopBar";
 import { BottomBar } from "../ui/BottomBar";
 import { Cursor } from "./Cursor";
@@ -26,13 +25,11 @@ const contextFor = (path: string) => {
 
 /**
  * Marco de las pantallas: TopBar unificada en todas las pantallas
- * (incluido el menu principal, con Wordmark estatico). Experiencia
- * conserva su HUD propio. El footer global, el cargador, el grano
- * y el cursor viven por encima de todo.
+ * (incluido el menu principal, con Wordmark estatico). El footer
+ * global, el cargador, el grano y el cursor viven por encima de todo.
  */
 export function Layout({ children }: LayoutProps) {
   const { pathname } = useLocation();
-  const showTopBar = pathname !== "/experience";
 
   return (
     <div className="min-h-dvh bg-bg-hero text-paper">
@@ -43,10 +40,7 @@ export function Layout({ children }: LayoutProps) {
         Saltar al contenido
       </a>
       <LoadScreen />
-      {pathname === "/experience" ? <HUD /> : null}
-      {showTopBar && (
-        <TopBar context={contextFor(pathname)} static={pathname === "/"} />
-      )}
+      <TopBar context={contextFor(pathname)} static={pathname === "/"} />
       <BottomBar />
       <Grain />
       <Cursor />

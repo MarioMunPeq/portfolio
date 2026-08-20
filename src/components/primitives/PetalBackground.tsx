@@ -1,7 +1,23 @@
 import { useMemo } from "react";
 import { useReducedMotion } from "motion/react";
 
-/* ── Petal (Type A) ─────────────────────────────────────── */
+/* ── Mulberry32 — fast, deterministic PRNG ──────────────── */
+
+function mulberry32(seed: number) {
+  let s = seed | 0;
+  return () => {
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function randRange(rng: () => number, min: number, max: number) {
+  return min + rng() * (max - min);
+}
+
+/* ── Particle interfaces ────────────────────────────────── */
 
 interface Petal {
   id: string;
@@ -21,8 +37,6 @@ interface Petal {
   rot4: number;
   opacity: number;
 }
-
-/* ── Flower (Type B) ────────────────────────────────────── */
 
 interface Flower {
   id: string;
@@ -47,58 +61,52 @@ type Particle = Petal | Flower;
 const PETAL_COUNT = 24;
 const FLOWER_COUNT = 5;
 
-function seededRand(seed: number) {
-  return (offset: number) => {
-    const v = ((seed + offset) * 137.508) % 1;
-    return v < 0 ? v + 1 : v;
-  };
-}
-
 function generateParticles(): Particle[] {
+  const rng = mulberry32(42);
   const particles: Particle[] = [];
 
   /* ── Individual petals ── */
   for (let i = 0; i < PETAL_COUNT; i++) {
-    const r = seededRand(i);
+    const baseW = randRange(rng, 6, 18);
+    const baseH = baseW * randRange(rng, 1.2, 2.0);
     particles.push({
       id: `p${i}`,
       type: "petal",
-      left: r(1) * 100,
-      w: 8 + r(2) * 8,
-      h: 12 + r(3) * 10,
-      delay: -(r(4) * 16),
-      duration: 7 + r(5) * 7,
-      sway1: -15 + r(6) * 30,
-      sway2: -25 + r(7) * 50,
-      sway3: -20 + r(8) * 40,
-      sway4: -10 + r(9) * 20,
-      rot1: 30 + r(10) * 60,
-      rot2: 90 + r(11) * 120,
-      rot3: 180 + r(12) * 90,
-      rot4: 270 + r(13) * 120,
-      opacity: 0.3 + r(14) * 0.5,
+      left: randRange(rng, -5, 105),
+      w: baseW,
+      h: baseH,
+      delay: -(randRange(rng, 0, 20)),
+      duration: randRange(rng, 5, 18),
+      sway1: randRange(rng, -30, 30),
+      sway2: randRange(rng, -50, 50),
+      sway3: randRange(rng, -40, 40),
+      sway4: randRange(rng, -25, 25),
+      rot1: randRange(rng, 0, 360),
+      rot2: randRange(rng, 0, 360),
+      rot3: randRange(rng, 0, 360),
+      rot4: randRange(rng, 0, 360),
+      opacity: randRange(rng, 0.2, 0.75),
     });
   }
 
-  /* ── Complete sakura flowers ── */
+  /* ── Complete sakura flowers — significantly larger, fully independent positions ── */
   for (let i = 0; i < FLOWER_COUNT; i++) {
-    const r = seededRand(i + 200);
     particles.push({
       id: `f${i}`,
       type: "flower",
-      left: r(1) * 100,
-      size: 18 + r(2) * 12,
-      delay: -(r(3) * 18),
-      duration: 12 + r(4) * 8,
-      sway1: -20 + r(5) * 40,
-      sway2: -35 + r(6) * 70,
-      sway3: -25 + r(7) * 50,
-      sway4: -15 + r(8) * 30,
-      rot1: 15 + r(9) * 45,
-      rot2: 60 + r(10) * 90,
-      rot3: 120 + r(11) * 120,
-      rot4: 200 + r(12) * 160,
-      opacity: 0.35 + r(13) * 0.4,
+      left: randRange(rng, 2, 98),
+      size: randRange(rng, 32, 56),
+      delay: -(randRange(rng, 0, 24)),
+      duration: randRange(rng, 10, 26),
+      sway1: randRange(rng, -40, 40),
+      sway2: randRange(rng, -60, 60),
+      sway3: randRange(rng, -50, 50),
+      sway4: randRange(rng, -35, 35),
+      rot1: randRange(rng, 0, 360),
+      rot2: randRange(rng, 0, 360),
+      rot3: randRange(rng, 0, 360),
+      rot4: randRange(rng, 0, 360),
+      opacity: randRange(rng, 0.25, 0.65),
     });
   }
 
