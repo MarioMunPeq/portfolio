@@ -160,10 +160,10 @@ function DrivingCar({ className = "" }: { className?: string }) {
 // estrella, y sus inclinaciones suaves (casi horizontales).
 const LABEL_POSITIONS = [
   { left: 48, top: 0 },
-  { left: 94, top: 28 },
-  { left: 92, top: 90 },
-  { left: 6, top: 90 },
-  { left: 8, top: 28 },
+  { left: 88, top: 28 },
+  { left: 88, top: 90 },
+  { left: 10, top: 90 },
+  { left: 12, top: 28 },
 ];
 const LABEL_ROTATIONS = [-1, -3, 3, -2, 1];
 
@@ -221,8 +221,8 @@ function PortraitSlot() {
 
 function StatStar() {
   return (
-    <div className="relative w-full pt-4 pb-4">
-      <div className="relative aspect-square w-full max-w-[34rem] ml-auto">
+    <div className="relative w-full overflow-hidden pt-4 pb-4">
+      <div className="relative aspect-square w-full max-w-[280px] mx-auto lg:max-w-[34rem] lg:ml-auto lg:overflow-visible">
         <SocialStar className="absolute inset-0 h-full w-full [transform:rotate(2deg)]" />
 
         {STATS.map(({ label, value, descriptor }, i) => {
@@ -280,7 +280,7 @@ export function About() {
         {/* Palabra fantasma de marca */}
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute right-0 top-2 z-0 -rotate-6 select-none font-p5-menu uppercase leading-none text-outline-faint opacity-55"
+          className="pointer-events-none absolute right-0 top-2 z-0 hidden -rotate-6 select-none font-p5-menu uppercase leading-none text-outline-faint opacity-55 md:block"
           style={{ fontSize: "clamp(7rem, 15vw, 14rem)" }}
         >
           PERFIL
@@ -351,7 +351,7 @@ export function About() {
                 </div>
 
                 {/* Pegatina de rol + credencial (DAM vive aqui, no en el footer) */}
-                <div className="relative z-30 mt-4 flex flex-wrap items-center justify-end gap-2 pr-2">
+                <div className="relative z-30 mt-4 flex flex-wrap items-center justify-start gap-2 pl-2 lg:justify-end lg:pr-2">
                   <Tag font="sans" className="rotate-1">
                     {hero.eyebrow}
                   </Tag>
