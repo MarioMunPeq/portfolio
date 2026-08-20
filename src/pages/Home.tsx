@@ -74,10 +74,10 @@ export function Home() {
         {/* Navegacion de comandos — columna izquierda compacta */}
         <nav
           aria-label="Menu principal del portfolio"
-          className="absolute left-[4%] top-1/2 z-20 -translate-y-1/2 sm:left-[5%] lg:left-[6%]"
+          className="absolute left-3 top-[45%] z-20 -translate-y-1/2 sm:left-[5%] sm:top-1/2 lg:left-[6%]"
         >
           <ol
-            className={`flex w-[min(85vw,425px)] flex-col gap-3${entered ? " hero-commands--enter" : ""}`}
+            className={`flex w-[min(88vw,425px)] flex-col gap-2 sm:gap-3${entered ? " hero-commands--enter" : ""}`}
           >
             {HERO_COMMANDS.map((command, i) => (
               <CommandNavItem

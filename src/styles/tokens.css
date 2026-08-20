@@ -344,6 +344,38 @@
   }
 }
 
+/* ── Mobile hero commands — dedicated composition ≤639px ───────── */
+@media (max-width: 639px) {
+  .hero-command-item {
+    --off: 0px !important;
+    transform: rotate(var(--rot, 0deg));
+  }
+
+  .hero-command-item:has(.metro-menu-btn:hover) {
+    transform: rotate(calc(var(--rot, 0deg) * 1.5));
+  }
+
+  .hero-cmd {
+    padding: 16px 36px 16px 14px;
+    gap: 8px;
+    clip-path: polygon(0 14%, 4% 0, 94% 0, 100% 50%, 94% 100%, 4% 100%, 0 86%);
+  }
+
+  .hero-cmd-track {
+    clip-path: polygon(0 14%, 4% 0, 94% 0, 100% 50%, 94% 100%, 4% 100%, 0 86%);
+  }
+
+  .hero-btn-icon {
+    height: 24px !important;
+    width: 24px !important;
+    font-size: 14px !important;
+  }
+
+  .hero-cmd > span:nth-child(3) {
+    font-size: 20px;
+  }
+}
+
 /* Sello de estrella por categoria (pantalla de carga): pasa de estrella
    hueca (contorno) a estrella dorada rellena segun el estado de cada
    categoria. Solo dos estados (empty → full) con transicion limpia; sin
