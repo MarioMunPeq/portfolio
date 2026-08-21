@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useMediaQuery } from "../../lib/use-media-query";
 import { transitionBus } from "../transition/transition-bus";
 
 export type HeroIcon = "triangle" | "square" | "circle" | "cross" | "asterisk";
@@ -43,10 +44,15 @@ export function CommandNavItem({
   const { glyph, colorClass } = ICONS[icon];
   const navigate = useNavigate();
   const navigating = useRef(false);
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   const handleNav = async () => {
     if (navigating.current) return;
     navigating.current = true;
+    if (!isDesktop) {
+      navigate(path);
+      return;
+    }
     transitionBus.markExternallyStarted();
     await transitionBus.playUntilCovered();
     navigate(path);

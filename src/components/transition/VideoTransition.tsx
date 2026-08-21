@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useMediaQuery } from "../../lib/use-media-query";
 
 /**
  * Singleton fullscreen video overlay for page transitions.
@@ -13,11 +14,16 @@ import { useEffect, useRef } from "react";
  *
  * On `ended` the video pre-seeks back to 0 so the next transition avoids
  * an expensive backward seek through the WebM container.
+ *
+ * On mobile/tablet (< 1024 px) the video is completely skipped — no
+ * element is rendered, no file is loaded.
  */
 export function VideoTransition() {
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
+    if (!isDesktop) return;
     const video = videoRef.current;
     if (!video) return;
 
@@ -81,7 +87,9 @@ export function VideoTransition() {
       disposed = true;
       video.removeEventListener("ended", onEnded);
     };
-  }, []);
+  }, [isDesktop]);
+
+  if (!isDesktop) return null;
 
   return (
     <video

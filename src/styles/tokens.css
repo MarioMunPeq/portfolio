@@ -126,15 +126,6 @@
   );
 }
 
-/* Rayas de peligro rojo/negro (barra superior del menu principal) */
-@utility bg-hazard {
-  background-image: repeating-linear-gradient(
-    -45deg,
-    var(--color-accent) 0 14px,
-    var(--color-bg-hero) 14px 28px
-  );
-}
-
 /* Scanlines horizontales sutiles del hero (solo menu principal) */
 @utility bg-scanlines {
   background-image: repeating-linear-gradient(
@@ -1869,18 +1860,32 @@ html.lenis body {
 .bgm-vol__track {
   position: relative;
   flex: 1;
+  height: 36px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.bgm-vol__track::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
   height: 4px;
   background: rgba(245, 245, 240, 0.12);
-  cursor: pointer;
 }
 
 .bgm-vol__fill {
   position: absolute;
-  top: 0;
   left: 0;
-  height: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 4px;
+  width: 0;
   background: var(--color-paper);
   transition: width 0.08s linear;
+  z-index: 1;
 }
 
 .bgm-vol__pct {

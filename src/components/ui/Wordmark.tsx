@@ -50,12 +50,8 @@ export function Wordmark({
     <Link
       to="/"
       data-cursor="back"
-      className={`group inline-flex items-center gap-2.5 text-label font-medium uppercase tracking-[0.25em] ${className}`}
+      className={`group inline-flex items-center text-label font-medium uppercase tracking-[0.25em] ${className}`}
     >
-      <span
-        aria-hidden="true"
-        className="h-2.5 w-2.5 bg-accent [clip-path:polygon(100%_0,100%_100%,0_50%)] transition-transform duration-200 group-hover:translate-x-0.5"
-      />
       <span className="flex flex-col leading-none">
         <span className="font-display text-base tracking-[0.2em] text-paper transition-colors duration-200 group-hover:text-accent">
           {INITIALS}

@@ -1,34 +1,33 @@
-import { profile } from "../../data/profile";
 import { Wordmark } from "./Wordmark";
 
+const MONTHS = [
+  "ENE", "FEB", "MAR", "ABR", "MAY", "JUN",
+  "JUL", "AGO", "SEP", "OCT", "NOV", "DIC",
+];
+
+function formatSystemDate(): string {
+  const d = new Date();
+  return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+}
+
 interface TopBarProps {
-  /** Etiqueta de contexto de la pantalla actual (PERFIL, INVENTARIO...). */
-  context: string;
   /** Version estatica (menu principal): Wordmark sin enlace ni flecha. */
   static?: boolean;
 }
 
 /**
- * Barra superior de sistema de las pantallas internas: franja diagonal
- * rojo/negro (hazard) + tres slots fijos [◀ MARCA] [contexto] [SISTEMA V.2026].
- * Sustituye a la HUD generica: fija, decorativa de la identidad de juego.
+ * Barra superior de sistema: franja diagonal rojo/negro (hazard) +
+ * dos slots [◀ MARCA] ............. [FECHA].
  */
-export function TopBar({ context, static: isStatic = false }: TopBarProps) {
+export function TopBar({ static: isStatic = false }: TopBarProps) {
   return (
-    <div className="fixed inset-x-0 top-0 z-50">
-      <div aria-hidden="true" className="h-[14px] w-full bg-hazard" />
-      <div className="border-b border-paper/10 bg-bg-hero text-paper">
-        <div className="flex items-center justify-between gap-4 px-4 py-2.5 md:px-6">
-          <Wordmark static={isStatic} />
+    <div className="fixed inset-x-0 top-0 z-50 border-b border-paper/10 bg-bg-hero text-paper">
+      <div className="flex items-center justify-between gap-4 px-4 py-2.5 md:px-6">
+        <Wordmark static={isStatic} />
 
-          <span className="hidden truncate text-label uppercase tracking-[0.25em] text-paper/60 md:inline">
-            {context}
-          </span>
-
-          <span className="text-label font-medium uppercase tracking-[0.25em] text-paper/70">
-            {profile.branding.system.split(" ")[0]} {profile.branding.version}
-          </span>
-        </div>
+        <span className="shrink-0 text-label font-medium tabular-nums uppercase tracking-[0.25em] text-paper/50">
+          {formatSystemDate()}
+        </span>
       </div>
     </div>
   );

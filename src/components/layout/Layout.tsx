@@ -10,19 +10,6 @@ interface LayoutProps {
   children: ReactNode;
 }
 
-const CONTEXT: Record<string, string> = {
-  "/about": "PERFIL",
-  "/projects": "INVENTARIO",
-  "/experience": "PROGRESO",
-  "/education": "FORMACIoN",
-  "/404": "ERROR 404",
-};
-
-const contextFor = (path: string) => {
-  if (path.startsWith("/proyectos/")) return "INVENTARIO";
-  return CONTEXT[path] ?? "SISTEMA";
-};
-
 /**
  * Marco de las pantallas: TopBar unificada en todas las pantallas
  * (incluido el menu principal, con Wordmark estatico). El footer
@@ -40,7 +27,7 @@ export function Layout({ children }: LayoutProps) {
         Saltar al contenido
       </a>
       <LoadScreen />
-      <TopBar context={contextFor(pathname)} static={pathname === "/"} />
+      <TopBar static={pathname === "/"} />
       <BottomBar />
       <Grain />
       <Cursor />

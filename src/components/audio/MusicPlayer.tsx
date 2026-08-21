@@ -642,7 +642,11 @@ export function MusicPlayer() {
                   }
                 }}
               >
-                <div ref={volFillRef} className="bgm-vol__fill" />
+                <div
+                  ref={volFillRef}
+                  className="bgm-vol__fill"
+                  style={{ width: `${DEFAULT_VOLUME * 100}%` }}
+                />
               </div>
               <span className="bgm-vol__pct">
                 {muted ? "0" : Math.round(volume * 100)}%

@@ -2,6 +2,7 @@ import { useState, useLayoutEffect, useRef } from "react";
 import type { ReactNode } from "react";
 import { flushSync } from "react-dom";
 import { Routes, useLocation } from "react-router-dom";
+import { useMediaQuery } from "../../lib/use-media-query";
 import { transitionBus } from "./transition-bus";
 
 interface TransitionRoutesProps {
@@ -27,12 +28,22 @@ export function TransitionRoutes({ children }: TransitionRoutesProps) {
   const location = useLocation();
   const [displayed, setDisplayed] = useState(location);
   const transitioning = useRef(false);
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   useLayoutEffect(() => {
     if (location.key === displayed.key) return;
 
     if (transitioning.current) {
       setDisplayed(location);
+      return;
+    }
+
+    /* Mobile / tablet: no transition video — instant swap. */
+    if (!isDesktop) {
+      flushSync(() => {
+        setDisplayed(location);
+      });
+      window.scrollTo(0, 0);
       return;
     }
 
