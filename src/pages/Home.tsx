@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Screen } from "../components/transition/Screen";
 import { CommandNavItem } from "../components/hero/CommandNavItem";
 import { HERO_COMMANDS } from "../components/hero/hero-commands";
@@ -19,12 +20,28 @@ const MENU_CHAOS = [
 export function Home() {
   const booted = useBooted();
   const [entered, setEntered] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!booted || entered) return;
     const t = window.setTimeout(() => setEntered(true), 400);
     return () => window.clearTimeout(t);
   }, [booted, entered]);
+
+  /* Keyboard shortcuts: 1-4 navigate to the corresponding section */
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement).tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      const idx = parseInt(e.key, 10);
+      if (idx >= 1 && idx <= HERO_COMMANDS.length) {
+        e.preventDefault();
+        navigate(HERO_COMMANDS[idx - 1].path);
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [navigate]);
 
   return (
     <Screen className="bg-ink text-paper">

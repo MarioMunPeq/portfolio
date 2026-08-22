@@ -68,4 +68,16 @@ export const experience: ExperienceEntry[] = [
     location: "Valladolid, España",
     tech: ["Liferay", "Odoo", "Desarrollo web", "Soporte tecnico"],
   },
+  {
+    id: "cognizant",
+    company: "Cognizant",
+    role: "Pega Developer — Graduate Program",
+    period: "Sep 2026 — Actualidad",
+    summary:
+      "Programa de graduate developer especializado en desarrollo de soluciones empresariales con Pega.",
+    highlights: [],
+    meta: "Trabajo",
+    location: "España",
+    tech: ["Pega", "Java"],
+  },
 ];

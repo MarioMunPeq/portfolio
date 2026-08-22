@@ -167,10 +167,12 @@ function GalleryImage({
     "md:ml-[6%]",
   ];
   return (
-    <div
-      className={`group/gal relative cursor-pointer ${offsets[index % offsets.length]}`}
+    <button
+      type="button"
+      className={`group/gal relative cursor-pointer ${offsets[index % offsets.length]} border-0 bg-transparent p-0 text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent`}
       style={{ transform: `rotate(${rotation})`, zIndex: 10 + index }}
       onClick={onOpen}
+      aria-label={`Ampliar captura: ${screenshot.alt}`}
     >
       <div
         aria-hidden="true"
@@ -215,7 +217,7 @@ function GalleryImage({
           </svg>
         </span>
       </div>
-    </div>
+    </button>
   );
 }
 
@@ -432,9 +434,6 @@ export function ProjectDetail() {
   const nextProject =
     currentIndex < projects.length - 1 ? projects[currentIndex + 1] : null;
 
-  const stackCount = project.stack?.length ?? 0;
-  const screenshotCount = project.screenshots?.length ?? 0;
-
   return (
     <Screen className="min-h-dvh bg-bg-hero text-paper">
       {/* ── Background decorative layers ── */}
@@ -472,13 +471,19 @@ export function ProjectDetail() {
               <Link
                 to="/projects"
                 data-cursor="back"
-                className="inline-flex items-center gap-3 font-expose text-label font-medium uppercase tracking-[0.22em] text-paper/80 hover:text-accent transition-colors group"
+                className="group inline-flex items-center gap-3 border border-paper/20 bg-bg-content-alt px-5 py-2.5 transition-all duration-200 hover:border-accent hover:bg-accent/10"
+                style={{
+                  clipPath:
+                    "polygon(0 0, calc(100% - 0.8rem) 0, 100% 0.8rem, 100% 100%, 0.8rem 100%, 0 calc(100% - 0.8rem))",
+                }}
               >
                 <span
                   aria-hidden="true"
-                  className="h-3 w-3 bg-accent rotate-45 transition-transform duration-200 group-hover:-translate-x-1"
+                  className="h-2.5 w-2.5 bg-accent rotate-45 transition-transform duration-200 group-hover:-translate-x-1"
                 />
-                VOLVER A {sectionLabel}
+                <span className="font-sans text-[13px] font-medium uppercase tracking-[0.22em] text-paper/80 transition-colors group-hover:text-accent">
+                  Volver a {sectionLabel}
+                </span>
               </Link>
             </Reveal>
 
@@ -507,41 +512,6 @@ export function ProjectDetail() {
               <div className="mt-4 flex items-center gap-3">
                 <span className="h-2 w-32 -skew-x-12 bg-accent" />
                 <span className="h-3 w-3 rotate-45 bg-gold" />
-              </div>
-            </Reveal>
-
-            {/* Status bar */}
-            <Reveal delay={0.1}>
-              <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 font-sans text-[0.65rem] uppercase tracking-[0.18em] text-paper/30">
-                {project.version && (
-                  <span className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rotate-45 bg-paper/40" />v
-                    {project.version}
-                  </span>
-                )}
-                <span className="flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rotate-45 bg-accent/60" />
-                  Stack: {stackCount}{" "}
-                  {stackCount === 1 ? "tecnologia" : "tecnologias"}
-                </span>
-                {screenshotCount > 0 && (
-                  <span className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rotate-45 bg-gold/60" />
-                    Galeria: {screenshotCount} capturas
-                  </span>
-                )}
-                {project.links.demo && (
-                  <span className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rotate-45 bg-green-500/60" />
-                    Demo disponible
-                  </span>
-                )}
-                {project.links.github && (
-                  <span className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rotate-45 bg-blue-400/60" />
-                    Codigo abierto
-                  </span>
-                )}
               </div>
             </Reveal>
 

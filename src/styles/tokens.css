@@ -41,15 +41,6 @@
   unicode-range: U+0000-007F;
 }
 
-/* Libre Baskerville: serif editorial para el periodico de habilidades.
-   Variable font con peso ajustable. */
-@font-face {
-  font-family: "Libre Baskerville";
-  src: url("/portfolio/fonts/LibreBaskerville-VariableFont_wght.ttf")
-    format("truetype");
-  font-display: swap;
-}
-
 /* Utilidad: texto hueco con trazo en color acento (solo tipografia grande) */
 @utility text-outline {
   color: transparent;
@@ -60,12 +51,6 @@
 @utility text-outline-faint {
   color: transparent;
   -webkit-text-stroke: 2px rgba(245, 245, 240, 0.28);
-}
-
-/* Utilidad: texto hueco para fondos claros (tinta tenue) */
-@utility text-outline-ink {
-  color: transparent;
-  -webkit-text-stroke: 2px rgba(10, 10, 10, 0.22);
 }
 
 /* Utilidad: texto hueco con contorno medio (legible pero secundario) */
@@ -98,16 +83,6 @@
   background-size: 12px 12px;
 }
 
-/* Trama de puntos: papel con puntos tinta (negro sobre blanco) */
-@utility bg-halftone-paper {
-  background-color: var(--color-paper);
-  background-image: radial-gradient(
-    rgba(10, 10, 10, 0.85) 1.4px,
-    transparent 1.4px
-  );
-  background-size: 12px 12px;
-}
-
 /* Rayas diagonales rojas (bandas de menu) */
 @utility bg-stripes-red {
   background-image: repeating-linear-gradient(
@@ -133,15 +108,6 @@
     color-mix(in srgb, var(--color-paper) 2.5%, transparent) 0 1px,
     transparent 1px 3px
   );
-}
-
-/* Puntos halftone tenues (gris sobre negro, fondo del hero) */
-@utility bg-halftone-dots {
-  background-image: radial-gradient(
-    var(--color-bg-content-alt) 1px,
-    transparent 1px
-  );
-  background-size: 6px 6px;
 }
 
 /* Estrellas de contorno para fondos (Inventario): tesela SVG data-URI con
@@ -507,38 +473,6 @@
 
 .bar-breathe {
   animation: bar-breathe 1.2s ease-in-out infinite;
-}
-
-/* ============================================================
-   arbol de Habilidades — halo respirante y bloqueo
-   ============================================================ */
-
-/* Halo de brillo tras los hexagonos desbloqueados: circulo rojo
-   difuminado que respira (opacidad) en un ciclo lento (~3.6s). El
-   resplandor fijo del hexagono lo aporta su drop-shadow; este halo
-   añade el latido. En hover el halo se enciende mas (la respiracion
-   no se detiene). reduced-motion lo anula via la regla global. */
-@keyframes hex-breathe {
-  0%,
-  100% {
-    opacity: 0.3;
-  }
-  50% {
-    opacity: 0.75;
-  }
-}
-
-.hex-halo {
-  position: absolute;
-  inset: -8px;
-  border-radius: 9999px;
-  background-color: rgba(230, 0, 18, 0.45);
-  filter: blur(10px);
-  animation: hex-breathe 3.6s ease-in-out infinite;
-}
-
-.group:hover .hex-halo {
-  background-color: rgba(255, 72, 54, 0.7);
 }
 
 /* Panel del marcador Q: marco rojo con esquinas cortadas y fondo oscuro
@@ -1021,9 +955,7 @@ html.lenis body {
   --color-accent-deep: #a3000c;
   /* Dorado de "completado" para los sellos de categoria de la pantalla de carga */
   --color-gold: #ffcc00;
-  --color-gold-deep: #cc9a00;
   --color-bg-hero: #0a0a0a;
-  --color-bg-content: #f5f5f0;
   --color-bg-content-alt: #1a1a1a;
   --color-ink: #0a0a0a;
   --color-paper: #f5f5f0;
@@ -1041,7 +973,6 @@ html.lenis body {
   /* --- Tipografias --- */
   --font-display: "Anton", "Arial Narrow", sans-serif;
   --font-sans: "Space Grotesk", system-ui, sans-serif;
-  --font-serif: "Libre Baskerville", "Georgia", serif;
   --font-hand: "Caveat", cursive;
   /* P5 Menu: SOLO para las etiquetas principales del menu principal
      (perfil, inventario, estadisticas, habilidades). Falta de acentos:
@@ -1062,12 +993,6 @@ html.lenis body {
   --text-hero: clamp(3.25rem, 9vw, 8rem);
   --text-hero--line-height: 0.95;
 
-  --text-section-title: clamp(2rem, 4.5vw, 3.5rem);
-  --text-section-title--line-height: 1;
-
-  --text-subtitle: 1.5rem;
-  --text-subtitle--line-height: 1.25;
-
   --text-body: 1rem;
   --text-body--line-height: 1.6;
 
@@ -1078,19 +1003,6 @@ html.lenis body {
   --text-label--line-height: 1.2;
 
   /* --- Animaciones del sistema de juego --- */
-
-  /* Parpadeo suave para señales "PRESS ENTER" (respetado por reduced-motion) */
-  --animate-blink-soft: blink-soft 2.2s ease-in-out infinite;
-
-  @keyframes blink-soft {
-    0%,
-    100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.25;
-    }
-  }
 
   /* --- Cochecito de "Permiso de conducir": cruza la pantalla ---
      El coche entra por la izquierda, cruza toda la pantalla y sale por la
@@ -1132,18 +1044,6 @@ html.lenis body {
     }
     50% {
       transform: rotate(-1.5deg);
-    }
-  }
-
-  /* Ruedas: giro continuo mientras cruza */
-  --animate-car-wheel: car-wheel 0.5s linear infinite;
-
-  @keyframes car-wheel {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
     }
   }
 
@@ -1472,6 +1372,17 @@ html.lenis body {
     var(--connector-delay, 0s) both;
 }
 
+/* Pipe glow breathing — subtle pulse along active pipes */
+@keyframes pipe-glow-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 /* Cursor diamond pulse */
 @keyframes cursor-diamond-pulse {
   0%,
@@ -1542,6 +1453,24 @@ html.lenis body {
   color: var(--color-accent);
 }
 
+/* Label as expand/collapse button */
+.bgm-bar__label--btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: opacity 0.12s;
+}
+
+.bgm-bar__label--btn:hover {
+  opacity: 0.8;
+}
+
+.bgm-bar__label--btn:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
 .bgm-bar__sep {
   display: block;
   width: 1px;
@@ -1566,6 +1495,20 @@ html.lenis body {
   color: var(--color-accent);
 }
 
+/* Track counter as a proper <button> in the compact bar */
+.bgm-bar__track--btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.bgm-bar__track--btn:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  opacity: 1;
+}
+
 .bgm-bar__title {
   font-family: var(--font-sans);
   font-size: 12px;
@@ -1578,18 +1521,27 @@ html.lenis body {
 }
 
 .bgm-bar__play {
+  background: none;
+  border: none;
+  font-family: inherit;
   font-size: 11px;
   cursor: pointer;
   opacity: 0.55;
   transition:
     opacity 0.1s,
     color 0.1s;
-  padding: 2px 4px;
+  padding: 4px 6px;
 }
 
 .bgm-bar__play:hover {
   opacity: 1;
   color: var(--color-accent);
+}
+
+.bgm-bar__play:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  opacity: 1;
 }
 
 /* ================================================================
@@ -1682,6 +1634,9 @@ html.lenis body {
   color: var(--color-paper);
   opacity: 0.45;
   cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
   transition:
     opacity 0.12s,
     color 0.12s;
@@ -1690,6 +1645,12 @@ html.lenis body {
 .bgm-panel__counter:hover {
   opacity: 1;
   color: var(--color-accent);
+}
+
+.bgm-panel__counter:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  opacity: 1;
 }
 
 /* Track info */
@@ -1742,6 +1703,11 @@ html.lenis body {
 
 .bgm-ctrl:hover {
   background: rgba(245, 245, 240, 0.08);
+}
+
+.bgm-ctrl:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 6px;
 }
 
 .bgm-ctrl:active {
@@ -1842,18 +1808,24 @@ html.lenis body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
   padding: 0;
   background: transparent;
   border: none;
-  font-size: 11px;
+  font-size: 12px;
   cursor: pointer;
   opacity: 0.5;
   transition: opacity 0.1s;
 }
 
 .bgm-vol__btn:hover {
+  opacity: 1;
+}
+
+.bgm-vol__btn:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
   opacity: 1;
 }
 

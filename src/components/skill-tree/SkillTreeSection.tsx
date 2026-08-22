@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "motion/react";
 import { DiamondMarker } from "../shared/DiamondMarker";
-import { Tag } from "../ui/Tag";
 import { NodeIcon } from "./NodeIcon";
 import { SKILL_TREE } from "../../data/skill-tree";
 import type { SkillNode } from "../../data/skill-tree";
@@ -70,19 +69,23 @@ interface NodeBadgeProps {
   node: SkillNode;
   index: number;
   selected: boolean;
-  flashKey: number;
   onSelect: (id: string) => void;
 }
 
-function NodeBadge({
-  node,
-  index,
-  selected,
-  flashKey,
-  onSelect,
-}: NodeBadgeProps) {
+function NodeBadge({ node, index, selected, onSelect }: NodeBadgeProps) {
   const locked = node.kind === "locked";
   const tier = getNodeTier(node);
+
+  /* One-shot flash: plays glitch animation only when node becomes selected */
+  const [flash, setFlash] = useState(false);
+  useEffect(() => {
+    if (selected) {
+      setFlash(true);
+      const t = setTimeout(() => setFlash(false), 300);
+      return () => clearTimeout(t);
+    }
+    setFlash(false);
+  }, [selected]);
   const glow = selected
     ? "drop-shadow(3px 3px 0 rgba(0,0,0,0.85)) drop-shadow(0 0 18px rgba(230,0,18,0.9))"
     : "drop-shadow(3px 3px 0 rgba(0,0,0,0.85)) drop-shadow(0 0 10px rgba(230,0,18,0.45))";
@@ -120,14 +123,12 @@ function NodeBadge({
             locked
               ? "group-hover:[animation:locked-shake_0.35s_ease-in-out]"
               : "group-hover:scale-110"
-          } ${selected && !locked ? "node-glitch-flash" : ""}`}
+          } ${flash && !locked ? "node-glitch-flash" : ""}`}
           style={{
             filter: locked ? "drop-shadow(3px 3px 0 rgba(0,0,0,0.85))" : glow,
             transform: selected && !locked ? "scale(1.08)" : undefined,
             transition: locked ? "none" : "transform 0.1s steps(2)",
-            animationDelay: selected ? "0s" : undefined,
           }}
-          key={flashKey}
         >
           {/* Halo (unlocked only) */}
           {!locked && <span aria-hidden="true" className="node-halo" />}
@@ -253,17 +254,16 @@ function NodeBadge({
   );
 }
 
-/* ── Angular connector layer ── */
+/* ── Pipe connector layer — consistent duct system for all directions ── */
 
 function ConnectorLayer({ size }: { size: { w: number; h: number } }) {
   const { w, h } = size;
   const reduced = useReducedMotion();
   if (w <= 0 || h <= 0) return null;
 
-  const center = (node: SkillNode) => ({
-    x: (node.x / 100) * w,
-    y: (node.y / 100) * h,
-  });
+  const PIPE_W = 8;
+
+  const cx = (n: SkillNode) => ({ x: (n.x / 100) * w, y: (n.y / 100) * h });
 
   return (
     <svg
@@ -272,137 +272,384 @@ function ConnectorLayer({ size }: { size: { w: number; h: number } }) {
       height={h}
       aria-hidden="true"
     >
+      <defs>
+        {/* Clip paths for traveling dots — keeps them inside pipes */}
+        {SKILL_TREE.edges.map((edge, i) => {
+          const from = SKILL_TREE.nodes.find((n) => n.id === edge.from);
+          const to = SKILL_TREE.nodes.find((n) => n.id === edge.to);
+          if (!from || !to) return null;
+          const a = cx(from);
+          const b = cx(to);
+          const hw = PIPE_W / 2;
+          const isVertical = Math.abs(b.x - a.x) < 0.5;
+          const isHorizontal = Math.abs(b.y - a.y) < 0.5;
+          return (
+            <clipPath key={`pc${i}`} id={`pipe-clip-${i}`}>
+              {isVertical ? (
+                <rect
+                  x={a.x - hw}
+                  y={Math.min(a.y, b.y)}
+                  width={PIPE_W}
+                  height={Math.abs(b.y - a.y)}
+                />
+              ) : isHorizontal ? (
+                <rect
+                  x={Math.min(a.x, b.x)}
+                  y={a.y - hw}
+                  width={Math.abs(b.x - a.x)}
+                  height={PIPE_W}
+                />
+              ) : (
+                <>
+                  <rect
+                    x={a.x - hw}
+                    y={Math.min(a.y, b.y)}
+                    width={PIPE_W}
+                    height={Math.abs(b.y - a.y)}
+                  />
+                  <rect
+                    x={Math.min(a.x, b.x)}
+                    y={b.y - hw}
+                    width={Math.abs(b.x - a.x)}
+                    height={PIPE_W}
+                  />
+                  <rect
+                    x={a.x - hw}
+                    y={b.y - hw}
+                    width={PIPE_W}
+                    height={PIPE_W}
+                  />
+                </>
+              )}
+            </clipPath>
+          );
+        })}
+      </defs>
+
       {SKILL_TREE.edges.map((edge, index) => {
-        const from = SKILL_TREE.nodes.find((node) => node.id === edge.from);
-        const to = SKILL_TREE.nodes.find((node) => node.id === edge.to);
+        const from = SKILL_TREE.nodes.find((n) => n.id === edge.from);
+        const to = SKILL_TREE.nodes.find((n) => n.id === edge.to);
         if (!from || !to) return null;
 
-        const a = center(from);
-        const b = center(to);
+        const a = cx(from);
+        const b = cx(to);
         const isFuture = edge.kind === "future";
+        const hw = PIPE_W / 2;
+        const isVertical = Math.abs(b.x - a.x) < 0.5;
+        const isHorizontal = Math.abs(b.y - a.y) < 0.5;
 
-        /* Angular path: L-shape (vertical first, then horizontal) */
-        const cornerY = b.y;
+        /* Traveling dot corner ratio */
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const cornerT =
+          isVertical || isHorizontal
+            ? 1
+            : Math.abs(dy) / (Math.abs(dx) + Math.abs(dy) + 0.001);
 
-        /* Double parallel lines with perpendicular offset */
-        const offset = 3.5;
-        const dx = 0;
-        const dy = offset;
-        const path1 = `M ${a.x + dx},${a.y - dy} L ${a.x + dx},${cornerY - dy} L ${b.x},${cornerY - dy}`;
-        const path2 = `M ${a.x - dx},${a.y + dy} L ${a.x - dx},${cornerY + dy} L ${b.x},${cornerY + dy}`;
+        const borderFill = isFuture ? "#1a1a1a" : "#2a2a2a";
+        const borderStroke = isFuture ? "rgba(245,245,240,0.1)" : "#333";
+        const bodyFill = isFuture ? "#161616" : "#1c1c1c";
+        const highlightStroke = isFuture
+          ? "rgba(245,245,240,0.03)"
+          : "rgba(245,245,240,0.06)";
 
-        const stroke = isFuture
-          ? "rgba(245,245,240,0.2)"
-          : "var(--color-accent)";
-        const dashArray = isFuture ? "5 7" : "8 5";
-        const lineW = isFuture ? 1.5 : 2;
-
-        return (
+        const seg = (
           <g
             key={index}
             style={{
-              filter: isFuture
-                ? "none"
-                : "drop-shadow(0 0 4px rgba(230,0,18,0.35))",
-              ["--connector-delay" as string]: `${index * 0.12 + 0.1}s`,
+              ["--connector-delay" as string]: `${index * 0.15 + 0.1}s`,
             }}
           >
-            <path
-              d={path1}
-              fill="none"
-              stroke={stroke}
-              strokeWidth={lineW}
-              strokeLinecap="square"
-              strokeDasharray={dashArray}
-              className="connector-draw"
-            />
-            <path
-              d={path2}
-              fill="none"
-              stroke={stroke}
-              strokeWidth={lineW}
-              strokeLinecap="square"
-              strokeDasharray={dashArray}
-              className="connector-draw"
-            />
+            {isVertical ? (
+              <>
+                {/* Border */}
+                <rect
+                  x={a.x - hw}
+                  y={Math.min(a.y, b.y)}
+                  width={PIPE_W}
+                  height={Math.abs(b.y - a.y)}
+                  fill={borderFill}
+                  stroke={borderStroke}
+                  strokeWidth={1.5}
+                  className="connector-draw"
+                />
+                {/* Body */}
+                <rect
+                  x={a.x - hw + 1.5}
+                  y={Math.min(a.y, b.y)}
+                  width={PIPE_W - 3}
+                  height={Math.abs(b.y - a.y)}
+                  fill={bodyFill}
+                />
+                {/* Center highlight */}
+                <line
+                  x1={a.x}
+                  y1={Math.min(a.y, b.y)}
+                  x2={a.x}
+                  y2={Math.max(a.y, b.y)}
+                  stroke={highlightStroke}
+                  strokeWidth={1.5}
+                />
+              </>
+            ) : isHorizontal ? (
+              <>
+                {/* Border */}
+                <rect
+                  x={Math.min(a.x, b.x)}
+                  y={a.y - hw}
+                  width={Math.abs(b.x - a.x)}
+                  height={PIPE_W}
+                  fill={borderFill}
+                  stroke={borderStroke}
+                  strokeWidth={1.5}
+                  className="connector-draw"
+                />
+                {/* Body */}
+                <rect
+                  x={Math.min(a.x, b.x)}
+                  y={a.y - hw + 1.5}
+                  width={Math.abs(b.x - a.x)}
+                  height={PIPE_W - 3}
+                  fill={bodyFill}
+                />
+                {/* Center highlight */}
+                <line
+                  x1={Math.min(a.x, b.x)}
+                  y1={a.y}
+                  x2={Math.max(a.x, b.x)}
+                  y2={a.y}
+                  stroke={highlightStroke}
+                  strokeWidth={1.5}
+                />
+              </>
+            ) : (
+              /* L-shape: vertical segment + horizontal segment + corner */
+              <>
+                {/* Vertical segment border */}
+                <rect
+                  x={a.x - hw}
+                  y={Math.min(a.y, b.y)}
+                  width={PIPE_W}
+                  height={Math.abs(b.y - a.y)}
+                  fill={borderFill}
+                  stroke={borderStroke}
+                  strokeWidth={1.5}
+                  className="connector-draw"
+                />
+                {/* Vertical segment body */}
+                <rect
+                  x={a.x - hw + 1.5}
+                  y={Math.min(a.y, b.y)}
+                  width={PIPE_W - 3}
+                  height={Math.abs(b.y - a.y)}
+                  fill={bodyFill}
+                />
+                {/* Vertical center highlight */}
+                <line
+                  x1={a.x}
+                  y1={Math.min(a.y, b.y)}
+                  x2={a.x}
+                  y2={Math.max(a.y, b.y)}
+                  stroke={highlightStroke}
+                  strokeWidth={1.5}
+                />
+                {/* Horizontal segment border */}
+                <rect
+                  x={Math.min(a.x, b.x)}
+                  y={b.y - hw}
+                  width={Math.abs(b.x - a.x)}
+                  height={PIPE_W}
+                  fill={borderFill}
+                  stroke={borderStroke}
+                  strokeWidth={1.5}
+                  className="connector-draw"
+                />
+                {/* Horizontal segment body */}
+                <rect
+                  x={Math.min(a.x, b.x)}
+                  y={b.y - hw + 1.5}
+                  width={Math.abs(b.x - a.x)}
+                  height={PIPE_W - 3}
+                  fill={bodyFill}
+                />
+                {/* Horizontal center highlight */}
+                <line
+                  x1={Math.min(a.x, b.x)}
+                  y1={b.y}
+                  x2={Math.max(a.x, b.x)}
+                  y2={b.y}
+                  stroke={highlightStroke}
+                  strokeWidth={1.5}
+                />
+                {/* Corner piece — covers junction */}
+                <rect
+                  x={a.x - hw}
+                  y={b.y - hw}
+                  width={PIPE_W}
+                  height={PIPE_W}
+                  fill={borderFill}
+                  stroke={borderStroke}
+                  strokeWidth={1.5}
+                />
+                <rect
+                  x={a.x - hw + 1.5}
+                  y={b.y - hw + 1.5}
+                  width={PIPE_W - 3}
+                  height={PIPE_W - 3}
+                  fill={bodyFill}
+                />
+              </>
+            )}
 
-            {/* Energy pulse along angular path */}
+            {/* Pipe glow — direction-aware */}
             {!reduced && !isFuture && (
-              <g>
+              <g style={{ filter: "blur(8px)" }}>
+                {isVertical && (
+                  <rect
+                    x={a.x - 8}
+                    y={Math.min(a.y, b.y) - 4}
+                    width={16}
+                    height={Math.abs(b.y - a.y) + 8}
+                    fill="none"
+                    stroke="rgba(230,0,18,0.1)"
+                    strokeWidth={14}
+                    rx={7}
+                    style={{
+                      animation: `pipe-glow-pulse 4s ease-in-out ${index * 0.5}s infinite`,
+                    }}
+                  />
+                )}
+                {isHorizontal && (
+                  <rect
+                    x={Math.min(a.x, b.x) - 4}
+                    y={a.y - 8}
+                    width={Math.abs(b.x - a.x) + 8}
+                    height={16}
+                    fill="none"
+                    stroke="rgba(230,0,18,0.1)"
+                    strokeWidth={14}
+                    rx={7}
+                    style={{
+                      animation: `pipe-glow-pulse 4s ease-in-out ${index * 0.5}s infinite`,
+                    }}
+                  />
+                )}
+                {!isVertical && !isHorizontal && (
+                  <>
+                    <rect
+                      x={a.x - 8}
+                      y={Math.min(a.y, b.y) - 4}
+                      width={16}
+                      height={Math.abs(b.y - a.y) + 8}
+                      fill="none"
+                      stroke="rgba(230,0,18,0.1)"
+                      strokeWidth={14}
+                      rx={7}
+                      style={{
+                        animation: `pipe-glow-pulse 4s ease-in-out ${index * 0.5}s infinite`,
+                      }}
+                    />
+                    <rect
+                      x={Math.min(a.x, b.x) - 4}
+                      y={b.y - 8}
+                      width={Math.abs(b.x - a.x) + 8}
+                      height={16}
+                      fill="none"
+                      stroke="rgba(230,0,18,0.1)"
+                      strokeWidth={14}
+                      rx={7}
+                      style={{
+                        animation: `pipe-glow-pulse 4s ease-in-out ${index * 0.5}s infinite`,
+                      }}
+                    />
+                  </>
+                )}
+              </g>
+            )}
+
+            {/* Traveling dots */}
+            {!reduced && !isFuture && (
+              <g clipPath={`url(#pipe-clip-${index})`}>
+                {/* Outer glow */}
                 <circle
-                  r={6}
+                  r={5}
                   fill="var(--color-accent)"
                   opacity={0}
-                  style={{ filter: "blur(2px)" }}
+                  style={{ filter: "blur(3px)" }}
                 >
                   <animate
                     attributeName="cx"
                     values={`${a.x};${a.x};${b.x}`}
-                    dur="2.8s"
-                    begin={`${index * 0.7}s`}
+                    keyTimes={`0;${cornerT};1`}
+                    dur="3s"
+                    begin={`${index * 0.8}s`}
                     repeatCount="indefinite"
                     calcMode="spline"
                     keySplines="0.42 0 0.58 1;0.42 0 0.58 1"
                   />
                   <animate
                     attributeName="cy"
-                    values={`${a.y};${cornerY};${cornerY}`}
-                    dur="2.8s"
-                    begin={`${index * 0.7}s`}
+                    values={`${a.y};${b.y};${b.y}`}
+                    keyTimes={`0;${cornerT};1`}
+                    dur="3s"
+                    begin={`${index * 0.8}s`}
                     repeatCount="indefinite"
                     calcMode="spline"
                     keySplines="0.42 0 0.58 1;0.42 0 0.58 1"
                   />
                   <animate
                     attributeName="opacity"
-                    values="0;1;0"
-                    keyTimes="0;0.5;1"
-                    dur="2.8s"
-                    begin={`${index * 0.7}s`}
+                    values="0;0.7;0.7;0"
+                    keyTimes="0;0.15;0.85;1"
+                    dur="3s"
+                    begin={`${index * 0.8}s`}
                     repeatCount="indefinite"
-                    calcMode="spline"
-                    keySplines="0.42 0 0.58 1;0.42 0 0.58 1"
                   />
                 </circle>
+                {/* White core */}
                 <circle
                   r={2}
                   fill="var(--color-paper)"
                   opacity={0}
-                  style={{ filter: "drop-shadow(0 0 4px rgba(230,0,18,0.9))" }}
+                  style={{
+                    filter: "drop-shadow(0 0 3px rgba(230,0,18,0.9))",
+                  }}
                 >
                   <animate
                     attributeName="cx"
                     values={`${a.x};${a.x};${b.x}`}
-                    dur="2.8s"
-                    begin={`${index * 0.7}s`}
+                    keyTimes={`0;${cornerT};1`}
+                    dur="3s"
+                    begin={`${index * 0.8}s`}
                     repeatCount="indefinite"
                     calcMode="spline"
                     keySplines="0.42 0 0.58 1;0.42 0 0.58 1"
                   />
                   <animate
                     attributeName="cy"
-                    values={`${a.y};${cornerY};${cornerY}`}
-                    dur="2.8s"
-                    begin={`${index * 0.7}s`}
+                    values={`${a.y};${b.y};${b.y}`}
+                    keyTimes={`0;${cornerT};1`}
+                    dur="3s"
+                    begin={`${index * 0.8}s`}
                     repeatCount="indefinite"
                     calcMode="spline"
                     keySplines="0.42 0 0.58 1;0.42 0 0.58 1"
                   />
                   <animate
                     attributeName="opacity"
-                    values="0;1;0"
-                    keyTimes="0;0.5;1"
-                    dur="2.8s"
-                    begin={`${index * 0.7}s`}
+                    values="0;1;1;0"
+                    keyTimes="0;0.15;0.85;1"
+                    dur="3s"
+                    begin={`${index * 0.8}s`}
                     repeatCount="indefinite"
-                    calcMode="spline"
-                    keySplines="0.42 0 0.58 1;0.42 0 0.58 1"
                   />
                 </circle>
               </g>
             )}
           </g>
         );
+
+        return seg;
       })}
     </svg>
   );
@@ -424,49 +671,59 @@ function DetailPanel({ node }: { node: SkillNode }) {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {node.level && (
-            <Tag font="sans" tone="dark" size="sm">
+            <span className="inline-flex items-center border border-paper/20 bg-bg-hero px-2.5 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.15em] text-paper/60">
               {node.level}
-            </Tag>
+            </span>
           )}
-          <Tag font="sans" tone={locked ? "dark" : "red"} size="sm">
+          <span
+            className={`inline-flex items-center px-2.5 py-1 text-[0.6rem] font-bold uppercase tracking-[0.15em] ${
+              locked
+                ? "border border-paper/15 text-paper/40"
+                : "bg-accent text-paper"
+            }`}
+          >
             {node.status}
-          </Tag>
+          </span>
         </div>
       </div>
 
-      <h4 className="mt-4 font-display text-2xl uppercase leading-tight">
+      <h4 className="mt-4 font-display text-2xl uppercase leading-tight text-paper">
         {node.title}
       </h4>
 
       {(node.period || node.institution) && (
-        <dl className="mt-4 space-y-3">
+        <dl className="mt-4 grid grid-cols-2 gap-4">
           {node.period && (
             <div>
-              <dt className="font-sans text-[0.65rem] uppercase tracking-[0.18em] text-paper/50">
+              <dt className="font-sans text-[0.6rem] uppercase tracking-[0.18em] text-paper/40">
                 Periodo
               </dt>
-              <dd className="mt-1 font-medium">{node.period}</dd>
+              <dd className="mt-1 text-sm font-medium text-paper/85">
+                {node.period}
+              </dd>
             </div>
           )}
           {node.institution && (
             <div>
-              <dt className="font-sans text-[0.65rem] uppercase tracking-[0.18em] text-paper/50">
+              <dt className="font-sans text-[0.6rem] uppercase tracking-[0.18em] text-paper/40">
                 Centro
               </dt>
-              <dd className="mt-1 font-medium">{node.institution}</dd>
+              <dd className="mt-1 text-sm font-medium text-paper/85">
+                {node.institution}
+              </dd>
             </div>
           )}
         </dl>
       )}
 
       {node.detail && (
-        <p className="mt-4 inline-flex items-center gap-2 border-l-2 border-accent pl-3 font-sans text-[0.65rem] uppercase tracking-[0.18em] text-accent">
+        <p className="mt-4 inline-flex items-center gap-2 border-l-2 border-accent pl-3 text-[0.7rem] font-semibold uppercase tracking-[0.15em] text-accent">
           {node.detail}
         </p>
       )}
 
       {node.description && (
-        <p className="mt-4 max-w-2xl text-body leading-relaxed text-paper/80">
+        <p className="mt-4 max-w-2xl text-body leading-relaxed text-paper/75">
           {node.description}
         </p>
       )}
@@ -475,7 +732,7 @@ function DetailPanel({ node }: { node: SkillNode }) {
 
   return (
     <div
-      className="relative border border-paper/30 bg-bg-content-alt p-5 md:p-6"
+      className="relative border border-paper/15 bg-bg-content-alt p-5 md:p-6"
       style={{
         clipPath:
           "polygon(0 0, calc(100% - 1.2rem) 0, 100% 1.2rem, 100% 100%, 0 100%)",
@@ -557,7 +814,6 @@ export function SkillTreeSection() {
   const { ref, size } = useContainerSize();
   const treeRef = useRef<HTMLDivElement>(null);
   const [selected, setSelected] = useState("bootcamp");
-  const [flashKey, setFlashKey] = useState(0);
 
   const active =
     SKILL_TREE.nodes.find((node) => node.id === selected) ??
@@ -565,7 +821,6 @@ export function SkillTreeSection() {
 
   const handleSelect = useCallback((id: string) => {
     setSelected(id);
-    setFlashKey((k) => k + 1);
   }, []);
 
   return (
@@ -580,7 +835,7 @@ export function SkillTreeSection() {
           (treeRef as React.MutableRefObject<HTMLDivElement | null>).current =
             el;
         }}
-        className="relative mx-auto h-[19rem] max-w-4xl sm:h-[20rem] lg:h-[21rem]"
+        className="relative mx-auto h-[22rem] max-w-4xl sm:h-[24rem] lg:h-[26rem]"
       >
         {/* Side label — UI chrome density */}
         <span
@@ -603,7 +858,6 @@ export function SkillTreeSection() {
             node={node}
             index={index}
             selected={node.id === selected}
-            flashKey={flashKey}
             onSelect={handleSelect}
           />
         ))}

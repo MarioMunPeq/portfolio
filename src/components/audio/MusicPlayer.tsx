@@ -472,56 +472,35 @@ export function MusicPlayer() {
 
       <div className="bgm-player" aria-label="Music Player">
         {/* ── Compact bar (always visible inside BottomBar) ── */}
-        <div
-          className="bgm-bar"
-          onClick={() => setExpanded((v) => !v)}
-          role="button"
-          tabIndex={0}
-          aria-expanded={expanded}
-          aria-label={`Music: ${t.title}`}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") setExpanded((v) => !v);
-          }}
-        >
-          <span className="bgm-bar__label">♫ MUSIC</span>
+        <div className="bgm-bar">
+          <button
+            type="button"
+            className="bgm-bar__label bgm-bar__label--btn"
+            onClick={() => setExpanded((v) => !v)}
+            aria-expanded={expanded}
+            aria-label={`Sistema BGM: ${t.title}. ${expanded ? "Contraer" : "Expandir"} panel`}
+          >
+            ♫ MUSIC
+          </button>
           <span className="bgm-bar__sep" />
-          <span
-            className="bgm-bar__track"
-            onClick={(e) => {
-              e.stopPropagation();
-              setSelectorOpen((v) => !v);
-            }}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.stopPropagation();
-                setSelectorOpen((v) => !v);
-              }
-            }}
+          <button
+            type="button"
+            className="bgm-bar__track bgm-bar__track--btn"
+            onClick={() => setSelectorOpen((v) => !v)}
+            aria-label={`Pista ${trackIndex + 1} de ${TRACKS.length}: ${t.title}. Cambiar pista`}
           >
             {String(trackIndex + 1).padStart(2, "0")} /{" "}
             {String(TRACKS.length).padStart(2, "0")}
-          </span>
+          </button>
           <span className="bgm-bar__title">{t.title}</span>
-          <span
+          <button
+            type="button"
             className="bgm-bar__play"
-            onClick={(e) => {
-              e.stopPropagation();
-              togglePlay();
-            }}
-            role="button"
-            tabIndex={0}
-            aria-label={isPlaying ? "Pause" : "Play"}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.stopPropagation();
-                togglePlay();
-              }
-            }}
+            onClick={togglePlay}
+            aria-label={isPlaying ? "Pausar" : "Reproducir"}
           >
             {isPlaying ? "❚❚" : "▶"}
-          </span>
+          </button>
           <Visualizer analyser={analyser} />
         </div>
 
@@ -531,18 +510,15 @@ export function MusicPlayer() {
             {/* Header: system label + track counter */}
             <div className="bgm-panel__head">
               <span className="bgm-panel__sys">BGM SYSTEM</span>
-              <span
+              <button
+                type="button"
                 className="bgm-panel__counter"
-                role="button"
-                tabIndex={0}
                 onClick={() => setSelectorOpen((v) => !v)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") setSelectorOpen((v) => !v);
-                }}
+                aria-label={`Pista ${trackIndex + 1} de ${TRACKS.length}. Abrir selector de pistas`}
               >
                 {String(trackIndex + 1).padStart(2, "0")} /{" "}
                 {String(TRACKS.length).padStart(2, "0")}
-              </span>
+              </button>
             </div>
 
             {/* Track title */}
@@ -555,7 +531,7 @@ export function MusicPlayer() {
               <button
                 className="bgm-ctrl"
                 onClick={prevTrack}
-                aria-label="Previous track"
+                aria-label="Pista anterior"
               >
                 <span className="bgm-ctrl__icon">◀</span>
                 <span className="bgm-ctrl__label">PREV</span>
@@ -563,7 +539,7 @@ export function MusicPlayer() {
               <button
                 className="bgm-ctrl bgm-ctrl--play"
                 onClick={togglePlay}
-                aria-label={isPlaying ? "Pause" : "Play"}
+                aria-label={isPlaying ? "Pausar" : "Reproducir"}
               >
                 <span className="bgm-ctrl__icon">{isPlaying ? "❚❚" : "▶"}</span>
                 <span className="bgm-ctrl__label">
@@ -573,7 +549,7 @@ export function MusicPlayer() {
               <button
                 className="bgm-ctrl"
                 onClick={nextTrack}
-                aria-label="Next track"
+                aria-label="Siguiente pista"
               >
                 <span className="bgm-ctrl__icon">▶</span>
                 <span className="bgm-ctrl__label">NEXT</span>
@@ -585,6 +561,24 @@ export function MusicPlayer() {
               <div
                 className="bgm-progress"
                 onMouseDown={seek}
+                onTouchStart={(e) => {
+                  const touch = e.touches[0];
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const pct = Math.max(
+                    0,
+                    Math.min(1, (touch.clientX - rect.left) / rect.width),
+                  );
+                  const a = audioRef.current;
+                  if (a && isFinite(a.duration) && a.duration > 0) {
+                    a.currentTime = pct * a.duration;
+                    if (progressFillRef.current)
+                      progressFillRef.current.style.width = `${pct * 100}%`;
+                    if (timeLabelRef.current)
+                      timeLabelRef.current.textContent = formatTime(
+                        pct * a.duration,
+                      );
+                  }
+                }}
                 role="slider"
                 aria-label="Track progress"
                 aria-valuemin={0}
@@ -620,6 +614,18 @@ export function MusicPlayer() {
               <div
                 className="bgm-vol__track"
                 onMouseDown={changeVolume}
+                onTouchStart={(e) => {
+                  const touch = e.touches[0];
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const pct = Math.max(
+                    0,
+                    Math.min(1, (touch.clientX - rect.left) / rect.width),
+                  );
+                  volumeRef.current = pct;
+                  setVolume(pct);
+                  const a = audioRef.current;
+                  if (a && !mutedRef.current) a.volume = pct;
+                }}
                 role="slider"
                 aria-label="Volume"
                 aria-valuemin={0}
@@ -642,11 +648,7 @@ export function MusicPlayer() {
                   }
                 }}
               >
-                <div
-                  ref={volFillRef}
-                  className="bgm-vol__fill"
-                  style={{ width: `${DEFAULT_VOLUME * 100}%` }}
-                />
+                <div ref={volFillRef} className="bgm-vol__fill" />
               </div>
               <span className="bgm-vol__pct">
                 {muted ? "0" : Math.round(volume * 100)}%

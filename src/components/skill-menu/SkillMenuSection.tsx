@@ -21,12 +21,10 @@ import {
   faFigma,
 } from "@fortawesome/free-brands-svg-icons";
 import { Reveal } from "../primitives/Reveal";
-import type { ProfileSkills, SpokenLanguage } from "../../data/profile";
+import type { ProfileSkills } from "../../data/profile";
 
 interface Props {
   skills: ProfileSkills;
-  languages: SpokenLanguage[];
-  interests: string[];
 }
 
 interface Category {

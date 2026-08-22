@@ -1,5 +1,10 @@
-import { motion, useReducedMotion } from "motion/react";
-import { useState } from "react";
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "motion/react";
+import { useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { Screen } from "../components/transition/Screen";
 import { PetalBackground } from "../components/primitives/PetalBackground";
@@ -71,6 +76,7 @@ const CONNECTORS: Connector[] = [
   { ang: 26, leftPct: 44.5, shiftPx: 34, mShiftPx: 4, mAng: 22 },
   { ang: -26, leftPct: 56, shiftPx: 34, mShiftPx: -4, mAng: -22 },
   { ang: 26, leftPct: 48, shiftPx: 34, mShiftPx: 4, mAng: 22 },
+  { ang: -26, leftPct: 52, shiftPx: 34, mShiftPx: -4, mAng: -22 },
 ];
 
 /* ================================================================
@@ -87,7 +93,7 @@ function ReadChecks() {
       <path
         d="M1.5 6 L5 9.5 L10 4"
         fill="none"
-        stroke="white"
+        stroke="#B80404"
         strokeWidth="2"
         strokeLinecap="square"
         strokeLinejoin="miter"
@@ -95,12 +101,21 @@ function ReadChecks() {
       <path
         d="M9 6 L12.5 9.5 L18.5 3.5"
         fill="none"
-        stroke="white"
+        stroke="#B80404"
         strokeWidth="3.5"
         strokeLinecap="square"
         strokeLinejoin="miter"
       />
     </svg>
+  );
+}
+
+function ActiveDot() {
+  return (
+    <span className="relative flex h-2.5 w-2.5 shrink-0">
+      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#B80404] opacity-60" />
+      <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#B80404]" />
+    </span>
   );
 }
 
@@ -181,7 +196,7 @@ function CompanyLogo({ company }: { company: string }) {
 
   if (index === -1) {
     return (
-      <span className="flex h-full w-full items-center justify-center font-p5-menu text-2xl uppercase leading-none text-white md:text-3xl">
+      <span className="flex h-full w-full items-center justify-center font-p5-menu text-2xl uppercase leading-none text-black md:text-3xl">
         {company.charAt(0)}
       </span>
     );
@@ -219,7 +234,7 @@ function SpeakerAvatar({
       style={{ transform: right ? "rotate(3deg)" : "rotate(-3deg)" }}
     >
       <div
-        className="h-full w-full border-[3px] border-white bg-black"
+        className="h-full w-full border-[3px] border-black bg-white"
         style={{ boxShadow: "0 0 0 2px #B80404, 6px 6px 0 #000" }}
       >
         <CompanyLogo company={entry.company} />
@@ -254,17 +269,17 @@ function RoleRibbon({ role }: { role: string }) {
 function TechStamp({ tech }: { tech: string }) {
   return (
     <span
-      className="inline-flex items-center border-[1.5px] border-white/30 bg-black px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.15em] text-white/80"
+      className="inline-flex items-center bg-[#1a1a1a] px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.15em] text-white/90"
       style={
         {
           clipPath: "polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%)",
-          boxShadow: "2px 2px 0 rgba(0,0,0,0.3)",
+          boxShadow: "2px 2px 0 rgba(0,0,0,0.15)",
         } as CSSProperties
       }
     >
       <span
         aria-hidden="true"
-        className="mr-1 inline-block h-[4px] w-[4px] bg-[#B80404]"
+        className="mr-1.5 inline-block h-[4px] w-[4px] bg-[#B80404]"
       />
       {tech}
     </span>
@@ -276,11 +291,12 @@ function TechStamp({ tech }: { tech: string }) {
    ================================================================ */
 
 function OpenMessage({ entry }: { entry: ExperienceEntry }) {
+  const isActive = entry.period?.toLowerCase().includes("actualidad") ?? false;
   return (
     <div className="px-6 py-8 md:px-10 md:py-9">
       {/* Empresa — elemento dominante */}
       <h3
-        className="font-display uppercase leading-[0.9] text-white"
+        className="font-display uppercase leading-[0.9] text-black"
         style={{ fontSize: "clamp(1.7rem, 2.6vw, 2.6rem)" }}
       >
         {entry.company}
@@ -296,7 +312,7 @@ function OpenMessage({ entry }: { entry: ExperienceEntry }) {
       <RoleRibbon role={entry.role} />
 
       {/* Fechas / ubicacion / meta */}
-      <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/55">
+      <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-black/55">
         {entry.period && (
           <span className="flex items-center gap-2">
             <span
@@ -327,17 +343,17 @@ function OpenMessage({ entry }: { entry: ExperienceEntry }) {
       </div>
 
       {/* Descripcion */}
-      <p className="mt-5 font-sans text-[15px] leading-relaxed text-white/80">
+      <p className="mt-5 font-sans text-[15px] leading-relaxed text-black/80">
         {entry.summary}
       </p>
 
       {/* Highlights */}
       {entry.highlights.length > 0 && (
-        <ul className="mt-5 space-y-2 border-l-[2px] border-white/15 pl-4">
+        <ul className="mt-5 space-y-2 border-l-[2px] border-black/15 pl-4">
           {entry.highlights.map((highlight) => (
             <li
               key={highlight}
-              className="flex gap-2.5 text-[13px] leading-snug text-white/80"
+              className="flex gap-2.5 text-[13px] leading-snug text-black/80"
             >
               <span
                 aria-hidden="true"
@@ -351,21 +367,30 @@ function OpenMessage({ entry }: { entry: ExperienceEntry }) {
 
       {/* Tech stamps */}
       {entry.tech && entry.tech.length > 0 && (
-        <div className="mt-5 flex flex-wrap gap-[6px]">
+        <div className="mt-5 flex flex-wrap gap-2">
           {entry.tech.map((tech) => (
             <TechStamp key={tech} tech={tech} />
           ))}
         </div>
       )}
 
-      {/* Footer — solo LEIDO */}
-      <div className="mt-7 flex items-center justify-end border-t border-white/10 pt-3">
-        <span className="flex items-center gap-2">
-          <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-white/40">
-            Leido
+      {/* Footer — contextual status */}
+      <div className="mt-7 flex items-center justify-end border-t border-black/10 pt-3">
+        {isActive ? (
+          <span className="flex items-center gap-2">
+            <ActiveDot />
+            <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-black/70">
+              Activo
+            </span>
           </span>
-          <ReadChecks />
-        </span>
+        ) : (
+          <span className="flex items-center gap-2">
+            <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-[#B80404]">
+              Leido
+            </span>
+            <ReadChecks />
+          </span>
+        )}
       </div>
     </div>
   );
@@ -387,9 +412,21 @@ function MessageBlock({
   const poly = right ? BUBBLE_RIGHT : BUBBLE_LEFT;
   const layout = LAYOUTS[index % LAYOUTS.length];
   const conn = CONNECTORS[index - 1] ?? null;
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: cardRef,
+    offset: ["start end", "end start"],
+  });
+
+  const parallaxY = useTransform(
+    scrollYProgress,
+    [0, 1],
+    [reduced ? 0 : 6, reduced ? 0 : -6],
+  );
 
   return (
-    <div className="group">
+    <div className="group" ref={cardRef}>
       {/* Conector angular entre mensajes */}
       {conn && (
         <div className="relative h-14 md:h-56" aria-hidden="true">
@@ -426,6 +463,7 @@ function MessageBlock({
 
       <motion.div
         className="relative z-20"
+        style={{ y: parallaxY }}
         initial={
           reduced
             ? false
@@ -440,21 +478,12 @@ function MessageBlock({
         viewport={{ once: true, amount: 0.15 }}
         transition={{ duration: 0.45, ease: EASE }}
       >
-        <div
-          className={`${layout.maxW} ${layout.wrap} ${layout.rot} transition-transform duration-200 ease-out group-hover:rotate-0 group-hover:-translate-y-1.5`}
-        >
+        <div className={`${layout.maxW} ${layout.wrap} ${layout.rot}`}>
           <div className="relative">
-            {/* Cola del dialogo */}
-            <span
-              aria-hidden="true"
-              className={`absolute bottom-[-1rem] ${right ? "right-[3.5rem]" : "left-[3.5rem]"} h-6 w-6 bg-white`}
-              style={{ clipPath: "polygon(0 0, 100% 0, 50% 100%)" }}
-            />
-
             {/* Sombra dura offset */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 bg-black transition-transform duration-200 ease-out [transform:translate(var(--sx),var(--sy))] group-hover:[--sx:5px] group-hover:[--sy:7px]"
+              className="pointer-events-none absolute inset-0 bg-black transition-transform duration-200 ease-out [transform:translate(var(--sx),var(--sy))]"
               style={
                 {
                   clipPath: poly,
@@ -464,13 +493,12 @@ function MessageBlock({
               }
             />
 
-            {/* Panel: borde blanco + interior negro + acento rojo */}
+            {/* Panel: borde blanco + interior blanco + acento rojo */}
             <div
-              data-cursor="select"
               className="relative bg-white p-[6px] md:p-[7px]"
               style={{ clipPath: poly }}
             >
-              <div className="relative bg-black">
+              <div className="relative bg-white transition-[filter] duration-200 group-hover:brightness-[1.03]">
                 <div className="h-[3px] w-full bg-[#B80404]" />
                 <OpenMessage entry={entry} />
               </div>

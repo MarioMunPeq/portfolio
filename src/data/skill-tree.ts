@@ -41,7 +41,7 @@ export const SKILL_TREE: { nodes: SkillNode[]; edges: SkillEdge[] } = {
     {
       id: "telecomunicaciones",
       x: 50,
-      y: 82,
+      y: 85,
       label: "TELECO",
       title: "Instalaciones de Telecomunicaciones",
       icon: "antenna",
@@ -53,9 +53,9 @@ export const SKILL_TREE: { nodes: SkillNode[]; edges: SkillEdge[] } = {
     },
     {
       id: "ari",
-      x: 28,
-      y: 50,
-      label: "robotica",
+      x: 25,
+      y: 52,
+      label: "ROBOTICA",
       title: "Automatizacion y robotica Industrial",
       icon: "robot",
       kind: "unlocked",
@@ -67,8 +67,8 @@ export const SKILL_TREE: { nodes: SkillNode[]; edges: SkillEdge[] } = {
     },
     {
       id: "dam",
-      x: 72,
-      y: 50,
+      x: 75,
+      y: 52,
       label: "DAM",
       title: "Desarrollo de Aplicaciones Multiplataforma",
       icon: "code",
@@ -81,7 +81,7 @@ export const SKILL_TREE: { nodes: SkillNode[]; edges: SkillEdge[] } = {
     },
     {
       id: "bootcamp",
-      x: 72,
+      x: 75,
       y: 18,
       label: "BOOTCAMP IA",
       title: "Bootcamp de Inteligencia Artificial",

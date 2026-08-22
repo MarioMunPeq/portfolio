@@ -109,24 +109,8 @@ export function LoadScreen() {
     [0.16, 0.2, 0.46, 0.5],
     [0, 0.55, 0.55, 0],
   );
-  const [glowOpacity, setGlowOpacity] = useState(0.65);
-  const glowCombinedOpacity = useTransform(maskOpacity, (o) => o * glowOpacity);
-
   const impactFired = useRef(false);
   const exitStarted = useRef(false);
-
-  /* Layered glow breathing — subtle 3s cycle. */
-  useEffect(() => {
-    if (reduced) return;
-    let raf: number;
-    const tick = () => {
-      const t = performance.now() / 3000;
-      setGlowOpacity(0.5 + 0.15 * Math.sin(t * Math.PI * 2));
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [reduced]);
 
   const hide = useCallback(() => {
     setHidden(true);
@@ -197,7 +181,15 @@ export function LoadScreen() {
         else startExit();
       },
     });
-    return () => controls.stop();
+    /* Safety: force-hide after 6s even if animation or exit stalls. */
+    const safety = window.setTimeout(() => {
+      markBooted();
+      hide();
+    }, 6000);
+    return () => {
+      controls.stop();
+      window.clearTimeout(safety);
+    };
   }, [progress, visible, reduced, hide, startExit]);
 
   if (hidden) return null;
@@ -437,7 +429,7 @@ export function LoadScreen() {
                 aria-hidden="true"
                 className="absolute inset-0 z-0"
                 style={{
-                  opacity: glowCombinedOpacity,
+                  opacity: 0.65,
                   background: [
                     "radial-gradient(circle at 50% 50%, rgba(230,0,18,0.38) 0%, transparent 18%)",
                     "radial-gradient(circle at 50% 50%, rgba(230,0,18,0.16) 0%, transparent 35%)",

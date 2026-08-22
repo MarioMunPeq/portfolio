@@ -126,6 +126,13 @@ export function Cursor() {
     ghostX.set(x.get());
     ghostY.set(y.get());
 
+    const disable = () => {
+      setEnabled(false);
+      setCursor({ active: false, label: "", color: "white" });
+      setPressed(false);
+      document.documentElement.removeAttribute("data-cursor-active");
+    };
+
     const onResize = () => {
       viewport.current = { w: window.innerWidth, h: window.innerHeight };
     };
@@ -183,13 +190,14 @@ export function Cursor() {
     /* Si el viewport cambia a un layout tactil (rotacion, resize),
        forzar el apagado completo del cursor custom. */
     const onHoverChange = (e: MediaQueryListEvent) => {
-      if (e.matches) {
-        setEnabled(false);
-        setCursor({ active: false, label: "", color: "white" });
-        setPressed(false);
-        document.documentElement.removeAttribute("data-cursor-active");
-      }
+      if (e.matches) disable();
     };
+
+    /* Desactivar inmediatamente al detectar cualquier interaccion tactil.
+       Un solo touch en un dispositivo hibrido (ej. Surface) debe apagar
+       el cursor custom para siempre en esa sesion. */
+    const onTouchStart = () => disable();
+
     hoverQuery.addEventListener("change", onHoverChange);
 
     window.addEventListener("resize", onResize);
@@ -199,6 +207,10 @@ export function Cursor() {
     window.addEventListener("mouseup", onUp);
     window.addEventListener("blur", onLeave);
     document.addEventListener("mouseleave", onLeave);
+    window.addEventListener("touchstart", onTouchStart, {
+      once: true,
+      passive: true,
+    });
 
     return () => {
       hoverQuery.removeEventListener("change", onHoverChange);
@@ -209,6 +221,7 @@ export function Cursor() {
       window.removeEventListener("mouseup", onUp);
       window.removeEventListener("blur", onLeave);
       document.removeEventListener("mouseleave", onLeave);
+      window.removeEventListener("touchstart", onTouchStart);
       document.documentElement.removeAttribute("data-cursor-active");
     };
   }, [reduced, x, y, ghostX, ghostY]);

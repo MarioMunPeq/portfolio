@@ -2,7 +2,6 @@ import { useReducedMotion } from "motion/react";
 import { Reveal } from "../components/primitives/Reveal";
 import { Screen } from "../components/transition/Screen";
 import { DiamondMarker } from "../components/shared/DiamondMarker";
-import { Annotation } from "../components/primitives/Annotation";
 import { SectionTitle } from "../components/ui/SectionTitle";
 import { Tag } from "../components/ui/Tag";
 import { StatTag } from "../components/ui/StatTag";
@@ -247,7 +246,7 @@ function StatStar() {
 }
 
 export function About() {
-  const { about, hero, branding } = profile;
+  const { about, hero } = profile;
 
   return (
     <Screen className="min-h-dvh bg-bg-hero text-paper">
@@ -295,14 +294,7 @@ export function About() {
           <div className="mt-10 grid items-start gap-16 lg:grid-cols-[0.38fr_0.62fr] lg:gap-8 xl:gap-12">
             {/* ===== Columna izquierda: identidad ===== */}
             <Reveal>
-              <div className="relative -ml-2 lg:-ml-6">
-                <Annotation
-                  tone="paper"
-                  className="absolute -left-2 top-4 z-30 -rotate-3"
-                >
-                  {branding.system}
-                </Annotation>
-
+              <div className="relative">
                 <div className="relative z-10 mx-auto w-[min(22rem,95%)] -rotate-2">
                   <PortraitSlot />
                   <span
@@ -408,11 +400,7 @@ export function About() {
           </Reveal>
 
           {/* ===== Habilidades (menu de juego) ===== */}
-          <SkillMenuSection
-            skills={about.skills}
-            languages={about.languages}
-            interests={about.interests}
-          />
+          <SkillMenuSection skills={about.skills} />
         </div>
 
         {/* ===== Permiso de conducir — full width, cruza el layout ===== */}

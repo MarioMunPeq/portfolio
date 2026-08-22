@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 interface LightboxProps {
@@ -9,9 +9,14 @@ interface LightboxProps {
 
 export function Lightbox({ src, alt, onClose }: LightboxProps) {
   const [visible, setVisible] = useState(false);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const raf = requestAnimationFrame(() => setVisible(true));
+    const raf = requestAnimationFrame(() => {
+      setVisible(true);
+      closeRef.current?.focus();
+    });
     return () => cancelAnimationFrame(raf);
   }, []);
 
@@ -20,6 +25,27 @@ export function Lightbox({ src, alt, onClose }: LightboxProps) {
       if (e.key === "Escape") {
         setVisible(false);
         setTimeout(onClose, 250);
+        return;
+      }
+      /* Focus trap: keep Tab cycling inside the lightbox */
+      if (e.key === "Tab" && containerRef.current) {
+        const focusable = containerRef.current.querySelectorAll<HTMLElement>(
+          "button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])",
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
       }
     }
     document.addEventListener("keydown", handleKey);
@@ -44,6 +70,7 @@ export function Lightbox({ src, alt, onClose }: LightboxProps) {
       style={{ backgroundColor: "rgba(0,0,0,0.92)", cursor: "default" }}
     >
       <div
+        ref={containerRef}
         onClick={(e) => e.stopPropagation()}
         className={`relative max-h-[85vh] max-w-[90vw] transition-all duration-250 ${
           visible ? "scale-100 opacity-100" : "scale-95 opacity-0"
@@ -56,9 +83,10 @@ export function Lightbox({ src, alt, onClose }: LightboxProps) {
           style={{ cursor: "zoom-out" }}
         />
         <button
+          ref={closeRef}
           onClick={handleClose}
           aria-label="Cerrar visor"
-          className="absolute -right-3 -top-3 flex h-9 w-9 items-center justify-center border border-paper/30 bg-bg-hero text-paper transition-colors hover:border-accent hover:text-accent"
+          className="absolute -right-3 -top-3 flex h-11 w-11 items-center justify-center border border-paper/30 bg-bg-hero text-paper transition-colors hover:border-accent hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           style={{
             clipPath:
               "polygon(0 0, calc(100% - 0.5rem) 0, 100% 0.5rem, 100% 100%, 0.5rem 100%, 0 calc(100% - 0.5rem))",
@@ -67,7 +95,7 @@ export function Lightbox({ src, alt, onClose }: LightboxProps) {
         >
           <svg
             viewBox="0 0 24 24"
-            className="h-4 w-4"
+            className="h-5 w-5"
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
