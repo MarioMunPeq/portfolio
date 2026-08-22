@@ -68,12 +68,16 @@ export function LoadScreen() {
   /* --- Exit states --- */
   const [mainFading, setMainFading] = useState(false);
   const [tearing, setTearing] = useState(false);
-  const [maskExiting, setMaskExiting] = useState(false);
   const [pollExiting, setPollExiting] = useState(false);
 
   const progress = useMotionValue(0);
   const impactScale = useMotionValue(1);
   const glowBoost = useMotionValue(0);
+
+  /* --- Mask exit (imperative — immune to React re-renders) --- */
+  const maskExitOpacity = useMotionValue(1);
+  const maskExitY = useMotionValue("0%");
+  const maskExitScale = useMotionValue(1);
 
   /* --- Mask reveal (during loading phase) --- */
   const revealEdge = useTransform(
@@ -135,9 +139,13 @@ export function LoadScreen() {
     setPollExiting(true);
     setMainFading(true);
     setTearing(true);
-    window.setTimeout(() => setMaskExiting(true), 180);
+    window.setTimeout(() => {
+      animate(maskExitOpacity, 0, { duration: 0.4, ease: EXIT_EASE });
+      animate(maskExitY, "-12%", { duration: 0.4, ease: EXIT_EASE });
+      animate(maskExitScale, 1.12, { duration: 0.4, ease: EXIT_EASE });
+    }, 180);
     window.setTimeout(hide, 680);
-  }, [hide, impactScale]);
+  }, [hide, impactScale, maskExitOpacity, maskExitY, maskExitScale]);
 
   /* Barra y porcentaje: escritura directa en el DOM (sin re-renders). */
   useMotionValueEvent(progress, "change", (value) => {
@@ -393,24 +401,26 @@ export function LoadScreen() {
           ============================================================ */}
       <motion.div
         className="fixed inset-0 z-[101] pointer-events-none"
-        animate={{
-          opacity: maskExiting ? 0 : 1,
-          y: maskExiting ? "-12%" : "0%",
-          scale: maskExiting ? 1.12 : 1,
+        style={{
+          opacity: maskExitOpacity,
+          y: maskExitY,
+          scale: maskExitScale,
         }}
-        transition={{ duration: 0.4, ease: EXIT_EASE }}
       >
         <div
-          className="load-mask-float pointer-events-none absolute"
+          className="pointer-events-none absolute"
           style={{ left: "50%", top: "50%" }}
         >
-          <motion.div
+          <div
             className="relative w-[min(82vw,560px)] max-w-none"
-            style={{
-              x: "-50%",
-              clipPath: reduced ? "none" : maskClip,
-            }}
+            style={{ transform: "translate(-50%, -50%)" }}
           >
+            <motion.div
+              className="relative w-full max-w-none"
+              style={{
+                clipPath: reduced ? "none" : maskClip,
+              }}
+            >
             <motion.img
               src={MASK_SRC}
               alt=""
@@ -453,6 +463,7 @@ export function LoadScreen() {
               />
             )}
           </motion.div>
+          </div>
 
           {/* FASE 3 — IMPACTO: diamantes */}
           {!reduced && impact && (
