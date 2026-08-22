@@ -12,13 +12,10 @@ import { ProjectDetail } from "./pages/ProjectDetail";
 import { NotFound } from "./pages/NotFound";
 
 /**
- * La app se sirve bajo el base `/portfolio/` (vite.config) en el despliegue,
- * pero bajo `/` en preview local. El basename se ajusta a la ruta real de
- * carga para que `/portfolio/` (o `/`) resuelva la pantalla de inicio `/`.
+ * La app se sirve bajo `/` (dominio personalizado mariomunpeq.is-a.dev).
+ * En preview local también se sirve bajo `/`.
  */
-const APP_BASE = window.location.pathname.startsWith("/portfolio")
-  ? "/portfolio"
-  : "/";
+const APP_BASE = "/";
 
 function App() {
   return (

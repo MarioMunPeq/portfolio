@@ -266,7 +266,7 @@ export function About() {
           className="pointer-events-none absolute -right-20 top-0 h-full w-[75%] opacity-[0.14]"
           style={{
             backgroundImage:
-              "url(/portfolio/images/background/starbackground.png)",
+              "url(/images/background/starbackground.png)",
             backgroundSize: "cover",
             backgroundPosition: "center",
             maskImage:

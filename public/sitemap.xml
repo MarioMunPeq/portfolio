@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://mariomunpeq.github.io/portfolio/</loc>
+    <loc>https://mariomunpeq.is-a.dev/</loc>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://mariomunpeq.github.io/portfolio/about</loc>
+    <loc>https://mariomunpeq.is-a.dev/about</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mariomunpeq.github.io/portfolio/projects</loc>
+    <loc>https://mariomunpeq.is-a.dev/projects</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mariomunpeq.github.io/portfolio/experience</loc>
+    <loc>https://mariomunpeq.is-a.dev/experience</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://mariomunpeq.github.io/portfolio/education</loc>
+    <loc>https://mariomunpeq.is-a.dev/education</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

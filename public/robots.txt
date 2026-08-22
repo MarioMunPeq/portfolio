@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://mariomunpeq.github.io/portfolio/sitemap.xml
+Sitemap: https://mariomunpeq.is-a.dev/sitemap.xml

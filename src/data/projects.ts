@@ -104,33 +104,33 @@ export const projects: Project[] = [
     },
     images: [
       {
-        src: "/portfolio/images/projects/dungeon-archive/home.png",
+        src: "/images/projects/dungeon-archive/home.png",
         alt: "Dungeon Archive home screen",
       },
     ],
     screenshots: [
       {
-        src: "/portfolio/images/projects/dungeon-archive/home.png",
+        src: "/images/projects/dungeon-archive/home.png",
         alt: "Dungeon Archive home screen",
         caption: "Home",
       },
       {
-        src: "/portfolio/images/projects/dungeon-archive/character.png",
+        src: "/images/projects/dungeon-archive/character.png",
         alt: "Character manager",
         caption: "Character",
       },
       {
-        src: "/portfolio/images/projects/dungeon-archive/combat.png",
+        src: "/images/projects/dungeon-archive/combat.png",
         alt: "Combat tracker",
         caption: "Combat",
       },
       {
-        src: "/portfolio/images/projects/dungeon-archive/dice.png",
+        src: "/images/projects/dungeon-archive/dice.png",
         alt: "Dice roller",
         caption: "Dice roller",
       },
       {
-        src: "/portfolio/images/projects/dungeon-archive/backup.png",
+        src: "/images/projects/dungeon-archive/backup.png",
         alt: "Cloud Backup screen",
         caption: "Backup",
       },

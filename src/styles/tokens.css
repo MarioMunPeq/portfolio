@@ -10,11 +10,10 @@
      con el siguiente font del stack (Anton → Arial Narrow → sans-serif),
      que si tiene esos glifos. Esto es GLOBAL: este stylesheet lo carga
      toda la app desde main.tsx, asi que vale para todas las paginas.
-   La base del proyecto es "/portfolio/", asi que las url() llevan ese prefijo.
    ============================================================ */
 @font-face {
   font-family: "P5 Menu";
-  src: url("/portfolio/fonts/Persona5MenuFontPrototype-Regular.ttf")
+  src: url("/fonts/Persona5MenuFontPrototype-Regular.ttf")
     format("truetype");
   font-display: swap;
   unicode-range: U+0000-007F;
@@ -25,7 +24,7 @@
    españoles (a e i o u ñ ¿ ¡): los aporta el fallback del stack (per-glyph). */
 @font-face {
   font-family: "P5 Hatty";
-  src: url("/portfolio/fonts/p5hatty.ttf") format("truetype");
+  src: url("/fonts/p5hatty.ttf") format("truetype");
   font-display: swap;
   unicode-range: U+0000-007F;
 }
@@ -36,7 +35,7 @@
    (per-glyph), igual que P5 Menu. */
 @font-face {
   font-family: "Expose";
-  src: url("/portfolio/fonts/Expose-Regular.otf") format("opentype");
+  src: url("/fonts/Expose-Regular.otf") format("opentype");
   font-display: swap;
   unicode-range: U+0000-007F;
 }
