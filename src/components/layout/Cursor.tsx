@@ -52,7 +52,7 @@ const PRESS = { duration: 0.12, ease: BEZIER };
 // Clip-path wipe de la caja — agresivo, diagonal.
 const PUNCH: [number, number, number, number] = [0.65, 0, 0.35, 1];
 const WIPE_IN = { duration: 0.15, ease: PUNCH };
-const WIPE_OUT = { duration: 0.10, ease: PUNCH };
+const WIPE_OUT = { duration: 0.1, ease: PUNCH };
 // Texto interior: delay escalonado respecto al wipe.
 const TEXT_IN = { duration: 0.12, ease: "easeOut" as const, delay: 0.06 };
 const TEXT_OUT = { duration: 0.06, ease: "easeIn" as const };

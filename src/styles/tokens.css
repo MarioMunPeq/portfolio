@@ -13,8 +13,7 @@
    ============================================================ */
 @font-face {
   font-family: "P5 Menu";
-  src: url("/fonts/Persona5MenuFontPrototype-Regular.ttf")
-    format("truetype");
+  src: url("/fonts/Persona5MenuFontPrototype-Regular.ttf") format("truetype");
   font-display: swap;
   unicode-range: U+0000-007F;
 }
@@ -236,7 +235,9 @@
   color: color-mix(in srgb, var(--color-ink) 70%, transparent);
 }
 @media (min-width: 1024px) {
-  .hero-sub { font-size: 15px; }
+  .hero-sub {
+    font-size: 15px;
+  }
 }
 
 /* Marco angular sin `border`: la capa exterior (hero-cmd) pinta el borde

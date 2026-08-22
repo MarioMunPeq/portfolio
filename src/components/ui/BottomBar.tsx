@@ -62,7 +62,8 @@ function DigitalClock() {
     >
       {clock.hours}
       <span className={clock.dotVisible ? "opacity-100" : "opacity-0"}>
-        {" "}♦{" "}
+        {" "}
+        ♦{" "}
       </span>
       {clock.minutes}
     </span>

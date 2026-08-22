@@ -421,48 +421,48 @@ export function LoadScreen() {
                 clipPath: reduced ? "none" : maskClip,
               }}
             >
-            <motion.img
-              src={MASK_SRC}
-              alt=""
-              draggable={false}
-              className="block w-full max-w-none relative z-[1]"
-              style={{
-                scale: reduced ? 1 : maskCombinedScale,
-                opacity: reduced ? 1 : maskOpacity,
-                filter: reduced ? "none" : maskFilter,
-              }}
-            />
-
-            {/* Layered glow — tight inner + medium + soft outer halo, breathing pulse */}
-            {!reduced && (
-              <motion.div
-                aria-hidden="true"
-                className="absolute inset-0 z-0"
+              <motion.img
+                src={MASK_SRC}
+                alt=""
+                draggable={false}
+                className="block w-full max-w-none relative z-[1]"
                 style={{
-                  opacity: 0.65,
-                  background: [
-                    "radial-gradient(circle at 50% 50%, rgba(230,0,18,0.38) 0%, transparent 18%)",
-                    "radial-gradient(circle at 50% 50%, rgba(230,0,18,0.16) 0%, transparent 35%)",
-                    "radial-gradient(circle at 50% 50%, rgba(230,0,18,0.06) 0%, transparent 55%)",
-                  ].join(", "),
-                  mixBlendMode: "screen",
+                  scale: reduced ? 1 : maskCombinedScale,
+                  opacity: reduced ? 1 : maskOpacity,
+                  filter: reduced ? "none" : maskFilter,
                 }}
               />
-            )}
 
-            {/* FASE 2 — REVELADO: linea de escaneo */}
-            {!reduced && (
-              <motion.div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-x-0 h-px bg-accent"
-                style={{
-                  top: scanTop,
-                  opacity: scanOpacity,
-                  boxShadow: "0 0 12px rgba(230,0,18,0.65)",
-                }}
-              />
-            )}
-          </motion.div>
+              {/* Layered glow — tight inner + medium + soft outer halo, breathing pulse */}
+              {!reduced && (
+                <motion.div
+                  aria-hidden="true"
+                  className="absolute inset-0 z-0"
+                  style={{
+                    opacity: 0.65,
+                    background: [
+                      "radial-gradient(circle at 50% 50%, rgba(230,0,18,0.38) 0%, transparent 18%)",
+                      "radial-gradient(circle at 50% 50%, rgba(230,0,18,0.16) 0%, transparent 35%)",
+                      "radial-gradient(circle at 50% 50%, rgba(230,0,18,0.06) 0%, transparent 55%)",
+                    ].join(", "),
+                    mixBlendMode: "screen",
+                  }}
+                />
+              )}
+
+              {/* FASE 2 — REVELADO: linea de escaneo */}
+              {!reduced && (
+                <motion.div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-x-0 h-px bg-accent"
+                  style={{
+                    top: scanTop,
+                    opacity: scanOpacity,
+                    boxShadow: "0 0 12px rgba(230,0,18,0.65)",
+                  }}
+                />
+              )}
+            </motion.div>
           </div>
 
           {/* FASE 3 — IMPACTO: diamantes */}

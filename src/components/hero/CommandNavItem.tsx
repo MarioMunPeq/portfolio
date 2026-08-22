@@ -87,7 +87,10 @@ export function CommandNavItem({
         <span className="min-w-0 flex-1 overflow-hidden whitespace-nowrap [transform:skewX(11deg)] font-p5-menu text-[22px] leading-none tracking-[0.02em] text-paper transition-colors duration-200 [text-shadow:2px_2px_0_color-mix(in_srgb,var(--color-ink)_60%,transparent)] group-hover:text-ink group-hover:[text-shadow:none] group-focus-visible:text-ink sm:text-[28px] lg:text-[30px] xl:text-[36px]">
           {label}
         </span>
-        <span className="w-[130px] shrink-0 hidden self-center overflow-hidden whitespace-nowrap [transform:skewX(11deg)] md:block" aria-hidden="true">
+        <span
+          className="w-[130px] shrink-0 hidden self-center overflow-hidden whitespace-nowrap [transform:skewX(11deg)] md:block"
+          aria-hidden="true"
+        >
           <span className="hero-sub block transition-opacity duration-200 group-hover:opacity-0">
             {sub}
           </span>

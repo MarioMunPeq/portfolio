@@ -27,8 +27,7 @@ function ProjectsGraphicLayer() {
       <span
         className="absolute -left-16 top-[10%] h-[120%] w-[65%] opacity-[0.12]"
         style={{
-          backgroundImage:
-            "url(/images/background/starbackground.png)",
+          backgroundImage: "url(/images/background/starbackground.png)",
           backgroundSize: "cover",
           backgroundPosition: "center",
           transform: "rotate(-3deg)",
