@@ -208,12 +208,35 @@
   align-items: center;
   gap: 12px;
   width: 100%;
-  padding: 26px 50px 26px 22px;
+  padding: 32px 50px 32px 22px;
   background-color: var(--color-paper);
   clip-path: polygon(0 18%, 5% 0, 93% 0, 100% 50%, 93% 100%, 5% 100%, 0 82%);
   transform: skewX(-11deg);
   transition: transform 0.08s cubic-bezier(0.22, 1, 0.36, 1);
   overflow: hidden;
+}
+
+/* Subtitle dual-layer: default + hover crossfade */
+.hero-sub {
+  font-family: var(--font-display);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: color-mix(in srgb, var(--color-paper) 50%, transparent);
+  transform: skewX(11deg);
+  transition: color 0.2s;
+}
+.hero-sub--hover {
+  position: absolute;
+  inset: 0;
+  color: color-mix(in srgb, var(--color-ink) 70%, transparent);
+}
+.group:hover .hero-sub,
+.group:focus-visible .hero-sub {
+  color: color-mix(in srgb, var(--color-ink) 70%, transparent);
+}
+@media (min-width: 1024px) {
+  .hero-sub { font-size: 15px; }
 }
 
 /* Marco angular sin `border`: la capa exterior (hero-cmd) pinta el borde
@@ -312,7 +335,7 @@
   }
 
   .hero-cmd {
-    padding: 16px 36px 16px 14px;
+    padding: 20px 36px 20px 14px;
     gap: 8px;
     clip-path: polygon(0 14%, 4% 0, 94% 0, 100% 50%, 94% 100%, 4% 100%, 0 86%);
   }
@@ -987,6 +1010,8 @@ html.lenis body {
   /* P5 Hatty: manuscrita para etiquetas y anotaciones pequeñas de la pagina
      de Habilidades. Sin acentos españoles: el fallback los aporta por glifo. */
   --font-hatty: "P5 Hatty", "Anton", "Arial Narrow", sans-serif;
+  /* Share Tech Mono: reloj digital LCD/segmentos del footer. */
+  --font-digital: "Share Tech Mono", monospace;
 
   /* --- Escala tipografica (min: hero, section-title, subtitle, body, caption) --- */
   --text-hero: clamp(3.25rem, 9vw, 8rem);

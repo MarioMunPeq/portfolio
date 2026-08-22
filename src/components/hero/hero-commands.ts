@@ -6,6 +6,7 @@ export interface HeroCommand {
   icon: HeroIcon;
   label: string;
   sub: string;
+  subHover: string;
   path: string;
 }
 
@@ -25,28 +26,32 @@ export const HERO_COMMANDS: HeroCommand[] = [
     id: "sobre-mi",
     icon: "triangle",
     label: "perfil",
-    sub: "Sobre mi",
+    sub: "SOBRE MÍ",
+    subHover: "DAM · DESARROLLO",
     path: byId("sobre-mi"),
   },
   {
     id: "proyectos",
     icon: "square",
     label: "inventario",
-    sub: "Proyectos",
+    sub: "PROYECTOS",
+    subHover: "WEB · SOFTWARE",
     path: byId("proyectos"),
   },
   {
     id: "experiencia",
     icon: "circle",
     label: "progreso",
-    sub: "Experiencia",
+    sub: "EXPERIENCIA",
+    subHover: "COGNIZANT · PEGA",
     path: byId("experiencia"),
   },
   {
     id: "formacion",
     icon: "cross",
     label: "habilidades",
-    sub: "Formacion",
+    sub: "FORMACIÓN",
+    subHover: "JAVA · PYTHON · C#",
     path: byId("formacion"),
   },
 ];

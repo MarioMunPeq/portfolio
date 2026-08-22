@@ -17,6 +17,7 @@ interface CommandNavItemProps {
   icon: HeroIcon;
   label: string;
   sub: string;
+  subHover: string;
   path: string;
   rotation?: number;
   offsetX?: number;
@@ -36,6 +37,7 @@ export function CommandNavItem({
   icon,
   label,
   sub,
+  subHover,
   path,
   rotation = 0,
   offsetX = 0,
@@ -82,11 +84,16 @@ export function CommandNavItem({
         >
           {glyph}
         </span>
-        <span className="whitespace-nowrap [transform:skewX(11deg)] font-p5-menu text-[26px] leading-none tracking-[0.02em] text-paper transition-colors duration-200 [text-shadow:2px_2px_0_color-mix(in_srgb,var(--color-ink)_60%,transparent)] group-hover:text-ink group-hover:[text-shadow:none] group-focus-visible:text-ink sm:text-[32px] lg:text-[34px] xl:text-[42px]">
+        <span className="min-w-0 flex-1 overflow-hidden whitespace-nowrap [transform:skewX(11deg)] font-p5-menu text-[22px] leading-none tracking-[0.02em] text-paper transition-colors duration-200 [text-shadow:2px_2px_0_color-mix(in_srgb,var(--color-ink)_60%,transparent)] group-hover:text-ink group-hover:[text-shadow:none] group-focus-visible:text-ink sm:text-[28px] lg:text-[30px] xl:text-[36px]">
           {label}
         </span>
-        <span className="ml-auto hidden self-center whitespace-nowrap font-display text-[14px] uppercase tracking-[0.06em] text-paper/50 [transform:skewX(11deg)] transition-colors duration-200 group-hover:text-ink/70 group-focus-visible:text-ink/70 md:block lg:text-[15px]">
-          {sub}
+        <span className="w-[130px] shrink-0 hidden self-center overflow-hidden whitespace-nowrap [transform:skewX(11deg)] md:block" aria-hidden="true">
+          <span className="hero-sub block transition-opacity duration-200 group-hover:opacity-0">
+            {sub}
+          </span>
+          <span className="hero-sub hero-sub--hover pointer-events-none absolute inset-0 block transition-opacity duration-200 opacity-0 group-hover:opacity-100">
+            {subHover}
+          </span>
         </span>
       </button>
     </li>

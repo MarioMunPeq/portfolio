@@ -6,10 +6,10 @@ import { HERO_COMMANDS } from "../components/hero/hero-commands";
 import { useBooted } from "../lib/boot";
 
 const MENU_CHAOS = [
-  { rotation: -2, offsetX: 10, widthPx: 375 },
-  { rotation: 1.5, offsetX: -5, widthPx: 400 },
-  { rotation: -1, offsetX: 16, widthPx: 390 },
-  { rotation: 2, offsetX: 2, widthPx: 410 },
+  { rotation: -2, offsetX: 10, widthPx: 420 },
+  { rotation: 1.5, offsetX: -5, widthPx: 470 },
+  { rotation: -1, offsetX: 16, widthPx: 435 },
+  { rotation: 2, offsetX: 2, widthPx: 480 },
 ];
 
 /**
@@ -94,7 +94,7 @@ export function Home() {
           className="absolute left-3 top-[45%] z-20 -translate-y-1/2 sm:left-[5%] sm:top-1/2 lg:left-[6%]"
         >
           <ol
-            className={`flex w-[min(88vw,425px)] flex-col gap-2 sm:gap-3${entered ? " hero-commands--enter" : ""}`}
+            className={`flex w-[min(88vw,480px)] flex-col gap-3 sm:gap-4${entered ? " hero-commands--enter" : ""}`}
           >
             {HERO_COMMANDS.map((command, i) => (
               <CommandNavItem

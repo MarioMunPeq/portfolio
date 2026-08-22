@@ -49,13 +49,30 @@ const BEZIER: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const SNAP = { duration: 0.18, ease: BEZIER };
 // Compresion al pulsar, aun mas corta (~120 ms).
 const PRESS = { duration: 0.12, ease: BEZIER };
-// Entrada de la etiqueta contextual.
-const LABEL_IN = { duration: 0.16, ease: BEZIER };
+// Clip-path wipe de la caja — agresivo, diagonal.
+const PUNCH: [number, number, number, number] = [0.65, 0, 0.35, 1];
+const WIPE_IN = { duration: 0.15, ease: PUNCH };
+const WIPE_OUT = { duration: 0.10, ease: PUNCH };
+// Texto interior: delay escalonado respecto al wipe.
+const TEXT_IN = { duration: 0.12, ease: "easeOut" as const, delay: 0.06 };
+const TEXT_OUT = { duration: 0.06, ease: "easeIn" as const };
+// Posicion de la etiqueta respecto al puntero.
+const SLIDE = { duration: 0.14, ease: BEZIER };
 // Rotacion continua y lenta del diamante, independiente del movimiento.
 const SPIN = { duration: 6, ease: "linear" as const, repeat: Infinity };
 
 // Diamante: cuadrado girado 45° (vertices arriba/abajo/izquierda/derecha).
 const DIAMOND = "M 12 2.5 L 21.5 12 L 12 21.5 L 2.5 12 Z";
+
+// Clip-path angular de la etiqueta (esquinas cortadas).
+const CLIP_OPEN =
+  "polygon(5px 0, calc(100% - 3px) 0, 100% 5px, 100% calc(100% - 3px), calc(100% - 5px) 100%, 3px 100%, 0 calc(100% - 5px), 0 3px)";
+// Estado oculto: colapsado al borde izquierdo (mismos 8 puntos).
+const CLIP_HIDDEN_LEFT =
+  "polygon(0 0, 0 0, 0 5px, 0 calc(100% - 5px), 0 100%, 0 100%, 0 calc(100% - 5px), 0 3px)";
+// Estado oculto: colapsado al borde derecho.
+const CLIP_HIDDEN_RIGHT =
+  "polygon(100% 0, 100% 0, 100% 5px, 100% calc(100% - 3px), 100% 100%, 100% 100%, 100% calc(100% - 5px), 100% 3px)";
 
 // Separacion horizontal de la etiqueta respecto al puntero y ancho estimado
 // (se reajusta con la medicion real del DOM).
@@ -309,39 +326,56 @@ export function Cursor() {
             </motion.div>
           </motion.div>
 
-          {/* Etiqueta contextual tipo P5 */}
+          {/* Etiqueta contextual tipo P5 — wipe diagonal + borde rojo + texto escalonado */}
           <motion.span
             className="pointer-events-none absolute left-0 top-0"
             animate={{
-              opacity: cursor.active ? 1 : 0,
-              scale: cursor.active ? 1 : 0.96,
               x: cursor.active ? labelX : labelX + (flipped ? -8 : 8),
               y: cursor.active ? labelY : labelY + 6,
             }}
-            transition={LABEL_IN}
+            transition={SLIDE}
           >
-            <span
+            {/* Capa borde: fondo rojo, 2px mas grande, mismo clip-path */}
+            <motion.span
+              className="absolute inset-[-2px] bg-accent"
+              animate={{
+                clipPath: cursor.active
+                  ? CLIP_OPEN
+                  : flipped
+                    ? CLIP_HIDDEN_RIGHT
+                    : CLIP_HIDDEN_LEFT,
+              }}
+              transition={cursor.active ? WIPE_IN : WIPE_OUT}
+            />
+            {/* Capa contenido: fondo oscuro, texto interior */}
+            <motion.span
               ref={labelRef}
-              className={`relative block bg-[#010101] px-4 py-[7px] [clip-path:polygon(0_0,100%_0,calc(100%_-_8px)_100%,8px_100%)] ${
+              className={`relative block bg-[#0a0a0a] px-5 py-[7px] ${
                 flipped ? "text-right" : ""
               }`}
+              animate={{
+                clipPath: cursor.active
+                  ? CLIP_OPEN
+                  : flipped
+                    ? CLIP_HIDDEN_RIGHT
+                    : CLIP_HIDDEN_LEFT,
+              }}
+              transition={cursor.active ? WIPE_IN : WIPE_OUT}
             >
-              {/* Linea estructural superior */}
-              <span className="absolute inset-x-0 top-0 h-px bg-paper/60" />
-              {/* Marcador direccional rojo */}
-              <span
-                className={`absolute top-1/2 h-[6px] w-[6px] -translate-y-1/2 rotate-45 bg-accent ${
-                  flipped ? "right-[7px]" : "left-[7px]"
-                }`}
-              />
-              <span
+              {/* Texto interior: ♦ + label, fade+slide escalonado */}
+              <motion.span
                 className={`block whitespace-nowrap font-display text-[11px] uppercase leading-none tracking-[0.18em] text-paper ${
-                  flipped ? "pr-4" : "pl-4"
+                  flipped ? "pr-3" : "pl-3"
                 }`}
+                animate={{
+                  opacity: cursor.active ? 1 : 0,
+                  y: cursor.active ? 0 : 3,
+                }}
+                transition={cursor.active ? TEXT_IN : TEXT_OUT}
               >
-                {cursor.label}
-              </span>
-            </span>
+                ♦ {cursor.label}
+              </motion.span>
+            </motion.span>
           </motion.span>
         </div>
       </motion.div>
