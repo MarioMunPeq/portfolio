@@ -155,15 +155,11 @@ function DrivingCar({ className = "" }: { className?: string }) {
   );
 }
 
-// Posiciones fijas de las etiquetas en las esquinas, fuera del area de la
-// estrella, y sus inclinaciones suaves (casi horizontales).
-const LABEL_POSITIONS = [
-  { left: 48, top: 0 },
-  { left: 88, top: 28 },
-  { left: 88, top: 90 },
-  { left: 10, top: 90 },
-  { left: 12, top: 28 },
-];
+// Posiciones de las etiquetas y sus inclinaciones suaves (casi horizontales).
+// Las coordenadas horizontales/verticales se resuelven por CSS (clases
+// .stat-tag--* en tokens.css), que en viewport estrecho acerca las etiquetas
+// al centro para que quepan dentro del cuadrado de la estrella sin cortarse
+// por los laterales. Solo la rotacion queda aqui.
 const LABEL_ROTATIONS = [-1, -3, 3, -2, 1];
 
 /** Hueco del retrato recortado en angulo. Sin avatar → placeholder. */
@@ -225,14 +221,11 @@ function StatStar() {
         <SocialStar className="absolute inset-0 h-full w-full [transform:rotate(2deg)]" />
 
         {STATS.map(({ label, value, descriptor }, i) => {
-          const pos = LABEL_POSITIONS[i];
           return (
             <div
               key={label}
-              className="absolute"
+              className={`stat-tag stat-tag--${i}`}
               style={{
-                left: `${pos.left}%`,
-                top: `${pos.top}%`,
                 transform: `translate(-50%,-50%) rotate(${LABEL_ROTATIONS[i]}deg)`,
               }}
             >

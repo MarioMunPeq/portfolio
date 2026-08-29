@@ -2084,6 +2084,61 @@ html.lenis body {
   }
 }
 
+/* --- Social Stats (About): etiquetas de atributo responsivas ---
+   Cada etiqueta dorada (.stat-tag) se centra en un punto del cuadrado de la
+   estrella (clases .stat-tag--0..4). En escritorio flotan en las esquinas,
+   fuera del area de la estrella. En viewport estrecho (vertical/movil) se
+   acercan al centro para caber dentro del contenedor cuadrado: la estrella se
+   adapta al ancho disponible y las tarjetas ya no desbordan ni se cortan por
+   los laterales, sin ocultar overflow ni generar scroll horizontal. */
+.stat-tag {
+  position: absolute;
+}
+
+.stat-tag--0 {
+  left: 48%;
+  top: 0%;
+}
+.stat-tag--1 {
+  left: 88%;
+  top: 28%;
+}
+.stat-tag--2 {
+  left: 88%;
+  top: 90%;
+}
+.stat-tag--3 {
+  left: 10%;
+  top: 90%;
+}
+.stat-tag--4 {
+  left: 12%;
+  top: 28%;
+}
+
+@media (max-width: 1023px) {
+  .stat-tag--0 {
+    left: 50%;
+    top: 4%;
+  }
+  .stat-tag--1 {
+    left: 66%;
+    top: 24%;
+  }
+  .stat-tag--2 {
+    left: 66%;
+    top: 86%;
+  }
+  .stat-tag--3 {
+    left: 34%;
+    top: 86%;
+  }
+  .stat-tag--4 {
+    left: 34%;
+    top: 24%;
+  }
+}
+
 /* --- Reduced motion: eliminar movimiento no esencial (spec §9) --- */
 @media (prefers-reduced-motion: reduce) {
   *,
