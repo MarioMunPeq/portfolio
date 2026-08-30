@@ -348,7 +348,7 @@ export function LoadScreen() {
           >
             <div className="pointer-events-none absolute bottom-12 right-6 z-20 w-[min(35rem,80vw)]">
               <div className="load-panel">
-                <div className="load-panel-inner px-7 pb-6 pt-[6.5rem]">
+                <div className="load-panel-inner px-4 pb-5 pt-[6.5rem] sm:px-7 sm:pb-6">
                   <p
                     className="load-question max-w-full truncate pl-[2.5rem] text-left font-anton uppercase leading-[1.05] text-paper"
                     style={{ fontSize: "clamp(1.3rem, 2.2vw, 2rem)" }}
@@ -361,15 +361,15 @@ export function LoadScreen() {
                     )}
                   </p>
 
-                  <div className="load-bar-block relative mt-2 flex items-center pl-[2.5rem]">
+                  <div className="load-bar-block relative mt-2 flex items-center pl-5 sm:pl-[2.5rem]">
                     <span
                       aria-hidden="true"
-                      className="load-q absolute bottom-[50px] left-0 font-anton text-[5.5rem] leading-none text-paper [text-shadow:-2px_-2px_0_#000,2px_-2px_0_#000,-2px_2px_0_#000,2px_2px_0_#000,-3px_-3px_0_#000,3px_-3px_0_#000,-3px_3px_0_#000,3px_3px_0_#000]"
+                      className="load-q absolute bottom-[30px] left-0 font-anton text-[3.25rem] leading-none text-paper sm:bottom-[50px] sm:text-[5.5rem] [text-shadow:-2px_-2px_0_#000,2px_-2px_0_#000,-2px_2px_0_#000,2px_2px_0_#000,-3px_-3px_0_#000,3px_-3px_0_#000,-3px_3px_0_#000,3px_3px_0_#000]"
                     >
                       Q
                     </span>
 
-                    <div className="relative h-[52px] w-full [transform:skewX(-6deg)]">
+                    <div className="relative h-[26px] w-full [transform:skewX(-6deg)] sm:h-[52px]">
                       <div className="absolute inset-0 bg-paper [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
                         <div className="absolute inset-[3px] bg-bg-hero [clip-path:polygon(0%_25%,100%_0%,100%_100%,0%_75%)]">
                           <div
@@ -380,7 +380,7 @@ export function LoadScreen() {
                       </div>
                     </div>
 
-                    <span className="load-pct ml-4 shrink-0 font-anton text-[3.5rem] leading-none text-accent [transform:skewX(-10deg)] [text-shadow:-2px_-2px_0_#000,2px_-2px_0_#000,-2px_2px_0_#000,2px_2px_0_#000,-3px_-3px_0_#000,3px_-3px_0_#000,-3px_3px_0_#000,3px_3px_0_#000,4px_4px_0_rgba(0,0,0,0.5)]">
+                    <span className="load-pct ml-3 shrink-0 font-anton text-[2rem] leading-none text-accent sm:ml-4 sm:text-[3.5rem] [transform:skewX(-10deg)] [text-shadow:-2px_-2px_0_#000,2px_-2px_0_#000,-2px_2px_0_#000,2px_2px_0_#000,-3px_-3px_0_#000,3px_-3px_0_#000,-3px_3px_0_#000,3px_3px_0_#000,4px_4px_0_rgba(0,0,0,0.5)]">
                       Si{" "}
                       <span className="inline-block min-w-[4.5ch] text-right tabular-nums">
                         <span ref={pctRef}>0</span>%

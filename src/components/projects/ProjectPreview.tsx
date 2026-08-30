@@ -11,7 +11,7 @@ export function ProjectPreview({ project }: { project: Project }) {
   const image = project.images?.[0] ?? null;
 
   return (
-    <div className="relative w-full max-w-[42rem]">
+    <div className="relative mx-auto w-full max-w-[min(100%,21rem)] sm:max-w-[min(100%,28rem)] lg:mx-0 lg:max-w-[42rem]">
       <div className="relative">
         {/* Sombra dura roja desplazada tras el marco */}
         <span
@@ -63,7 +63,7 @@ export function ProjectPreview({ project }: { project: Project }) {
         </PreviewBox>
       </div>
 
-      <div className="relative mt-10">
+      <div className="relative mt-4 sm:mt-6 lg:mt-10">
         <div>
           <h2
             className="font-expose uppercase leading-[0.95] text-paper"

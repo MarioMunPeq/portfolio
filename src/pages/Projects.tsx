@@ -57,8 +57,11 @@ function ProjectsGraphicLayer() {
  * Pantalla de proyectos = inventario del sistema. La gran captura del
  * proyecto seleccionado domina la izquierda; a la derecha, el selector
  * tipo inventario: filas de texto plano donde la seleccionada se pinta
- * con la colision de dos vigas sesgadas (cian + rojo). Hover/foco
- * selecciona, clic abre la ficha (/proyectos/:slug).
+ * con la colision de dos vigas sesgadas (cian + rojo). En escritorio,
+ * hover/foco selecciona y el clic abre la ficha (/proyectos/:slug). En
+ * movil/tactil, tocar una fila NO seleccionada la selecciona (actualiza
+ * la vista previa de arriba) sin navegar; tocar la fila ya seleccionada
+ * o su boton "ACCEDER" navega a la ficha.
  */
 export function Projects() {
   const [selected, setSelected] = useState<Project>(projects[0]);
@@ -73,6 +76,7 @@ export function Projects() {
             label="Inventario de proyectos"
             title="INVENTARIO"
             persona
+            compact
           />
 
           <div className="grid flex-1 items-start gap-y-8 overflow-hidden py-6 sm:py-8 lg:grid-cols-[1.06fr_1fr] lg:items-center lg:gap-x-10 lg:gap-y-0 lg:overflow-visible xl:gap-x-16 xl:py-10">

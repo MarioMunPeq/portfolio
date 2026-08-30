@@ -1,5 +1,8 @@
 import { Link } from "react-router-dom";
+import { useRef, type MouseEvent as ReactMouseEvent } from "react";
+import type { PointerEvent as ReactPointerEvent } from "react";
 import { useReducedMotion } from "motion/react";
+import { useMediaQuery } from "../../lib/use-media-query";
 
 interface NavRowProps {
   /** Nombre visible de la fila (uno solo). */
@@ -9,7 +12,7 @@ interface NavRowProps {
   active?: boolean;
   onSelect?: () => void;
   setItemRef?: (el: HTMLAnchorElement | null) => void;
-  /** Etiqueta de accion que aparece en hover/foco. */
+  /** Etiqueta de acceso a la ficha en el lado derecho. */
   tag?: string;
 }
 
@@ -26,9 +29,33 @@ export function NavRow({
   active = false,
   onSelect,
   setItemRef,
-  tag = "SELECCIONAR",
+  tag = "ACCEDER",
 }: NavRowProps) {
   const reduced = useReducedMotion();
+  const isTouch = useMediaQuery("(hover: none) and (pointer: coarse)");
+
+  /* En tactil el navegador emula eventos de raton al tocar (mouseenter,
+     focus, click). Esa emulacion selecciona la fila (vias onMouseEnter/
+     onFocus) ANTES de que llegue el click, de modo que el estado `active`
+     evaluado en el click ya no refleja la intencion del usuario. Para no
+     romperlo, la decision se toma al INICIO del toque (pointerdown),
+     cuando `active` todavia es el estado real previo al toque, y se guarda
+     en un ref inmune a esa emulacion:
+       - fila NO activa al tocar  -> SOLO seleccionar (sin navegar)
+       - fila YA activa (o ACCEDER) -> navegar a la ficha
+     En escritorio no interviene: el hover selecciona y el clic navega. */
+  const wasActiveOnPress = useRef(false);
+  const handlePointerDown = (_event: ReactPointerEvent<HTMLAnchorElement>) => {
+    if (isTouch) wasActiveOnPress.current = active;
+  };
+
+  const handleClick = (event: ReactMouseEvent<HTMLAnchorElement>) => {
+    if (isTouch && !wasActiveOnPress.current) {
+      event.preventDefault();
+      onSelect?.();
+    }
+    wasActiveOnPress.current = false;
+  };
 
   return (
     <li className="proj-item">
@@ -37,8 +64,10 @@ export function NavRow({
         ref={setItemRef}
         data-cursor="project"
         aria-current={active ? "true" : undefined}
+        onPointerDown={handlePointerDown}
         onMouseEnter={onSelect}
         onFocus={onSelect}
+        onClick={handleClick}
         className={`proj-row group relative flex items-center gap-3 py-3 pl-4 pr-3 md:gap-4 md:py-4 ${
           active ? "is-selected" : ""
         } ${active && !reduced ? "is-glitching" : ""}`}

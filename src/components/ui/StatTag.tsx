@@ -22,7 +22,7 @@ export function StatTag({
 }: StatTagProps) {
   return (
     <div
-      className={`relative inline-flex scale-[0.8] sm:scale-100 ${className}`}
+      className={`relative inline-flex scale-[0.65] lg:scale-100 ${className}`}
       style={{ filter: "drop-shadow(3px 3px 0 rgba(0, 0, 0, 0.7))" }}
     >
       <div

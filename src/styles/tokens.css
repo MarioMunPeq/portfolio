@@ -2087,10 +2087,11 @@ html.lenis body {
 /* --- Social Stats (About): etiquetas de atributo responsivas ---
    Cada etiqueta dorada (.stat-tag) se centra en un punto del cuadrado de la
    estrella (clases .stat-tag--0..4). En escritorio flotan en las esquinas,
-   fuera del area de la estrella. En viewport estrecho (vertical/movil) se
-   acercan al centro para caber dentro del contenedor cuadrado: la estrella se
-   adapta al ancho disponible y las tarjetas ya no desbordan ni se cortan por
-   los laterales, sin ocultar overflow ni generar scroll horizontal. */
+   fuera del area de la estrella. En viewport estrecho (vertical/movil y
+   tablet) se redistribuyen con mayor separacion horizontal/vertical para que
+   las etiquetas (ya encogidas en el StatTag via scale-[0.65]) quepan dentro
+   del cuadrado sin superponerse entre si ni recortarse por los laterales,
+   sin ocultar overflow ni generar scroll horizontal. */
 .stat-tag {
   position: absolute;
 }
@@ -2122,20 +2123,34 @@ html.lenis body {
     top: 4%;
   }
   .stat-tag--1 {
-    left: 66%;
+    left: 80%;
     top: 24%;
   }
   .stat-tag--2 {
-    left: 66%;
-    top: 86%;
+    left: 80%;
+    top: 76%;
   }
   .stat-tag--3 {
-    left: 34%;
-    top: 86%;
+    left: 20%;
+    top: 76%;
   }
   .stat-tag--4 {
-    left: 34%;
+    left: 20%;
     top: 24%;
+  }
+}
+
+/* --- Titulos de seccion: tamaño base (default) --- */
+.section-title__h1 {
+  font-size: clamp(2.75rem, 6.5vw, 5.5rem);
+}
+
+/* Variante compact (solo se aplica cuando el componente lo pide): reduce el
+   titulo en viewport estrecho para ahorrar altura vertical (evita scroll en
+   movil). En >=1024px queda el tamanio base, sin cambiar el escritorio. */
+@media (max-width: 1023px) {
+  .section-title__h1--compact {
+    font-size: clamp(1.7rem, 9vw, 3rem);
   }
 }
 

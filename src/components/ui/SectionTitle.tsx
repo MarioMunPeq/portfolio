@@ -10,6 +10,8 @@ interface SectionTitleProps {
   /** Fuente de la etiqueta: P5 Hatty (por defecto, legible como microcopy) o
       Expose (solo contextos grandes donde la fuente display se puede leer). */
   labelFont?: "hatty" | "expose";
+  /** Reduce el tamanio del titulo solo en viewport estrecho (movil). */
+  compact?: boolean;
   className?: string;
 }
 
@@ -24,6 +26,7 @@ export function SectionTitle({
   label,
   persona = false,
   labelFont = "hatty",
+  compact = false,
   className = "",
 }: SectionTitleProps) {
   return (
@@ -40,13 +43,10 @@ export function SectionTitle({
       ) : null}
 
       <h1
-        className={`mt-3 uppercase leading-[0.95] text-paper ${
+        className={`section-title__h1 mt-3 uppercase leading-[0.95] text-paper ${
           persona ? "font-p5-menu" : "font-display"
-        }`}
-        style={{
-          fontSize: "clamp(2.75rem, 6.5vw, 5.5rem)",
-          textShadow: "4px 4px 0 var(--color-accent-deep)",
-        }}
+        } ${compact ? "section-title__h1--compact" : ""}`}
+        style={{ textShadow: "4px 4px 0 var(--color-accent-deep)" }}
       >
         {title}
       </h1>
